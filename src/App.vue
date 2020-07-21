@@ -22,7 +22,6 @@
       </div>
 
       <v-spacer></v-spacer>
-      <div>{{ dejima_test() }}</div>
 
       <v-btn
         href="https://github.com/vuetifyjs/vuetify/releases/latest"
@@ -47,6 +46,8 @@ import {
   AgentQueryAPIApi,
   RentPropertyQueryAPIApi,
 } from "./dejima/dejima-client/src/index";
+import { FirebaseAuthenticationService } from "./firebase/FirebaseAuthenticationService.js";
+import { FirebaseService } from "./firebase/FirebaseService.js";
 
 export default {
   name: "App",
@@ -59,29 +60,61 @@ export default {
     //
   }),
   methods: {
-    dejima_test: async () => {
-      const apiClient = new ApiClient();
-      apiClient.basePath = process.env.VUE_APP_DEJIMA_API_ROOT;
-      apiClient.authentications["APIKeyHeader"].apiKey =
-        process.env.VUE_APP_DEJIMA_API_KEY;
-      console.log(apiClient.basePath);
-      console.log(apiClient.authentications["APIKeyHeader"]);
-
-      const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
-      const callback = function(error, data, response) {
-        if (error) {
-          console.error(error);
-        } else {
-          console.log("API called successfully. Returned data: " + data);
-          console.log(data);
-        }
-      };
-      const opt = {
-        startIndex: 1,
-        itemsPerPage: 20,
-      };
-      rentPropertyQueryAPIApi.searchRentPropertyByBuilding(opt, callback);
-    },
+    window: (onload = async () => {
+      await dejima_test();
+      await firebase_test();
+      await firebase_auth_test();
+    }),
   },
+};
+
+const dejima_test = async () => {
+  const apiClient = new ApiClient();
+  apiClient.basePath = process.env.VUE_APP_DEJIMA_API_ROOT;
+  apiClient.authentications["APIKeyHeader"].apiKey =
+    process.env.VUE_APP_DEJIMA_API_KEY;
+
+  const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
+  const callback = function(error, data, response) {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log("API called successfully. Returned data: ");
+      console.log(data);
+    }
+  };
+  const opt = {
+    startIndex: 1,
+    itemsPerPage: 20,
+  };
+  rentPropertyQueryAPIApi.searchRentPropertyByBuilding(opt, callback);
+};
+
+const firebase_test = async () => {
+  console.log(process.env.VUE_APP_FIREBASE_API_KEY);
+  const firebaseService = new FirebaseService();
+  await firebaseService.database
+    .ref(`users/usertest`)
+    .set({ query: "query set test" });
+  const result = await firebaseService.database
+    .ref(`users/usertest`)
+    .once("value");
+  console.log(result.val().query);
+};
+
+const firebase_auth_test = async () => {
+  const firebaseService = new FirebaseService();
+  const authenticationService = new FirebaseAuthenticationService(
+    firebaseService
+  );
+
+  const address = "logintest@example.com";
+  const password = "logintest";
+  try {
+    await authenticationService.signInWithEMailAndPassword(address, password);
+    console.log(`success to login (${address})`);
+  } catch (error) {
+    console.log(`fail to login (${address})`);
+  }
 };
 </script>
