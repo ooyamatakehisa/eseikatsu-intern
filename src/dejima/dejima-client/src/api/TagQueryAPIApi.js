@@ -35,13 +35,6 @@ export default class TagQueryAPIApi {
     }
 
 
-    /**
-     * Callback function to receive the result of the listTag operation.
-     * @callback module:api/TagQueryAPIApi~listTagCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/TagListResult} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
-     */
 
     /**
      * List Tag
@@ -49,10 +42,9 @@ export default class TagQueryAPIApi {
      * @param {Object} opts Optional parameters
      * @param {Number} opts.startIndex 検索の開始インデックス (default to 1)
      * @param {Number} opts.itemsPerPage ページあたりの最大表示数 (default to 50)
-     * @param {module:api/TagQueryAPIApi~listTagCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/TagListResult}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/TagListResult} and HTTP response
      */
-    listTag(category, opts, callback) {
+    listTagWithHttpInfo(category, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'category' is set
@@ -79,8 +71,23 @@ export default class TagQueryAPIApi {
       return this.apiClient.callApi(
         '/tag/tag/list/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
+    }
+
+    /**
+     * List Tag
+     * @param {module:model/String} category タグのカテゴリ: property, building
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.startIndex 検索の開始インデックス (default to 1)
+     * @param {Number} opts.itemsPerPage ページあたりの最大表示数 (default to 50)
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/TagListResult}
+     */
+    listTag(category, opts) {
+      return this.listTagWithHttpInfo(category, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
     }
 
 

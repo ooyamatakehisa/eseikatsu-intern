@@ -37,13 +37,6 @@ export default class ImageQueryAPIApi {
     }
 
 
-    /**
-     * Callback function to receive the result of the bulkGetMetadataRentRentListGet operation.
-     * @callback module:api/ImageQueryAPIApi~bulkGetMetadataRentRentListGetCallback
-     * @param {String} error Error message, if any.
-     * @param {Array.<module:model/MetadataResponse>} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
-     */
 
     /**
      * Bulk Get Metadata Rent
@@ -52,10 +45,9 @@ export default class ImageQueryAPIApi {
      * @param {Object} opts Optional parameters
      * @param {Number} opts.baitaiCode 媒体コード  いい物件One上の出稿設定でフィルターする  * 専用の媒体コードを指定する。コードの詳細は「媒体コード（baitai_code）について」参照 * 指定しなかった場合、いい物件Oneで画像の出稿先媒体を「すべて」にしている画像メタデータのみ取得する * 特にパノラマ画像はデフォルトでの出稿先媒体が「すべて」ではないので注意 * いい物件Oneで出稿先媒体を限定している場合、このパラメータで媒体を指定する必要がある * 存在しないコードが指定されてもエラーにはせず、指定されなかったときと同じ挙動になる 
      * @param {String} opts.kindCode 画像種別コード  画像種別でフィルターする  * kind_code をカンマ区切りで１つ以上指定することができる * 指定された場合、指定された画像種別のみを取得する * 指定されなかった場合、すべての画像を取得する * 存在しないコードが指定されてもエラーにならない 
-     * @param {module:api/ImageQueryAPIApi~bulkGetMetadataRentRentListGetCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link Array.<module:model/MetadataResponse>}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link Array.<module:model/MetadataResponse>} and HTTP response
      */
-    bulkGetMetadataRentRentListGet(propertyKey, opts, callback) {
+    bulkGetMetadataRentRentListGetWithHttpInfo(propertyKey, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'propertyKey' is set
@@ -82,17 +74,26 @@ export default class ImageQueryAPIApi {
       return this.apiClient.callApi(
         '/rent/list/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the bulkGetMetadataSaleSaleListGet operation.
-     * @callback module:api/ImageQueryAPIApi~bulkGetMetadataSaleSaleListGetCallback
-     * @param {String} error Error message, if any.
-     * @param {Array.<module:model/MetadataResponse>} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Bulk Get Metadata Rent
+     * 賃貸物件の画像メタデータをバルクで取得する
+     * @param {String} propertyKey いい生活番号のリスト（カンマ区切り）  いい生活番号をカンマ区切りで複数指定できる。 指定できるの個数の上限は50。 
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.baitaiCode 媒体コード  いい物件One上の出稿設定でフィルターする  * 専用の媒体コードを指定する。コードの詳細は「媒体コード（baitai_code）について」参照 * 指定しなかった場合、いい物件Oneで画像の出稿先媒体を「すべて」にしている画像メタデータのみ取得する * 特にパノラマ画像はデフォルトでの出稿先媒体が「すべて」ではないので注意 * いい物件Oneで出稿先媒体を限定している場合、このパラメータで媒体を指定する必要がある * 存在しないコードが指定されてもエラーにはせず、指定されなかったときと同じ挙動になる 
+     * @param {String} opts.kindCode 画像種別コード  画像種別でフィルターする  * kind_code をカンマ区切りで１つ以上指定することができる * 指定された場合、指定された画像種別のみを取得する * 指定されなかった場合、すべての画像を取得する * 存在しないコードが指定されてもエラーにならない 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:model/MetadataResponse>}
      */
+    bulkGetMetadataRentRentListGet(propertyKey, opts) {
+      return this.bulkGetMetadataRentRentListGetWithHttpInfo(propertyKey, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Bulk Get Metadata Sale
@@ -101,10 +102,9 @@ export default class ImageQueryAPIApi {
      * @param {Object} opts Optional parameters
      * @param {Number} opts.baitaiCode 媒体コード  いい物件One上の出稿設定でフィルターする  * 専用の媒体コードを指定する。コードの詳細は「媒体コード（baitai_code）について」参照 * 指定しなかった場合、いい物件Oneで画像の出稿先媒体を「すべて」にしている画像メタデータのみ取得する * 特にパノラマ画像はデフォルトでの出稿先媒体が「すべて」ではないので注意 * いい物件Oneで出稿先媒体を限定している場合、このパラメータで媒体を指定する必要がある * 存在しないコードが指定されてもエラーにはせず、指定されなかったときと同じ挙動になる 
      * @param {String} opts.kindCode 画像種別コード  画像種別でフィルターする  * kind_code をカンマ区切りで１つ以上指定することができる * 指定された場合、指定された画像種別のみを取得する * 指定されなかった場合、すべての画像を取得する * 存在しないコードが指定されてもエラーにならない 
-     * @param {module:api/ImageQueryAPIApi~bulkGetMetadataSaleSaleListGetCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link Array.<module:model/MetadataResponse>}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link Array.<module:model/MetadataResponse>} and HTTP response
      */
-    bulkGetMetadataSaleSaleListGet(propertyKey, opts, callback) {
+    bulkGetMetadataSaleSaleListGetWithHttpInfo(propertyKey, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'propertyKey' is set
@@ -131,17 +131,26 @@ export default class ImageQueryAPIApi {
       return this.apiClient.callApi(
         '/sale/list/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the getImageRentRentImgPropertyKeyFilenameGet operation.
-     * @callback module:api/ImageQueryAPIApi~getImageRentRentImgPropertyKeyFilenameGetCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/AnyType} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Bulk Get Metadata Sale
+     * 売買物件の画像メタデータをバルクで取得する
+     * @param {String} propertyKey いい生活番号のリスト（カンマ区切り）  いい生活番号をカンマ区切りで複数指定できる。 指定できるの個数の上限は50。 
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.baitaiCode 媒体コード  いい物件One上の出稿設定でフィルターする  * 専用の媒体コードを指定する。コードの詳細は「媒体コード（baitai_code）について」参照 * 指定しなかった場合、いい物件Oneで画像の出稿先媒体を「すべて」にしている画像メタデータのみ取得する * 特にパノラマ画像はデフォルトでの出稿先媒体が「すべて」ではないので注意 * いい物件Oneで出稿先媒体を限定している場合、このパラメータで媒体を指定する必要がある * 存在しないコードが指定されてもエラーにはせず、指定されなかったときと同じ挙動になる 
+     * @param {String} opts.kindCode 画像種別コード  画像種別でフィルターする  * kind_code をカンマ区切りで１つ以上指定することができる * 指定された場合、指定された画像種別のみを取得する * 指定されなかった場合、すべての画像を取得する * 存在しないコードが指定されてもエラーにならない 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:model/MetadataResponse>}
      */
+    bulkGetMetadataSaleSaleListGet(propertyKey, opts) {
+      return this.bulkGetMetadataSaleSaleListGetWithHttpInfo(propertyKey, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Get Image Rent
@@ -150,10 +159,9 @@ export default class ImageQueryAPIApi {
      * @param {String} filename 
      * @param {Object} opts Optional parameters
      * @param {String} opts.size 画像サイズ  横×縦をpixel単位で指定する。 正規表現では \\d+x\\d+ にマッチする。
-     * @param {module:api/ImageQueryAPIApi~getImageRentRentImgPropertyKeyFilenameGetCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/AnyType}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/AnyType} and HTTP response
      */
-    getImageRentRentImgPropertyKeyFilenameGet(propertyKey, filename, opts, callback) {
+    getImageRentRentImgPropertyKeyFilenameGetWithHttpInfo(propertyKey, filename, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'propertyKey' is set
@@ -184,17 +192,26 @@ export default class ImageQueryAPIApi {
       return this.apiClient.callApi(
         '/rent/img/{property_key}/{filename}', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the getImageSaleSaleImgPropertyKeyFilenameGet operation.
-     * @callback module:api/ImageQueryAPIApi~getImageSaleSaleImgPropertyKeyFilenameGetCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/AnyType} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Get Image Rent
+     * 賃貸物件の画像データを取得する  URL構成は変わる可能性がある。 必ず画像メタデータに含まれる `url` を使って画像を取得するべき。
+     * @param {String} propertyKey 
+     * @param {String} filename 
+     * @param {Object} opts Optional parameters
+     * @param {String} opts.size 画像サイズ  横×縦をpixel単位で指定する。 正規表現では \\d+x\\d+ にマッチする。
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/AnyType}
      */
+    getImageRentRentImgPropertyKeyFilenameGet(propertyKey, filename, opts) {
+      return this.getImageRentRentImgPropertyKeyFilenameGetWithHttpInfo(propertyKey, filename, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Get Image Sale
@@ -203,10 +220,9 @@ export default class ImageQueryAPIApi {
      * @param {String} filename 
      * @param {Object} opts Optional parameters
      * @param {String} opts.size 画像サイズ  横×縦をpixel単位で指定する。 正規表現では \\d+x\\d+ にマッチする。
-     * @param {module:api/ImageQueryAPIApi~getImageSaleSaleImgPropertyKeyFilenameGetCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/AnyType}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/AnyType} and HTTP response
      */
-    getImageSaleSaleImgPropertyKeyFilenameGet(propertyKey, filename, opts, callback) {
+    getImageSaleSaleImgPropertyKeyFilenameGetWithHttpInfo(propertyKey, filename, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'propertyKey' is set
@@ -237,17 +253,26 @@ export default class ImageQueryAPIApi {
       return this.apiClient.callApi(
         '/sale/img/{property_key}/{filename}', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the getMetadataRentRentPropertyKeyGet operation.
-     * @callback module:api/ImageQueryAPIApi~getMetadataRentRentPropertyKeyGetCallback
-     * @param {String} error Error message, if any.
-     * @param {Array.<module:model/MetadataResponse>} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Get Image Sale
+     * 売買物件の画像データを取得する  URL構成は変わる可能性がある。 必ず画像メタデータに含まれる `url` を使って画像を取得するべき。
+     * @param {String} propertyKey 
+     * @param {String} filename 
+     * @param {Object} opts Optional parameters
+     * @param {String} opts.size 画像サイズ  横×縦をpixel単位で指定する。 正規表現では \\d+x\\d+ にマッチする。
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/AnyType}
      */
+    getImageSaleSaleImgPropertyKeyFilenameGet(propertyKey, filename, opts) {
+      return this.getImageSaleSaleImgPropertyKeyFilenameGetWithHttpInfo(propertyKey, filename, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Get Metadata Rent
@@ -256,10 +281,9 @@ export default class ImageQueryAPIApi {
      * @param {Object} opts Optional parameters
      * @param {Number} opts.baitaiCode 媒体コード  いい物件One上の出稿設定でフィルターする  * 専用の媒体コードを指定する。コードの詳細は「媒体コード（baitai_code）について」参照 * 指定しなかった場合、いい物件Oneで画像の出稿先媒体を「すべて」にしている画像メタデータのみ取得する * 特にパノラマ画像はデフォルトでの出稿先媒体が「すべて」ではないので注意 * いい物件Oneで出稿先媒体を限定している場合、このパラメータで媒体を指定する必要がある * 存在しないコードが指定されてもエラーにはせず、指定されなかったときと同じ挙動になる 
      * @param {String} opts.kindCode 画像種別コード  画像種別でフィルターする  * kind_code をカンマ区切りで１つ以上指定することができる * 指定された場合、指定された画像種別のみを取得する * 指定されなかった場合、すべての画像を取得する * 存在しないコードが指定されてもエラーにならない 
-     * @param {module:api/ImageQueryAPIApi~getMetadataRentRentPropertyKeyGetCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link Array.<module:model/MetadataResponse>}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link Array.<module:model/MetadataResponse>} and HTTP response
      */
-    getMetadataRentRentPropertyKeyGet(propertyKey, opts, callback) {
+    getMetadataRentRentPropertyKeyGetWithHttpInfo(propertyKey, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'propertyKey' is set
@@ -286,17 +310,26 @@ export default class ImageQueryAPIApi {
       return this.apiClient.callApi(
         '/rent/{property_key}/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the getMetadataSaleSalePropertyKeyGet operation.
-     * @callback module:api/ImageQueryAPIApi~getMetadataSaleSalePropertyKeyGetCallback
-     * @param {String} error Error message, if any.
-     * @param {Array.<module:model/MetadataResponse>} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Get Metadata Rent
+     * 賃貸物件の画像メタデータを取得する
+     * @param {String} propertyKey いい生活番号
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.baitaiCode 媒体コード  いい物件One上の出稿設定でフィルターする  * 専用の媒体コードを指定する。コードの詳細は「媒体コード（baitai_code）について」参照 * 指定しなかった場合、いい物件Oneで画像の出稿先媒体を「すべて」にしている画像メタデータのみ取得する * 特にパノラマ画像はデフォルトでの出稿先媒体が「すべて」ではないので注意 * いい物件Oneで出稿先媒体を限定している場合、このパラメータで媒体を指定する必要がある * 存在しないコードが指定されてもエラーにはせず、指定されなかったときと同じ挙動になる 
+     * @param {String} opts.kindCode 画像種別コード  画像種別でフィルターする  * kind_code をカンマ区切りで１つ以上指定することができる * 指定された場合、指定された画像種別のみを取得する * 指定されなかった場合、すべての画像を取得する * 存在しないコードが指定されてもエラーにならない 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:model/MetadataResponse>}
      */
+    getMetadataRentRentPropertyKeyGet(propertyKey, opts) {
+      return this.getMetadataRentRentPropertyKeyGetWithHttpInfo(propertyKey, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Get Metadata Sale
@@ -305,10 +338,9 @@ export default class ImageQueryAPIApi {
      * @param {Object} opts Optional parameters
      * @param {Number} opts.baitaiCode 媒体コード  いい物件One上の出稿設定でフィルターする  * 専用の媒体コードを指定する。コードの詳細は「媒体コード（baitai_code）について」参照 * 指定しなかった場合、いい物件Oneで画像の出稿先媒体を「すべて」にしている画像メタデータのみ取得する * 特にパノラマ画像はデフォルトでの出稿先媒体が「すべて」ではないので注意 * いい物件Oneで出稿先媒体を限定している場合、このパラメータで媒体を指定する必要がある * 存在しないコードが指定されてもエラーにはせず、指定されなかったときと同じ挙動になる 
      * @param {String} opts.kindCode 画像種別コード  画像種別でフィルターする  * kind_code をカンマ区切りで１つ以上指定することができる * 指定された場合、指定された画像種別のみを取得する * 指定されなかった場合、すべての画像を取得する * 存在しないコードが指定されてもエラーにならない 
-     * @param {module:api/ImageQueryAPIApi~getMetadataSaleSalePropertyKeyGetCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link Array.<module:model/MetadataResponse>}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link Array.<module:model/MetadataResponse>} and HTTP response
      */
-    getMetadataSaleSalePropertyKeyGet(propertyKey, opts, callback) {
+    getMetadataSaleSalePropertyKeyGetWithHttpInfo(propertyKey, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'propertyKey' is set
@@ -335,8 +367,24 @@ export default class ImageQueryAPIApi {
       return this.apiClient.callApi(
         '/sale/{property_key}/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
+    }
+
+    /**
+     * Get Metadata Sale
+     * 売買物件の画像メタデータを取得する
+     * @param {String} propertyKey いい生活番号
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.baitaiCode 媒体コード  いい物件One上の出稿設定でフィルターする  * 専用の媒体コードを指定する。コードの詳細は「媒体コード（baitai_code）について」参照 * 指定しなかった場合、いい物件Oneで画像の出稿先媒体を「すべて」にしている画像メタデータのみ取得する * 特にパノラマ画像はデフォルトでの出稿先媒体が「すべて」ではないので注意 * いい物件Oneで出稿先媒体を限定している場合、このパラメータで媒体を指定する必要がある * 存在しないコードが指定されてもエラーにはせず、指定されなかったときと同じ挙動になる 
+     * @param {String} opts.kindCode 画像種別コード  画像種別でフィルターする  * kind_code をカンマ区切りで１つ以上指定することができる * 指定された場合、指定された画像種別のみを取得する * 指定されなかった場合、すべての画像を取得する * 存在しないコードが指定されてもエラーにならない 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:model/MetadataResponse>}
+     */
+    getMetadataSaleSalePropertyKeyGet(propertyKey, opts) {
+      return this.getMetadataSaleSalePropertyKeyGetWithHttpInfo(propertyKey, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
     }
 
 

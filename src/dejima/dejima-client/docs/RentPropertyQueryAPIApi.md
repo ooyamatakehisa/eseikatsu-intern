@@ -195,13 +195,12 @@ let opts = {
   'ignoreNameDisplay': true, // Boolean | 建物名/物件名フリガナでの検索時はデフォルトでは建物名表示フラグがfalseの物件は対象にしない。このフラグを有効化すると表示フラグに関わらず検索対象になる
   'query': "query_example" // String | 詳細検索用特殊パラメータ。検索条件を JSON で記載し、エンコードしたものを     バリューに渡す。          ex) '[{\"building_name\": \"いい生活アパート\", \"price.to\": 700000}, {\"buildinig_name\": \"いい生活ハイツ\", \"walk_from_station_minutes.to\": 10}]'     -> ?query=%5B%7B%22building_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%82%A2%E3%83%91%E3%83%BC%E3%83%88%22%2C%20%22price.to%22%3A%20700000%7D%2C%20%7B%22buildinig_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%83%8F%E3%82%A4%E3%83%84%22%2C%20%22walk_from_station_minutes.to%22%3A%2010%7D%5D          上記の例の場合の絞り込み条件は、抽象的に書き下すと次のようになる。          (building_name like \"%いい生活アパート%\" AND price <= 700000) OR (building_name like \"%いい生活ハイツ%\" AND walk_from_station_minutes <= 10)     
 };
-apiInstance.aggregateRentPropertyByArea(level, opts, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.aggregateRentPropertyByArea(level, opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters
@@ -567,13 +566,12 @@ let opts = {
   'ignoreNameDisplay': true, // Boolean | 建物名/物件名フリガナでの検索時はデフォルトでは建物名表示フラグがfalseの物件は対象にしない。このフラグを有効化すると表示フラグに関わらず検索対象になる
   'query': "query_example" // String | 詳細検索用特殊パラメータ。検索条件を JSON で記載し、エンコードしたものを     バリューに渡す。          ex) '[{\"building_name\": \"いい生活アパート\", \"price.to\": 700000}, {\"buildinig_name\": \"いい生活ハイツ\", \"walk_from_station_minutes.to\": 10}]'     -> ?query=%5B%7B%22building_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%82%A2%E3%83%91%E3%83%BC%E3%83%88%22%2C%20%22price.to%22%3A%20700000%7D%2C%20%7B%22buildinig_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%83%8F%E3%82%A4%E3%83%84%22%2C%20%22walk_from_station_minutes.to%22%3A%2010%7D%5D          上記の例の場合の絞り込み条件は、抽象的に書き下すと次のようになる。          (building_name like \"%いい生活アパート%\" AND price <= 700000) OR (building_name like \"%いい生活ハイツ%\" AND walk_from_station_minutes <= 10)     
 };
-apiInstance.aggregateRentPropertyByLine(level, opts, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.aggregateRentPropertyByLine(level, opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters
@@ -969,13 +967,12 @@ let opts = {
   'initialCostOrder': new EsApi.Order(), // Order | 初期費用ソート順
   'monthlyCostSummaryOrder': new EsApi.Order() // Order | 管理費など込み賃料
 };
-apiInstance.choiceRentProperty(opts, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.choiceRentProperty(opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters
@@ -1212,13 +1209,12 @@ let propertyFullKey = "propertyFullKey_example"; // String |
 let opts = {
   'baitaiCode': new EsApi.RentBaitaiCode() // RentBaitaiCode | 掲載先(デフォルトはウェブサイト)
 };
-apiInstance.getRentProperty(propertyFullKey, opts, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.getRentProperty(propertyFullKey, opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters
@@ -1455,13 +1451,12 @@ let opts = {
   'initialCostOrder': new EsApi.Order(), // Order | 初期費用ソート順
   'monthlyCostSummaryOrder': new EsApi.Order() // Order | 管理費など込み賃料
 };
-apiInstance.searchRentPropertyByBuilding(opts, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.searchRentPropertyByBuilding(opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters
@@ -1886,13 +1881,12 @@ let opts = {
   'initialCostOrder': new EsApi.Order(), // Order | 初期費用ソート順
   'monthlyCostSummaryOrder': new EsApi.Order() // Order | 管理費など込み賃料
 };
-apiInstance.searchRentPropertyByDwellingUnit(opts, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.searchRentPropertyByDwellingUnit(opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters

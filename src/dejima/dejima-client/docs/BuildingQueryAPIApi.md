@@ -30,13 +30,12 @@ APIKeyHeader.apiKey = 'YOUR API KEY';
 
 let apiInstance = new EsApi.BuildingQueryAPIApi();
 let buildingGuid = "buildingGuid_example"; // String | 
-apiInstance.getBuilding(buildingGuid, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.getBuilding(buildingGuid).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters
@@ -101,13 +100,12 @@ let opts = {
   'customerKey': [null], // [Number] | カスタマーキー
   'tatemonoGuid': ["null"] // [String] | One建物GUID
 };
-apiInstance.searchBuilding(opts, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.searchBuilding(opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters

@@ -31,13 +31,12 @@ let opts = {
   'startIndex': 1, // Number | 検索の開始インデックス
   'itemsPerPage': 50 // Number | ページあたりの最大表示数
 };
-apiInstance.listTag(category, opts, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.listTag(category, opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters
