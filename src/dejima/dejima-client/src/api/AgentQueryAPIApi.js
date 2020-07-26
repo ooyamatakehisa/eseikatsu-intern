@@ -37,22 +37,14 @@ export default class AgentQueryAPIApi {
     }
 
 
-    /**
-     * Callback function to receive the result of the getAgentByCustomerKey operation.
-     * @callback module:api/AgentQueryAPIApi~getAgentByCustomerKeyCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/Agent} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
-     */
 
     /**
      * Get Agent By Customer Key
      * customer_key または agent_guidで問い合わせ先情報を取得する agent_guidは非推奨
      * @param {String} agentIdentifier 組織情報識別子 (customer_key or agent_guid(非推奨))
-     * @param {module:api/AgentQueryAPIApi~getAgentByCustomerKeyCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/Agent}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/Agent} and HTTP response
      */
-    getAgentByCustomerKey(agentIdentifier, callback) {
+    getAgentByCustomerKeyWithHttpInfo(agentIdentifier) {
       let postBody = null;
       // verify the required parameter 'agentIdentifier' is set
       if (agentIdentifier === undefined || agentIdentifier === null) {
@@ -76,26 +68,31 @@ export default class AgentQueryAPIApi {
       return this.apiClient.callApi(
         '/agent/agent/{agent_identifier}/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the getStaff operation.
-     * @callback module:api/AgentQueryAPIApi~getStaffCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/Staff} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Get Agent By Customer Key
+     * customer_key または agent_guidで問い合わせ先情報を取得する agent_guidは非推奨
+     * @param {String} agentIdentifier 組織情報識別子 (customer_key or agent_guid(非推奨))
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/Agent}
      */
+    getAgentByCustomerKey(agentIdentifier) {
+      return this.getAgentByCustomerKeyWithHttpInfo(agentIdentifier)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Get Staff
      * staff_guidでスタッフ情報を取得する
      * @param {String} staffGuid 
-     * @param {module:api/AgentQueryAPIApi~getStaffCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/Staff}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/Staff} and HTTP response
      */
-    getStaff(staffGuid, callback) {
+    getStaffWithHttpInfo(staffGuid) {
       let postBody = null;
       // verify the required parameter 'staffGuid' is set
       if (staffGuid === undefined || staffGuid === null) {
@@ -119,17 +116,23 @@ export default class AgentQueryAPIApi {
       return this.apiClient.callApi(
         '/agent/staff/{staff_guid}/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the listAgent operation.
-     * @callback module:api/AgentQueryAPIApi~listAgentCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/AgentList} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Get Staff
+     * staff_guidでスタッフ情報を取得する
+     * @param {String} staffGuid 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/Staff}
      */
+    getStaff(staffGuid) {
+      return this.getStaffWithHttpInfo(staffGuid)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * List Agent
@@ -138,10 +141,9 @@ export default class AgentQueryAPIApi {
      * @param {Array.<Number>} opts.customerKey カスタマーキー
      * @param {Number} opts.startIndex 検索の開始インデックス (default to 1)
      * @param {Number} opts.itemsPerPage ページあたりの最大表示数 (default to 10)
-     * @param {module:api/AgentQueryAPIApi~listAgentCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/AgentList}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/AgentList} and HTTP response
      */
-    listAgent(opts, callback) {
+    listAgentWithHttpInfo(opts) {
       opts = opts || {};
       let postBody = null;
 
@@ -164,8 +166,24 @@ export default class AgentQueryAPIApi {
       return this.apiClient.callApi(
         '/agent/agent/list/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
+    }
+
+    /**
+     * List Agent
+     * API_KEYに紐づくカスタマーキーと一致する問い合わせ先組織情報一覧を取得する  クエリで customer_key を指定すれば対象を絞り込める
+     * @param {Object} opts Optional parameters
+     * @param {Array.<Number>} opts.customerKey カスタマーキー
+     * @param {Number} opts.startIndex 検索の開始インデックス (default to 1)
+     * @param {Number} opts.itemsPerPage ページあたりの最大表示数 (default to 10)
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/AgentList}
+     */
+    listAgent(opts) {
+      return this.listAgentWithHttpInfo(opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
     }
 
 

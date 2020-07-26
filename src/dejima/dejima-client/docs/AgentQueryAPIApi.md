@@ -31,13 +31,12 @@ APIKeyHeader.apiKey = 'YOUR API KEY';
 
 let apiInstance = new EsApi.AgentQueryAPIApi();
 let agentIdentifier = "agentIdentifier_example"; // String | 組織情報識別子 (customer_key or agent_guid(非推奨))
-apiInstance.getAgentByCustomerKey(agentIdentifier, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.getAgentByCustomerKey(agentIdentifier).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters
@@ -82,13 +81,12 @@ APIKeyHeader.apiKey = 'YOUR API KEY';
 
 let apiInstance = new EsApi.AgentQueryAPIApi();
 let staffGuid = "staffGuid_example"; // String | 
-apiInstance.getStaff(staffGuid, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.getStaff(staffGuid).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters
@@ -137,13 +135,12 @@ let opts = {
   'startIndex': 1, // Number | 検索の開始インデックス
   'itemsPerPage': 10 // Number | ページあたりの最大表示数
 };
-apiInstance.listAgent(opts, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
+apiInstance.listAgent(opts).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
 });
+
 ```
 
 ### Parameters

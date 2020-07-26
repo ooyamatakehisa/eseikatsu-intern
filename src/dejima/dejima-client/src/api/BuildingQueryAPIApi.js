@@ -37,22 +37,14 @@ export default class BuildingQueryAPIApi {
     }
 
 
-    /**
-     * Callback function to receive the result of the getBuilding operation.
-     * @callback module:api/BuildingQueryAPIApi~getBuildingCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/Building} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
-     */
 
     /**
      * Get Building
      * building_guidで建物情報を取得する
      * @param {String} buildingGuid 
-     * @param {module:api/BuildingQueryAPIApi~getBuildingCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/Building}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/Building} and HTTP response
      */
-    getBuilding(buildingGuid, callback) {
+    getBuildingWithHttpInfo(buildingGuid) {
       let postBody = null;
       // verify the required parameter 'buildingGuid' is set
       if (buildingGuid === undefined || buildingGuid === null) {
@@ -76,17 +68,23 @@ export default class BuildingQueryAPIApi {
       return this.apiClient.callApi(
         '/building/building/{building_guid}/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the searchBuilding operation.
-     * @callback module:api/BuildingQueryAPIApi~searchBuildingCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/BuildingList} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Get Building
+     * building_guidで建物情報を取得する
+     * @param {String} buildingGuid 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/Building}
      */
+    getBuilding(buildingGuid) {
+      return this.getBuildingWithHttpInfo(buildingGuid)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Search Building
@@ -111,10 +109,9 @@ export default class BuildingQueryAPIApi {
      * @param {Array.<String>} opts.address 住所
      * @param {Array.<Number>} opts.customerKey カスタマーキー
      * @param {Array.<String>} opts.tatemonoGuid One建物GUID
-     * @param {module:api/BuildingQueryAPIApi~searchBuildingCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/BuildingList}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/BuildingList} and HTTP response
      */
-    searchBuilding(opts, callback) {
+    searchBuildingWithHttpInfo(opts) {
       opts = opts || {};
       let postBody = null;
 
@@ -153,8 +150,40 @@ export default class BuildingQueryAPIApi {
       return this.apiClient.callApi(
         '/building/building/search/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
+    }
+
+    /**
+     * Search Building
+     * 建物一覧を取得する
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.startIndex 検索の開始インデックス (default to 1)
+     * @param {Number} opts.itemsPerPage ページあたりの最大表示数 (default to 10)
+     * @param {Array.<String>} opts.buildingGuid 建物スペックGUID
+     * @param {Array.<Number>} opts.buildingTypeCode 建物形式区分<br/>1: マンション<br/>2: リゾートマンション<br/>3: アパート<br/>4: テラスハウス<br/>5: タウンハウス<br/>6: 戸建<br/>7: 土地<br/>8: 店舗<br/>9: 事務所<br/>10: ビル<br/>11: 倉庫<br/>12: 工場<br/>13: トランクルーム<br/>14: 駐車場<br/>15: バイク置き場<br/>16: その他
+     * @param {Array.<Number>} opts.structureCode 構造区分<br/>1: 木造<br/>2: 軽量鉄骨<br/>3: 鉄筋コンクリート<br/>4: 鉄骨鉄筋コンクリート<br/>5: ALC<br/>6: プレキャストコンクリート<br/>7: 鉄筋ブロック<br/>8: 鉄骨プレ<br/>9: 鉄骨<br/>10: その他
+     * @param {Number} opts.siteAreaFrom 土地面積検索区間
+     * @param {Number} opts.siteAreaTo 土地面積検索区間
+     * @param {module:model/Order} opts.siteAreaOrder 土地面積ソート順
+     * @param {String} opts.buildingName 建物名
+     * @param {String} opts.buildingFurigana 建物名フリガナ
+     * @param {String} opts.prefecture 都道府県
+     * @param {Array.<Number>} opts.prefectureCode 都道府県コード
+     * @param {Array.<String>} opts.city 市区郡
+     * @param {Array.<Number>} opts.cityCode 市区郡コード
+     * @param {Array.<String>} opts.town 町村
+     * @param {Array.<Number>} opts.jisCode JISコード
+     * @param {Array.<String>} opts.address 住所
+     * @param {Array.<Number>} opts.customerKey カスタマーキー
+     * @param {Array.<String>} opts.tatemonoGuid One建物GUID
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/BuildingList}
+     */
+    searchBuilding(opts) {
+      return this.searchBuildingWithHttpInfo(opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
     }
 
 

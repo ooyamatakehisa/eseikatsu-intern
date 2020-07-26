@@ -189,14 +189,12 @@ APIKeyHeader.apiKey = "YOUR API KEY"
 
 var api = new EsApi.AgentQueryAPIApi()
 var agentIdentifier = "agentIdentifier_example"; // {String} 組織情報識別子 (customer_key or agent_guid(非推奨))
-var callback = function(error, data, response) {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
-};
-api.getAgentByCustomerKey(agentIdentifier, callback);
+api.getAgentByCustomerKey(agentIdentifier).then(function(data) {
+  console.log('API called successfully. Returned data: ' + data);
+}, function(error) {
+  console.error(error);
+});
+
 
 ```
 

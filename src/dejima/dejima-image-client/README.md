@@ -217,14 +217,12 @@ var opts = {
   'baitaiCode': 101, // {Number} 媒体コード  いい物件One上の出稿設定でフィルターする  * 専用の媒体コードを指定する。コードの詳細は「媒体コード（baitai_code）について」参照 * 指定しなかった場合、いい物件Oneで画像の出稿先媒体を「すべて」にしている画像メタデータのみ取得する * 特にパノラマ画像はデフォルトでの出稿先媒体が「すべて」ではないので注意 * いい物件Oneで出稿先媒体を限定している場合、このパラメータで媒体を指定する必要がある * 存在しないコードが指定されてもエラーにはせず、指定されなかったときと同じ挙動になる 
   'kindCode': 1,2,3 // {String} 画像種別コード  画像種別でフィルターする  * kind_code をカンマ区切りで１つ以上指定することができる * 指定された場合、指定された画像種別のみを取得する * 指定されなかった場合、すべての画像を取得する * 存在しないコードが指定されてもエラーにならない 
 };
-var callback = function(error, data, response) {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
-};
-api.bulkGetMetadataRentRentListGet(propertyKey, opts, callback);
+api.bulkGetMetadataRentRentListGet(propertyKey, opts).then(function(data) {
+  console.log('API called successfully. Returned data: ' + data);
+}, function(error) {
+  console.error(error);
+});
+
 
 ```
 

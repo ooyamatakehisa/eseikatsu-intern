@@ -43,13 +43,6 @@ export default class RentPropertyQueryAPIApi {
     }
 
 
-    /**
-     * Callback function to receive the result of the aggregateRentPropertyByArea operation.
-     * @callback module:api/RentPropertyQueryAPIApi~aggregateRentPropertyByAreaCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/AreaAggregateResult} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
-     */
 
     /**
      * Aggregate By Area
@@ -215,10 +208,9 @@ export default class RentPropertyQueryAPIApi {
      * @param {String} opts.nameOrCodeText 建物名/物件名フリガナ/自社管理番号のいずれかにマッチするものを対象とする。建物名表示フラグがfalseの物件は自社管理番号のみがマッチング対象となる
      * @param {Boolean} opts.ignoreNameDisplay 建物名/物件名フリガナでの検索時はデフォルトでは建物名表示フラグがfalseの物件は対象にしない。このフラグを有効化すると表示フラグに関わらず検索対象になる
      * @param {String} opts.query 詳細検索用特殊パラメータ。検索条件を JSON で記載し、エンコードしたものを     バリューに渡す。          ex) '[{\"building_name\": \"いい生活アパート\", \"price.to\": 700000}, {\"buildinig_name\": \"いい生活ハイツ\", \"walk_from_station_minutes.to\": 10}]'     -> ?query=%5B%7B%22building_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%82%A2%E3%83%91%E3%83%BC%E3%83%88%22%2C%20%22price.to%22%3A%20700000%7D%2C%20%7B%22buildinig_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%83%8F%E3%82%A4%E3%83%84%22%2C%20%22walk_from_station_minutes.to%22%3A%2010%7D%5D          上記の例の場合の絞り込み条件は、抽象的に書き下すと次のようになる。          (building_name like \"%いい生活アパート%\" AND price <= 700000) OR (building_name like \"%いい生活ハイツ%\" AND walk_from_station_minutes <= 10)     
-     * @param {module:api/RentPropertyQueryAPIApi~aggregateRentPropertyByAreaCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/AreaAggregateResult}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/AreaAggregateResult} and HTTP response
      */
-    aggregateRentPropertyByArea(level, opts, callback) {
+    aggregateRentPropertyByAreaWithHttpInfo(level, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'level' is set
@@ -402,17 +394,183 @@ export default class RentPropertyQueryAPIApi {
       return this.apiClient.callApi(
         '/property/rent/area/count/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the aggregateRentPropertyByLine operation.
-     * @callback module:api/RentPropertyQueryAPIApi~aggregateRentPropertyByLineCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/LineAggregateResult} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Aggregate By Area
+     * エリア別の物件数の集計結果を取得する（賃貸）  市区郡/町村のレベル別に物件数を集計し、その結果を返す。 クエリパラメータで検索条件を付加することもできる。
+     * @param {module:model/AreaLevel} level 集計のレベル
+     * @param {Object} opts Optional parameters
+     * @param {module:model/RentBaitaiCode} opts.baitaiCode 掲載先<br/>103: EsB2B<br/>105: ウェブサイト
+     * @param {Array.<String>} opts.propertyFullKey 物件完全ID
+     * @param {Array.<Number>} opts.propertyUseCode 募集用途区分<br/>1: 居住用<br/>2: 事業用<br/>3: 投資用
+     * @param {Array.<Number>} opts.propertyTypeCode 募集種別区分<br/>101: マンション<br/>102: リゾートマンション<br/>103: アパート<br/>104: コーポ<br/>105: テラスハウス<br/>106: タウンハウス<br/>107: 戸建<br/>108: 土地<br/>109: 借地権譲渡<br/>110: 底地権譲渡<br/>111: 店舗<br/>112: 店舗事務所<br/>113: 住宅付店舗<br/>114: 事務所<br/>115: ビル<br/>116: 倉庫<br/>117: 工場<br/>118: トランクルーム<br/>119: 駐車場<br/>120: バイク置き場<br/>121: その他<br/>122: 間借り
+     * @param {Number} opts.newUsedCode 新築・中古区分<br/>1: 新築<br/>2: 中古
+     * @param {Number} opts.residenceRentPeriodCode 居住用契約区分<br/>1: 普通借家契約<br/>2: 定期借家契約
+     * @param {Array.<String>} opts.layoutText 間取りテキスト
+     * @param {Array.<Number>} opts.layoutTypeCode 間取りタイプ<br/>1: R<br/>2: K<br/>3: DK<br/>4: SDK<br/>5: LDK<br/>6: SLDK<br/>7: LK<br/>8: SK<br/>9: SLK
+     * @param {Boolean} opts.isLargerThan5k 間取り5K以上。非推奨のため代わりにlayout_codeを使うこと。
+     * @param {Array.<Number>} opts.layoutCode 間取り区分<br/>1: 1R<br/>2: 1K<br/>3: 1DK<br/>4: 1LDK<br/>5: 2K<br/>6: 2DK<br/>7: 2LDK<br/>8: 3K<br/>9: 3DK<br/>10: 3LDK<br/>11: 4K<br/>12: 4DK<br/>13: 4LDK<br/>14: 5K以上
+     * @param {Boolean} opts.isNowAvailable 即入居可フラグ (入居可能区分が即時 or 入居可能日が過去日)
+     * @param {Array.<Number>} opts.availableCode 入居可能区分<br/>1: 即時<br/>2: 相談<br/>3: 期日指定<br/>4: 予定
+     * @param {Array.<Number>} opts.rentTransactionFormCode 賃貸取引態様区分<br/>1: 貸主<br/>2: 代理<br/>3: 仲介元付(専任)<br/>4: 仲介元付(一般)<br/>5: 仲介先物<br/>6: 仲介元付<br/>7: 仲介
+     * @param {Array.<Number>} opts.studentRestrictionCode 学生専用区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.genderRestrictionCode 性別入居条件区分<br/>1: 不問<br/>2: 女性限定<br/>3: 男性限定<br/>4: 女性希望<br/>5: 男性希望
+     * @param {Array.<Number>} opts.kidsRestrictionCode 子供可入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.onePersonRestrictionCode 単身可入居条件<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.twoPersonsRestrictionCode 二人入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.elderRestrictionCode 高齢者入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.manageCostFreeCode 管理費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.serviceFeeFreeCode 共益費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.miscExpenseFreeCode 雑費なし区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Boolean} opts.otherInitialCostFreeFlag その他初期費用無しフラグ
+     * @param {Array.<Number>} opts.petRestrictionCode ペット可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.officeUsageRestrictionCode 事務所利用条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.corporateContractRestrictionCode 法人可条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.musicalInstrumentRestrictionCode 楽器等の使用区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.restaurantUsageRestrictionCode 飲食店可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.roomSharingRestrictionCode ルームシェア区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignerRestrictionCode 外国人入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.friendsRestrictionCode 友人同士入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignStudentRestrictionCode 留学生入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.parkingAvailabilityCode 駐車場の状況区分<br/>1: 無<br/>2: 有(敷地内)<br/>3: 付<br/>4: 近隣駐車場<br/>5: 空無<br/>6: 要問合せ
+     * @param {Array.<Number>} opts.gasCode ガス区分<br/>1: 都市ガス<br/>2: プロパン<br/>3: 共同<br/>4: その他
+     * @param {Array.<Number>} opts.initialCostCode 初期費用区分<br/>1: 五万円以下<br/>2: 十万円以下<br/>3: 十五万円以下<br/>4: 二十万円以下<br/>5: 三十万円以下<br/>99: その他
+     * @param {Array.<Number>} opts.guarantorRequirementsCode 保証人要否区分<br/>1: 要<br/>2: 不要<br/>3: 未入力
+     * @param {Boolean} opts.hasInsurance 損保 有無フラグ
+     * @param {Array.<Number>} opts.depositForStudentCode 学生敷金区分<br/>1: 不要<br/>2: 一ヶ月<br/>3: 二ヶ月
+     * @param {Boolean} opts.itJusetsuFlag IT重説可フラグ
+     * @param {Boolean} opts.noGuarantorFlag 保証人の有無フラグ。非推奨のため代わりにguarantor_requirements_codeを使うこと。
+     * @param {Boolean} opts.isTokuyuchin 特優賃フラグ
+     * @param {Boolean} opts.freeRentFlag フリーレントフラグ
+     * @param {Boolean} opts.managerFlag 管理人有り
+     * @param {Boolean} opts.hasMotorbikeParking バイク置場有フラグ
+     * @param {Boolean} opts.hasBikeParking 駐輪場有フラグ
+     * @param {Boolean} opts.panoramaFlag パノラマ画像付きフラグ
+     * @param {Boolean} opts.floorPlanFlag 間取り図付きフラグ
+     * @param {Boolean} opts.hasExteriorImage 外観画像付きフラグ
+     * @param {Boolean} opts.b2bCustomFlag 業者間用カスタムフラグ（ES-B2B賃貸クローズアップ物件掲載フラグ）
+     * @param {Boolean} opts.isFurnished 家具付きフラグ
+     * @param {Boolean} opts.hasAppliances 家電付きフラグ
+     * @param {Boolean} opts.isNetFree インターネット無料フラグ
+     * @param {Boolean} opts.isOver2f 2階以上フラグ
+     * @param {Boolean} opts.isBathToiletSeparate 風呂トイレ別フラグ
+     * @param {Boolean} opts.hasAircon エアコン付きフラグ
+     * @param {Boolean} opts.hasAutoLock オートロック付きフラグ
+     * @param {Boolean} opts.hasDeliveryBox 宅配ボックス付きフラグ
+     * @param {Boolean} opts.hasElevator エレベーター付きフラグ
+     * @param {Boolean} opts.hasLandryRoom 室内洗濯機置き場フラグ
+     * @param {Boolean} opts.isFlooring フローリングフラグ
+     * @param {Boolean} opts.isDesignersApartment デザイナーズマンションフラグ
+     * @param {Boolean} opts.isBarrierFree バリアフリーフラグ
+     * @param {Boolean} opts.isSouthFacing 南向きフラグ
+     * @param {Boolean} opts.isHighestFloor 最上階フラグ
+     * @param {Boolean} opts.isCornerRoom 角部屋フラグ
+     * @param {Boolean} opts.hasSystemKitchen システムキッチンフラグ
+     * @param {Boolean} opts.hasIhStove IHコンロフラグ
+     * @param {Boolean} opts.hasGasStove ガスコンロフラグ
+     * @param {Boolean} opts.hasMultipleGasStove ガスコンロ２口以上フラグ
+     * @param {Boolean} opts.hasReboilBath 追い焚き機能付きフラグ
+     * @param {Boolean} opts.hasWashlet 温水洗浄便座フラグ
+     * @param {Boolean} opts.hasBathDryer 浴室乾燥機付きフラグ
+     * @param {Boolean} opts.hasFloorHeating 床暖房フラグ
+     * @param {Boolean} opts.hasCloset クローゼットフラグ
+     * @param {Boolean} opts.hasWalkInCloset ウォークインクローゼットフラグ
+     * @param {Boolean} opts.hasCatv CATVフラグ
+     * @param {Boolean} opts.hasCs CSアンテナフラグ
+     * @param {Boolean} opts.hasBs BSアンテナフラグ
+     * @param {Boolean} opts.hasOpticalFiber 光ファイバーフラグ
+     * @param {Boolean} opts.isAllElectric オール電化フラグ
+     * @param {Boolean} opts.hasVerandaBalcony ベランダ・バルコニー付きフラグ
+     * @param {Boolean} opts.isMaisonette メゾネット
+     * @param {Boolean} opts.hasLoft ロフト付き
+     * @param {Boolean} opts.hasSoundproof 防音設備付き
+     * @param {Boolean} opts.hasCounterKitchen カウンターキッチン付き
+     * @param {Boolean} opts.hasGarbageCollectionSite 敷地内ゴミ置場有り
+     * @param {Boolean} opts.hasOwnYard 専用庭付き
+     * @param {Boolean} opts.isQuakeResistantStructure 耐震構造
+     * @param {Boolean} opts.isQuakeAbsorbingStructure 免震構造
+     * @param {Boolean} opts.isDampingStructure 制震構造
+     * @param {Boolean} opts.hasTvIntercom TVインターホン付き
+     * @param {Boolean} opts.hasSecurityCamera 防犯カメラ付き
+     * @param {Boolean} opts.isInternetAvailable インターネット使用可
+     * @param {Boolean} opts.hasTrunkRoom トランクルーム付き
+     * @param {Boolean} opts.isCondominium 分譲賃貸
+     * @param {Boolean} opts.isTowerApartment タワーマンション
+     * @param {Boolean} opts.isRenovated リノベーション
+     * @param {Boolean} opts.hasWashroom 洗面所独立
+     * @param {Number} opts.buildingAgeFrom 建築年数検索区間
+     * @param {Number} opts.buildingAgeTo 建築年数検索区間
+     * @param {Number} opts.priceFrom 現賃貸料検索区間
+     * @param {Number} opts.priceTo 現賃貸料検索区間
+     * @param {Number} opts.manageCostYenFrom 管理費（円）検索区間
+     * @param {Number} opts.manageCostYenTo 管理費（円）検索区間
+     * @param {Number} opts.depositYenFrom 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositYenTo 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositMonthFrom 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.depositMonthTo 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyYenFrom 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyYenTo 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyMonthFrom 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyMonthTo 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.repairCostYenFrom 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostYenTo 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostMonthFrom 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.repairCostMonthTo 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.initialCostFrom 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.initialCostTo 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.monthlyCostSummaryFrom 管理費など込み賃料検索区間
+     * @param {Number} opts.monthlyCostSummaryTo 管理費など込み賃料検索区間
+     * @param {Number} opts.advertisingFeePercentTo 広告料（パーセント）検索区間
+     * @param {Number} opts.advertisingFeePercentFrom 広告料（パーセント）検索区間
+     * @param {Number} opts.areaFrom 専有面積検索区間
+     * @param {Number} opts.areaTo 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaFrom 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaTo 専有面積検索区間
+     * @param {Number} opts.walkFromStationMinutesFrom 駅からの徒歩時間
+     * @param {Number} opts.walkFromStationMinutesTo 駅からの徒歩時間
+     * @param {Date} opts.lastUpdateDatetimeFrom 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.lastUpdateDatetimeTo 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeFrom 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeTo 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateFrom 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateTo 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateFrom 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateTo 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {String} opts.originalPropertyCodeText 自社管理番号
+     * @param {Array.<String>} opts.buildingGuid 建物スペックGUID
+     * @param {Array.<Number>} opts.buildingTypeCode 建物形式区分<br/>1: マンション<br/>2: リゾートマンション<br/>3: アパート<br/>4: テラスハウス<br/>5: タウンハウス<br/>6: 戸建<br/>7: 土地<br/>8: 店舗<br/>9: 事務所<br/>10: ビル<br/>11: 倉庫<br/>12: 工場<br/>13: トランクルーム<br/>14: 駐車場<br/>15: バイク置き場<br/>16: その他
+     * @param {Array.<Number>} opts.structureCode 構造区分<br/>1: 木造<br/>2: 軽量鉄骨<br/>3: 鉄筋コンクリート<br/>4: 鉄骨鉄筋コンクリート<br/>5: ALC<br/>6: プレキャストコンクリート<br/>7: 鉄筋ブロック<br/>8: 鉄骨プレ<br/>9: 鉄骨<br/>10: その他
+     * @param {Number} opts.siteAreaFrom 土地面積検索区間
+     * @param {Number} opts.siteAreaTo 土地面積検索区間
+     * @param {String} opts.buildingName 建物名
+     * @param {String} opts.buildingFurigana 建物名フリガナ
+     * @param {Array.<String>} opts.tagGuid タグGUID
+     * @param {String} opts.prefecture 都道府県
+     * @param {Array.<Number>} opts.prefectureCode 都道府県コード
+     * @param {Array.<String>} opts.city 市区郡
+     * @param {Array.<Number>} opts.cityCode 市区郡コード
+     * @param {Array.<String>} opts.town 町村
+     * @param {Array.<Number>} opts.jisCode JISコード
+     * @param {Array.<String>} opts.address 住所
+     * @param {Array.<Number>} opts.lineCode 沿線コード
+     * @param {Array.<Number>} opts.stationCode 駅コード
+     * @param {Array.<Number>} opts.customerKey カスタマーキー
+     * @param {Boolean} opts.ignorePublishStatus 掲載状態を無視するフラグ (default to false)
+     * @param {String} opts.nameOrCodeText 建物名/物件名フリガナ/自社管理番号のいずれかにマッチするものを対象とする。建物名表示フラグがfalseの物件は自社管理番号のみがマッチング対象となる
+     * @param {Boolean} opts.ignoreNameDisplay 建物名/物件名フリガナでの検索時はデフォルトでは建物名表示フラグがfalseの物件は対象にしない。このフラグを有効化すると表示フラグに関わらず検索対象になる
+     * @param {String} opts.query 詳細検索用特殊パラメータ。検索条件を JSON で記載し、エンコードしたものを     バリューに渡す。          ex) '[{\"building_name\": \"いい生活アパート\", \"price.to\": 700000}, {\"buildinig_name\": \"いい生活ハイツ\", \"walk_from_station_minutes.to\": 10}]'     -> ?query=%5B%7B%22building_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%82%A2%E3%83%91%E3%83%BC%E3%83%88%22%2C%20%22price.to%22%3A%20700000%7D%2C%20%7B%22buildinig_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%83%8F%E3%82%A4%E3%83%84%22%2C%20%22walk_from_station_minutes.to%22%3A%2010%7D%5D          上記の例の場合の絞り込み条件は、抽象的に書き下すと次のようになる。          (building_name like \"%いい生活アパート%\" AND price <= 700000) OR (building_name like \"%いい生活ハイツ%\" AND walk_from_station_minutes <= 10)     
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/AreaAggregateResult}
      */
+    aggregateRentPropertyByArea(level, opts) {
+      return this.aggregateRentPropertyByAreaWithHttpInfo(level, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Aggregate By Line
@@ -579,10 +737,9 @@ export default class RentPropertyQueryAPIApi {
      * @param {String} opts.nameOrCodeText 建物名/物件名フリガナ/自社管理番号のいずれかにマッチするものを対象とする。建物名表示フラグがfalseの物件は自社管理番号のみがマッチング対象となる
      * @param {Boolean} opts.ignoreNameDisplay 建物名/物件名フリガナでの検索時はデフォルトでは建物名表示フラグがfalseの物件は対象にしない。このフラグを有効化すると表示フラグに関わらず検索対象になる
      * @param {String} opts.query 詳細検索用特殊パラメータ。検索条件を JSON で記載し、エンコードしたものを     バリューに渡す。          ex) '[{\"building_name\": \"いい生活アパート\", \"price.to\": 700000}, {\"buildinig_name\": \"いい生活ハイツ\", \"walk_from_station_minutes.to\": 10}]'     -> ?query=%5B%7B%22building_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%82%A2%E3%83%91%E3%83%BC%E3%83%88%22%2C%20%22price.to%22%3A%20700000%7D%2C%20%7B%22buildinig_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%83%8F%E3%82%A4%E3%83%84%22%2C%20%22walk_from_station_minutes.to%22%3A%2010%7D%5D          上記の例の場合の絞り込み条件は、抽象的に書き下すと次のようになる。          (building_name like \"%いい生活アパート%\" AND price <= 700000) OR (building_name like \"%いい生活ハイツ%\" AND walk_from_station_minutes <= 10)     
-     * @param {module:api/RentPropertyQueryAPIApi~aggregateRentPropertyByLineCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/LineAggregateResult}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/LineAggregateResult} and HTTP response
      */
-    aggregateRentPropertyByLine(level, opts, callback) {
+    aggregateRentPropertyByLineWithHttpInfo(level, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'level' is set
@@ -767,17 +924,184 @@ export default class RentPropertyQueryAPIApi {
       return this.apiClient.callApi(
         '/property/rent/line/count/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the choiceRentProperty operation.
-     * @callback module:api/RentPropertyQueryAPIApi~choiceRentPropertyCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/PropertyList} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Aggregate By Line
+     * 鉄道会社・駅・沿線別の物件数の集計結果を取得する（賃貸）  鉄道会社・駅・沿線のレベルごとに物件数を集計し、その結果を返す。 クエリパラメータで検索条件を付加することもできる。
+     * @param {module:model/LineLevel} level 集計のレベル
+     * @param {Object} opts Optional parameters
+     * @param {Array.<Number>} opts.companyCode 会社コード
+     * @param {module:model/RentBaitaiCode} opts.baitaiCode 掲載先<br/>103: EsB2B<br/>105: ウェブサイト
+     * @param {Array.<String>} opts.propertyFullKey 物件完全ID
+     * @param {Array.<Number>} opts.propertyUseCode 募集用途区分<br/>1: 居住用<br/>2: 事業用<br/>3: 投資用
+     * @param {Array.<Number>} opts.propertyTypeCode 募集種別区分<br/>101: マンション<br/>102: リゾートマンション<br/>103: アパート<br/>104: コーポ<br/>105: テラスハウス<br/>106: タウンハウス<br/>107: 戸建<br/>108: 土地<br/>109: 借地権譲渡<br/>110: 底地権譲渡<br/>111: 店舗<br/>112: 店舗事務所<br/>113: 住宅付店舗<br/>114: 事務所<br/>115: ビル<br/>116: 倉庫<br/>117: 工場<br/>118: トランクルーム<br/>119: 駐車場<br/>120: バイク置き場<br/>121: その他<br/>122: 間借り
+     * @param {Number} opts.newUsedCode 新築・中古区分<br/>1: 新築<br/>2: 中古
+     * @param {Number} opts.residenceRentPeriodCode 居住用契約区分<br/>1: 普通借家契約<br/>2: 定期借家契約
+     * @param {Array.<String>} opts.layoutText 間取りテキスト
+     * @param {Array.<Number>} opts.layoutTypeCode 間取りタイプ<br/>1: R<br/>2: K<br/>3: DK<br/>4: SDK<br/>5: LDK<br/>6: SLDK<br/>7: LK<br/>8: SK<br/>9: SLK
+     * @param {Boolean} opts.isLargerThan5k 間取り5K以上。非推奨のため代わりにlayout_codeを使うこと。
+     * @param {Array.<Number>} opts.layoutCode 間取り区分<br/>1: 1R<br/>2: 1K<br/>3: 1DK<br/>4: 1LDK<br/>5: 2K<br/>6: 2DK<br/>7: 2LDK<br/>8: 3K<br/>9: 3DK<br/>10: 3LDK<br/>11: 4K<br/>12: 4DK<br/>13: 4LDK<br/>14: 5K以上
+     * @param {Boolean} opts.isNowAvailable 即入居可フラグ (入居可能区分が即時 or 入居可能日が過去日)
+     * @param {Array.<Number>} opts.availableCode 入居可能区分<br/>1: 即時<br/>2: 相談<br/>3: 期日指定<br/>4: 予定
+     * @param {Array.<Number>} opts.rentTransactionFormCode 賃貸取引態様区分<br/>1: 貸主<br/>2: 代理<br/>3: 仲介元付(専任)<br/>4: 仲介元付(一般)<br/>5: 仲介先物<br/>6: 仲介元付<br/>7: 仲介
+     * @param {Array.<Number>} opts.studentRestrictionCode 学生専用区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.genderRestrictionCode 性別入居条件区分<br/>1: 不問<br/>2: 女性限定<br/>3: 男性限定<br/>4: 女性希望<br/>5: 男性希望
+     * @param {Array.<Number>} opts.kidsRestrictionCode 子供可入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.onePersonRestrictionCode 単身可入居条件<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.twoPersonsRestrictionCode 二人入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.elderRestrictionCode 高齢者入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.manageCostFreeCode 管理費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.serviceFeeFreeCode 共益費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.miscExpenseFreeCode 雑費なし区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Boolean} opts.otherInitialCostFreeFlag その他初期費用無しフラグ
+     * @param {Array.<Number>} opts.petRestrictionCode ペット可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.officeUsageRestrictionCode 事務所利用条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.corporateContractRestrictionCode 法人可条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.musicalInstrumentRestrictionCode 楽器等の使用区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.restaurantUsageRestrictionCode 飲食店可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.roomSharingRestrictionCode ルームシェア区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignerRestrictionCode 外国人入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.friendsRestrictionCode 友人同士入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignStudentRestrictionCode 留学生入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.parkingAvailabilityCode 駐車場の状況区分<br/>1: 無<br/>2: 有(敷地内)<br/>3: 付<br/>4: 近隣駐車場<br/>5: 空無<br/>6: 要問合せ
+     * @param {Array.<Number>} opts.gasCode ガス区分<br/>1: 都市ガス<br/>2: プロパン<br/>3: 共同<br/>4: その他
+     * @param {Array.<Number>} opts.initialCostCode 初期費用区分<br/>1: 五万円以下<br/>2: 十万円以下<br/>3: 十五万円以下<br/>4: 二十万円以下<br/>5: 三十万円以下<br/>99: その他
+     * @param {Array.<Number>} opts.guarantorRequirementsCode 保証人要否区分<br/>1: 要<br/>2: 不要<br/>3: 未入力
+     * @param {Boolean} opts.hasInsurance 損保 有無フラグ
+     * @param {Array.<Number>} opts.depositForStudentCode 学生敷金区分<br/>1: 不要<br/>2: 一ヶ月<br/>3: 二ヶ月
+     * @param {Boolean} opts.itJusetsuFlag IT重説可フラグ
+     * @param {Boolean} opts.noGuarantorFlag 保証人の有無フラグ。非推奨のため代わりにguarantor_requirements_codeを使うこと。
+     * @param {Boolean} opts.isTokuyuchin 特優賃フラグ
+     * @param {Boolean} opts.freeRentFlag フリーレントフラグ
+     * @param {Boolean} opts.managerFlag 管理人有り
+     * @param {Boolean} opts.hasMotorbikeParking バイク置場有フラグ
+     * @param {Boolean} opts.hasBikeParking 駐輪場有フラグ
+     * @param {Boolean} opts.panoramaFlag パノラマ画像付きフラグ
+     * @param {Boolean} opts.floorPlanFlag 間取り図付きフラグ
+     * @param {Boolean} opts.hasExteriorImage 外観画像付きフラグ
+     * @param {Boolean} opts.b2bCustomFlag 業者間用カスタムフラグ（ES-B2B賃貸クローズアップ物件掲載フラグ）
+     * @param {Boolean} opts.isFurnished 家具付きフラグ
+     * @param {Boolean} opts.hasAppliances 家電付きフラグ
+     * @param {Boolean} opts.isNetFree インターネット無料フラグ
+     * @param {Boolean} opts.isOver2f 2階以上フラグ
+     * @param {Boolean} opts.isBathToiletSeparate 風呂トイレ別フラグ
+     * @param {Boolean} opts.hasAircon エアコン付きフラグ
+     * @param {Boolean} opts.hasAutoLock オートロック付きフラグ
+     * @param {Boolean} opts.hasDeliveryBox 宅配ボックス付きフラグ
+     * @param {Boolean} opts.hasElevator エレベーター付きフラグ
+     * @param {Boolean} opts.hasLandryRoom 室内洗濯機置き場フラグ
+     * @param {Boolean} opts.isFlooring フローリングフラグ
+     * @param {Boolean} opts.isDesignersApartment デザイナーズマンションフラグ
+     * @param {Boolean} opts.isBarrierFree バリアフリーフラグ
+     * @param {Boolean} opts.isSouthFacing 南向きフラグ
+     * @param {Boolean} opts.isHighestFloor 最上階フラグ
+     * @param {Boolean} opts.isCornerRoom 角部屋フラグ
+     * @param {Boolean} opts.hasSystemKitchen システムキッチンフラグ
+     * @param {Boolean} opts.hasIhStove IHコンロフラグ
+     * @param {Boolean} opts.hasGasStove ガスコンロフラグ
+     * @param {Boolean} opts.hasMultipleGasStove ガスコンロ２口以上フラグ
+     * @param {Boolean} opts.hasReboilBath 追い焚き機能付きフラグ
+     * @param {Boolean} opts.hasWashlet 温水洗浄便座フラグ
+     * @param {Boolean} opts.hasBathDryer 浴室乾燥機付きフラグ
+     * @param {Boolean} opts.hasFloorHeating 床暖房フラグ
+     * @param {Boolean} opts.hasCloset クローゼットフラグ
+     * @param {Boolean} opts.hasWalkInCloset ウォークインクローゼットフラグ
+     * @param {Boolean} opts.hasCatv CATVフラグ
+     * @param {Boolean} opts.hasCs CSアンテナフラグ
+     * @param {Boolean} opts.hasBs BSアンテナフラグ
+     * @param {Boolean} opts.hasOpticalFiber 光ファイバーフラグ
+     * @param {Boolean} opts.isAllElectric オール電化フラグ
+     * @param {Boolean} opts.hasVerandaBalcony ベランダ・バルコニー付きフラグ
+     * @param {Boolean} opts.isMaisonette メゾネット
+     * @param {Boolean} opts.hasLoft ロフト付き
+     * @param {Boolean} opts.hasSoundproof 防音設備付き
+     * @param {Boolean} opts.hasCounterKitchen カウンターキッチン付き
+     * @param {Boolean} opts.hasGarbageCollectionSite 敷地内ゴミ置場有り
+     * @param {Boolean} opts.hasOwnYard 専用庭付き
+     * @param {Boolean} opts.isQuakeResistantStructure 耐震構造
+     * @param {Boolean} opts.isQuakeAbsorbingStructure 免震構造
+     * @param {Boolean} opts.isDampingStructure 制震構造
+     * @param {Boolean} opts.hasTvIntercom TVインターホン付き
+     * @param {Boolean} opts.hasSecurityCamera 防犯カメラ付き
+     * @param {Boolean} opts.isInternetAvailable インターネット使用可
+     * @param {Boolean} opts.hasTrunkRoom トランクルーム付き
+     * @param {Boolean} opts.isCondominium 分譲賃貸
+     * @param {Boolean} opts.isTowerApartment タワーマンション
+     * @param {Boolean} opts.isRenovated リノベーション
+     * @param {Boolean} opts.hasWashroom 洗面所独立
+     * @param {Number} opts.buildingAgeFrom 建築年数検索区間
+     * @param {Number} opts.buildingAgeTo 建築年数検索区間
+     * @param {Number} opts.priceFrom 現賃貸料検索区間
+     * @param {Number} opts.priceTo 現賃貸料検索区間
+     * @param {Number} opts.manageCostYenFrom 管理費（円）検索区間
+     * @param {Number} opts.manageCostYenTo 管理費（円）検索区間
+     * @param {Number} opts.depositYenFrom 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositYenTo 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositMonthFrom 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.depositMonthTo 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyYenFrom 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyYenTo 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyMonthFrom 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyMonthTo 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.repairCostYenFrom 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostYenTo 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostMonthFrom 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.repairCostMonthTo 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.initialCostFrom 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.initialCostTo 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.monthlyCostSummaryFrom 管理費など込み賃料検索区間
+     * @param {Number} opts.monthlyCostSummaryTo 管理費など込み賃料検索区間
+     * @param {Number} opts.advertisingFeePercentTo 広告料（パーセント）検索区間
+     * @param {Number} opts.advertisingFeePercentFrom 広告料（パーセント）検索区間
+     * @param {Number} opts.areaFrom 専有面積検索区間
+     * @param {Number} opts.areaTo 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaFrom 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaTo 専有面積検索区間
+     * @param {Number} opts.walkFromStationMinutesFrom 駅からの徒歩時間
+     * @param {Number} opts.walkFromStationMinutesTo 駅からの徒歩時間
+     * @param {Date} opts.lastUpdateDatetimeFrom 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.lastUpdateDatetimeTo 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeFrom 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeTo 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateFrom 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateTo 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateFrom 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateTo 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {String} opts.originalPropertyCodeText 自社管理番号
+     * @param {Array.<String>} opts.buildingGuid 建物スペックGUID
+     * @param {Array.<Number>} opts.buildingTypeCode 建物形式区分<br/>1: マンション<br/>2: リゾートマンション<br/>3: アパート<br/>4: テラスハウス<br/>5: タウンハウス<br/>6: 戸建<br/>7: 土地<br/>8: 店舗<br/>9: 事務所<br/>10: ビル<br/>11: 倉庫<br/>12: 工場<br/>13: トランクルーム<br/>14: 駐車場<br/>15: バイク置き場<br/>16: その他
+     * @param {Array.<Number>} opts.structureCode 構造区分<br/>1: 木造<br/>2: 軽量鉄骨<br/>3: 鉄筋コンクリート<br/>4: 鉄骨鉄筋コンクリート<br/>5: ALC<br/>6: プレキャストコンクリート<br/>7: 鉄筋ブロック<br/>8: 鉄骨プレ<br/>9: 鉄骨<br/>10: その他
+     * @param {Number} opts.siteAreaFrom 土地面積検索区間
+     * @param {Number} opts.siteAreaTo 土地面積検索区間
+     * @param {String} opts.buildingName 建物名
+     * @param {String} opts.buildingFurigana 建物名フリガナ
+     * @param {Array.<String>} opts.tagGuid タグGUID
+     * @param {String} opts.prefecture 都道府県
+     * @param {Array.<Number>} opts.prefectureCode 都道府県コード
+     * @param {Array.<String>} opts.city 市区郡
+     * @param {Array.<Number>} opts.cityCode 市区郡コード
+     * @param {Array.<String>} opts.town 町村
+     * @param {Array.<Number>} opts.jisCode JISコード
+     * @param {Array.<String>} opts.address 住所
+     * @param {Array.<Number>} opts.lineCode 沿線コード
+     * @param {Array.<Number>} opts.stationCode 駅コード
+     * @param {Array.<Number>} opts.customerKey カスタマーキー
+     * @param {Boolean} opts.ignorePublishStatus 掲載状態を無視するフラグ (default to false)
+     * @param {String} opts.nameOrCodeText 建物名/物件名フリガナ/自社管理番号のいずれかにマッチするものを対象とする。建物名表示フラグがfalseの物件は自社管理番号のみがマッチング対象となる
+     * @param {Boolean} opts.ignoreNameDisplay 建物名/物件名フリガナでの検索時はデフォルトでは建物名表示フラグがfalseの物件は対象にしない。このフラグを有効化すると表示フラグに関わらず検索対象になる
+     * @param {String} opts.query 詳細検索用特殊パラメータ。検索条件を JSON で記載し、エンコードしたものを     バリューに渡す。          ex) '[{\"building_name\": \"いい生活アパート\", \"price.to\": 700000}, {\"buildinig_name\": \"いい生活ハイツ\", \"walk_from_station_minutes.to\": 10}]'     -> ?query=%5B%7B%22building_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%82%A2%E3%83%91%E3%83%BC%E3%83%88%22%2C%20%22price.to%22%3A%20700000%7D%2C%20%7B%22buildinig_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%83%8F%E3%82%A4%E3%83%84%22%2C%20%22walk_from_station_minutes.to%22%3A%2010%7D%5D          上記の例の場合の絞り込み条件は、抽象的に書き下すと次のようになる。          (building_name like \"%いい生活アパート%\" AND price <= 700000) OR (building_name like \"%いい生活ハイツ%\" AND walk_from_station_minutes <= 10)     
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/LineAggregateResult}
      */
+    aggregateRentPropertyByLine(level, opts) {
+      return this.aggregateRentPropertyByLineWithHttpInfo(level, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Choice Rent Property Dwelling Unit
@@ -973,10 +1297,9 @@ export default class RentPropertyQueryAPIApi {
      * @param {module:model/Order} opts.priceOrder 賃料ソート順
      * @param {module:model/Order} opts.initialCostOrder 初期費用ソート順
      * @param {module:model/Order} opts.monthlyCostSummaryOrder 管理費など込み賃料
-     * @param {module:api/RentPropertyQueryAPIApi~choiceRentPropertyCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/PropertyList}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/PropertyList} and HTTP response
      */
-    choiceRentProperty(opts, callback) {
+    choiceRentPropertyWithHttpInfo(opts) {
       opts = opts || {};
       let postBody = null;
 
@@ -1186,17 +1509,213 @@ export default class RentPropertyQueryAPIApi {
       return this.apiClient.callApi(
         '/property/rent/dwelling_unit/choice/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the getRentProperty operation.
-     * @callback module:api/RentPropertyQueryAPIApi~getRentPropertyCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/RentProperty} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Choice Rent Property Dwelling Unit
+     * 区画単位での物件をランダムに返す(賃貸)  区画ごとに検索条件に合致する部屋区画から items_per_page 個だけランダムに 選んで一覧情報を返す。 レスポンス形式のイメージは以下のようになる。   ``` 区画a -- 建物A 区画b -- 建物A 区画c -- 建物A 区画d -- 建物B 区画e -- 建物B ```
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.startIndex 検索の開始インデックス (default to 1)
+     * @param {Number} opts.itemsPerPage ページあたりの最大表示数 (default to 10)
+     * @param {module:model/RentBaitaiCode} opts.baitaiCode 掲載先<br/>103: EsB2B<br/>105: ウェブサイト
+     * @param {Array.<String>} opts.propertyFullKey 物件完全ID
+     * @param {Array.<Number>} opts.propertyUseCode 募集用途区分<br/>1: 居住用<br/>2: 事業用<br/>3: 投資用
+     * @param {Array.<Number>} opts.propertyTypeCode 募集種別区分<br/>101: マンション<br/>102: リゾートマンション<br/>103: アパート<br/>104: コーポ<br/>105: テラスハウス<br/>106: タウンハウス<br/>107: 戸建<br/>108: 土地<br/>109: 借地権譲渡<br/>110: 底地権譲渡<br/>111: 店舗<br/>112: 店舗事務所<br/>113: 住宅付店舗<br/>114: 事務所<br/>115: ビル<br/>116: 倉庫<br/>117: 工場<br/>118: トランクルーム<br/>119: 駐車場<br/>120: バイク置き場<br/>121: その他<br/>122: 間借り
+     * @param {Number} opts.newUsedCode 新築・中古区分<br/>1: 新築<br/>2: 中古
+     * @param {Number} opts.residenceRentPeriodCode 居住用契約区分<br/>1: 普通借家契約<br/>2: 定期借家契約
+     * @param {Array.<String>} opts.layoutText 間取りテキスト
+     * @param {Array.<Number>} opts.layoutTypeCode 間取りタイプ<br/>1: R<br/>2: K<br/>3: DK<br/>4: SDK<br/>5: LDK<br/>6: SLDK<br/>7: LK<br/>8: SK<br/>9: SLK
+     * @param {Boolean} opts.isLargerThan5k 間取り5K以上。非推奨のため代わりにlayout_codeを使うこと。
+     * @param {Array.<Number>} opts.layoutCode 間取り区分<br/>1: 1R<br/>2: 1K<br/>3: 1DK<br/>4: 1LDK<br/>5: 2K<br/>6: 2DK<br/>7: 2LDK<br/>8: 3K<br/>9: 3DK<br/>10: 3LDK<br/>11: 4K<br/>12: 4DK<br/>13: 4LDK<br/>14: 5K以上
+     * @param {Boolean} opts.isNowAvailable 即入居可フラグ (入居可能区分が即時 or 入居可能日が過去日)
+     * @param {Array.<Number>} opts.availableCode 入居可能区分<br/>1: 即時<br/>2: 相談<br/>3: 期日指定<br/>4: 予定
+     * @param {Array.<Number>} opts.rentTransactionFormCode 賃貸取引態様区分<br/>1: 貸主<br/>2: 代理<br/>3: 仲介元付(専任)<br/>4: 仲介元付(一般)<br/>5: 仲介先物<br/>6: 仲介元付<br/>7: 仲介
+     * @param {Array.<Number>} opts.studentRestrictionCode 学生専用区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.genderRestrictionCode 性別入居条件区分<br/>1: 不問<br/>2: 女性限定<br/>3: 男性限定<br/>4: 女性希望<br/>5: 男性希望
+     * @param {Array.<Number>} opts.kidsRestrictionCode 子供可入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.onePersonRestrictionCode 単身可入居条件<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.twoPersonsRestrictionCode 二人入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.elderRestrictionCode 高齢者入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.manageCostFreeCode 管理費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.serviceFeeFreeCode 共益費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.miscExpenseFreeCode 雑費なし区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Boolean} opts.otherInitialCostFreeFlag その他初期費用無しフラグ
+     * @param {Array.<Number>} opts.petRestrictionCode ペット可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.officeUsageRestrictionCode 事務所利用条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.corporateContractRestrictionCode 法人可条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.musicalInstrumentRestrictionCode 楽器等の使用区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.restaurantUsageRestrictionCode 飲食店可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.roomSharingRestrictionCode ルームシェア区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignerRestrictionCode 外国人入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.friendsRestrictionCode 友人同士入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignStudentRestrictionCode 留学生入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.parkingAvailabilityCode 駐車場の状況区分<br/>1: 無<br/>2: 有(敷地内)<br/>3: 付<br/>4: 近隣駐車場<br/>5: 空無<br/>6: 要問合せ
+     * @param {Array.<Number>} opts.gasCode ガス区分<br/>1: 都市ガス<br/>2: プロパン<br/>3: 共同<br/>4: その他
+     * @param {Array.<Number>} opts.initialCostCode 初期費用区分<br/>1: 五万円以下<br/>2: 十万円以下<br/>3: 十五万円以下<br/>4: 二十万円以下<br/>5: 三十万円以下<br/>99: その他
+     * @param {Array.<Number>} opts.guarantorRequirementsCode 保証人要否区分<br/>1: 要<br/>2: 不要<br/>3: 未入力
+     * @param {Boolean} opts.hasInsurance 損保 有無フラグ
+     * @param {Array.<Number>} opts.depositForStudentCode 学生敷金区分<br/>1: 不要<br/>2: 一ヶ月<br/>3: 二ヶ月
+     * @param {Boolean} opts.itJusetsuFlag IT重説可フラグ
+     * @param {Boolean} opts.noGuarantorFlag 保証人の有無フラグ。非推奨のため代わりにguarantor_requirements_codeを使うこと。
+     * @param {Boolean} opts.isTokuyuchin 特優賃フラグ
+     * @param {Boolean} opts.freeRentFlag フリーレントフラグ
+     * @param {Boolean} opts.managerFlag 管理人有り
+     * @param {Boolean} opts.hasMotorbikeParking バイク置場有フラグ
+     * @param {Boolean} opts.hasBikeParking 駐輪場有フラグ
+     * @param {Boolean} opts.panoramaFlag パノラマ画像付きフラグ
+     * @param {Boolean} opts.floorPlanFlag 間取り図付きフラグ
+     * @param {Boolean} opts.hasExteriorImage 外観画像付きフラグ
+     * @param {Boolean} opts.b2bCustomFlag 業者間用カスタムフラグ（ES-B2B賃貸クローズアップ物件掲載フラグ）
+     * @param {Boolean} opts.isFurnished 家具付きフラグ
+     * @param {Boolean} opts.hasAppliances 家電付きフラグ
+     * @param {Boolean} opts.isNetFree インターネット無料フラグ
+     * @param {Boolean} opts.isOver2f 2階以上フラグ
+     * @param {Boolean} opts.isBathToiletSeparate 風呂トイレ別フラグ
+     * @param {Boolean} opts.hasAircon エアコン付きフラグ
+     * @param {Boolean} opts.hasAutoLock オートロック付きフラグ
+     * @param {Boolean} opts.hasDeliveryBox 宅配ボックス付きフラグ
+     * @param {Boolean} opts.hasElevator エレベーター付きフラグ
+     * @param {Boolean} opts.hasLandryRoom 室内洗濯機置き場フラグ
+     * @param {Boolean} opts.isFlooring フローリングフラグ
+     * @param {Boolean} opts.isDesignersApartment デザイナーズマンションフラグ
+     * @param {Boolean} opts.isBarrierFree バリアフリーフラグ
+     * @param {Boolean} opts.isSouthFacing 南向きフラグ
+     * @param {Boolean} opts.isHighestFloor 最上階フラグ
+     * @param {Boolean} opts.isCornerRoom 角部屋フラグ
+     * @param {Boolean} opts.hasSystemKitchen システムキッチンフラグ
+     * @param {Boolean} opts.hasIhStove IHコンロフラグ
+     * @param {Boolean} opts.hasGasStove ガスコンロフラグ
+     * @param {Boolean} opts.hasMultipleGasStove ガスコンロ２口以上フラグ
+     * @param {Boolean} opts.hasReboilBath 追い焚き機能付きフラグ
+     * @param {Boolean} opts.hasWashlet 温水洗浄便座フラグ
+     * @param {Boolean} opts.hasBathDryer 浴室乾燥機付きフラグ
+     * @param {Boolean} opts.hasFloorHeating 床暖房フラグ
+     * @param {Boolean} opts.hasCloset クローゼットフラグ
+     * @param {Boolean} opts.hasWalkInCloset ウォークインクローゼットフラグ
+     * @param {Boolean} opts.hasCatv CATVフラグ
+     * @param {Boolean} opts.hasCs CSアンテナフラグ
+     * @param {Boolean} opts.hasBs BSアンテナフラグ
+     * @param {Boolean} opts.hasOpticalFiber 光ファイバーフラグ
+     * @param {Boolean} opts.isAllElectric オール電化フラグ
+     * @param {Boolean} opts.hasVerandaBalcony ベランダ・バルコニー付きフラグ
+     * @param {Boolean} opts.isMaisonette メゾネット
+     * @param {Boolean} opts.hasLoft ロフト付き
+     * @param {Boolean} opts.hasSoundproof 防音設備付き
+     * @param {Boolean} opts.hasCounterKitchen カウンターキッチン付き
+     * @param {Boolean} opts.hasGarbageCollectionSite 敷地内ゴミ置場有り
+     * @param {Boolean} opts.hasOwnYard 専用庭付き
+     * @param {Boolean} opts.isQuakeResistantStructure 耐震構造
+     * @param {Boolean} opts.isQuakeAbsorbingStructure 免震構造
+     * @param {Boolean} opts.isDampingStructure 制震構造
+     * @param {Boolean} opts.hasTvIntercom TVインターホン付き
+     * @param {Boolean} opts.hasSecurityCamera 防犯カメラ付き
+     * @param {Boolean} opts.isInternetAvailable インターネット使用可
+     * @param {Boolean} opts.hasTrunkRoom トランクルーム付き
+     * @param {Boolean} opts.isCondominium 分譲賃貸
+     * @param {Boolean} opts.isTowerApartment タワーマンション
+     * @param {Boolean} opts.isRenovated リノベーション
+     * @param {Boolean} opts.hasWashroom 洗面所独立
+     * @param {Number} opts.buildingAgeFrom 建築年数検索区間
+     * @param {Number} opts.buildingAgeTo 建築年数検索区間
+     * @param {Number} opts.priceFrom 現賃貸料検索区間
+     * @param {Number} opts.priceTo 現賃貸料検索区間
+     * @param {Number} opts.manageCostYenFrom 管理費（円）検索区間
+     * @param {Number} opts.manageCostYenTo 管理費（円）検索区間
+     * @param {Number} opts.depositYenFrom 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositYenTo 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositMonthFrom 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.depositMonthTo 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyYenFrom 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyYenTo 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyMonthFrom 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyMonthTo 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.repairCostYenFrom 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostYenTo 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostMonthFrom 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.repairCostMonthTo 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.initialCostFrom 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.initialCostTo 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.monthlyCostSummaryFrom 管理費など込み賃料検索区間
+     * @param {Number} opts.monthlyCostSummaryTo 管理費など込み賃料検索区間
+     * @param {Number} opts.advertisingFeePercentTo 広告料（パーセント）検索区間
+     * @param {Number} opts.advertisingFeePercentFrom 広告料（パーセント）検索区間
+     * @param {Number} opts.areaFrom 専有面積検索区間
+     * @param {Number} opts.areaTo 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaFrom 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaTo 専有面積検索区間
+     * @param {Number} opts.walkFromStationMinutesFrom 駅からの徒歩時間
+     * @param {Number} opts.walkFromStationMinutesTo 駅からの徒歩時間
+     * @param {Date} opts.lastUpdateDatetimeFrom 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.lastUpdateDatetimeTo 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeFrom 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeTo 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateFrom 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateTo 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateFrom 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateTo 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {String} opts.originalPropertyCodeText 自社管理番号
+     * @param {Array.<String>} opts.buildingGuid 建物スペックGUID
+     * @param {Array.<Number>} opts.buildingTypeCode 建物形式区分<br/>1: マンション<br/>2: リゾートマンション<br/>3: アパート<br/>4: テラスハウス<br/>5: タウンハウス<br/>6: 戸建<br/>7: 土地<br/>8: 店舗<br/>9: 事務所<br/>10: ビル<br/>11: 倉庫<br/>12: 工場<br/>13: トランクルーム<br/>14: 駐車場<br/>15: バイク置き場<br/>16: その他
+     * @param {Array.<Number>} opts.structureCode 構造区分<br/>1: 木造<br/>2: 軽量鉄骨<br/>3: 鉄筋コンクリート<br/>4: 鉄骨鉄筋コンクリート<br/>5: ALC<br/>6: プレキャストコンクリート<br/>7: 鉄筋ブロック<br/>8: 鉄骨プレ<br/>9: 鉄骨<br/>10: その他
+     * @param {Number} opts.siteAreaFrom 土地面積検索区間
+     * @param {Number} opts.siteAreaTo 土地面積検索区間
+     * @param {String} opts.buildingName 建物名
+     * @param {String} opts.buildingFurigana 建物名フリガナ
+     * @param {Array.<String>} opts.tagGuid タグGUID
+     * @param {String} opts.prefecture 都道府県
+     * @param {Array.<Number>} opts.prefectureCode 都道府県コード
+     * @param {Array.<String>} opts.city 市区郡
+     * @param {Array.<Number>} opts.cityCode 市区郡コード
+     * @param {Array.<String>} opts.town 町村
+     * @param {Array.<Number>} opts.jisCode JISコード
+     * @param {Array.<String>} opts.address 住所
+     * @param {Array.<Number>} opts.lineCode 沿線コード
+     * @param {Array.<Number>} opts.stationCode 駅コード
+     * @param {Array.<Number>} opts.customerKey カスタマーキー
+     * @param {Boolean} opts.ignorePublishStatus 掲載状態を無視するフラグ (default to false)
+     * @param {String} opts.nameOrCodeText 建物名/物件名フリガナ/自社管理番号のいずれかにマッチするものを対象とする。建物名表示フラグがfalseの物件は自社管理番号のみがマッチング対象となる
+     * @param {Boolean} opts.ignoreNameDisplay 建物名/物件名フリガナでの検索時はデフォルトでは建物名表示フラグがfalseの物件は対象にしない。このフラグを有効化すると表示フラグに関わらず検索対象になる
+     * @param {String} opts.query 詳細検索用特殊パラメータ。検索条件を JSON で記載し、エンコードしたものを     バリューに渡す。          ex) '[{\"building_name\": \"いい生活アパート\", \"price.to\": 700000}, {\"buildinig_name\": \"いい生活ハイツ\", \"walk_from_station_minutes.to\": 10}]'     -> ?query=%5B%7B%22building_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%82%A2%E3%83%91%E3%83%BC%E3%83%88%22%2C%20%22price.to%22%3A%20700000%7D%2C%20%7B%22buildinig_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%83%8F%E3%82%A4%E3%83%84%22%2C%20%22walk_from_station_minutes.to%22%3A%2010%7D%5D          上記の例の場合の絞り込み条件は、抽象的に書き下すと次のようになる。          (building_name like \"%いい生活アパート%\" AND price <= 700000) OR (building_name like \"%いい生活ハイツ%\" AND walk_from_station_minutes <= 10)     
+     * @param {String} opts.order 複数のソート条件を指定したい場合の特殊パラメータ。{.orderを除いたソートパラメータ名}.{asc か desc}を , 区切りで並べて指定すると、その先頭から順にソートが適用される。例: order=property_full_key.desc,layout.asc は、property_full_keyの降順、layoutの昇順でソートされる。このパラメータを個別のソート条件と同時に指定した場合、このパラメータのソート順が先に適用され、その後に個別のソート条件が適用される。
+     * @param {module:model/Order} opts.propertyFullKeyOrder 物件完全IDソート順
+     * @param {module:model/Order} opts.propertyClassCodeOrder 募集種別区分コードソート順
+     * @param {module:model/Order} opts.propertyUseCodeOrder 募集用途区分ソート順
+     * @param {module:model/Order} opts.propertyTypeCodeOrder 募集種別区分ソート順
+     * @param {module:model/Order} opts.modifiedOrder 新着ソート順。非推奨のため代わりにlast_update_datetime.orderを使うこと。
+     * @param {module:model/Order} opts.lastUpdateDatetimeOrder 新着ソート順
+     * @param {module:model/Order} opts.layoutOrder 間取りソート順
+     * @param {module:model/Order} opts.buildingAgeOrder 築年月ソート順
+     * @param {module:model/Order} opts.stationOrder 駅ソート順
+     * @param {module:model/Order} opts.stationNameOrder 駅名ソート順
+     * @param {module:model/Order} opts.lineOrder 沿線ソート順
+     * @param {module:model/Order} opts.lineNameOrder 沿線名ソート順
+     * @param {module:model/Order} opts.walkFromStationMinutesOrder 駅徒歩時間ソート順
+     * @param {module:model/Order} opts.addressOrder 住所コードソート順
+     * @param {module:model/Order} opts.searchAreaOrder 面積ソート順
+     * @param {module:model/Order} opts.exclusiveAreaOrder 専有面積ソート順
+     * @param {module:model/Order} opts.buildingNameOrder 建物名ソート順
+     * @param {module:model/Order} opts.buildingFuriganaOrder 建物名フリガナソート順
+     * @param {module:model/Order} opts.depositPriceOrder 敷金/保証金（円）ソート順
+     * @param {module:model/Order} opts.keyMoneyPriceOrder 礼金/権利金（円）ソート順
+     * @param {module:model/Order} opts.manageCostPriceOrder 管理費/共益費/雑費（円）ソート順
+     * @param {module:model/Order} opts.advertisingFeePercentOrder 広告料（パーセント）ソート順
+     * @param {module:model/Order} opts.advertiseFlagOrder 広告可フラグソート順
+     * @param {module:model/Order} opts.floorNumberOrder 所在階ソート順
+     * @param {module:model/Order} opts.availableDateOrder 入居可能日ソート順
+     * @param {module:model/Order} opts.priceOrder 賃料ソート順
+     * @param {module:model/Order} opts.initialCostOrder 初期費用ソート順
+     * @param {module:model/Order} opts.monthlyCostSummaryOrder 管理費など込み賃料
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/PropertyList}
      */
+    choiceRentProperty(opts) {
+      return this.choiceRentPropertyWithHttpInfo(opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Get Property
@@ -1204,10 +1723,9 @@ export default class RentPropertyQueryAPIApi {
      * @param {String} propertyFullKey 
      * @param {Object} opts Optional parameters
      * @param {module:model/RentBaitaiCode} opts.baitaiCode 掲載先(デフォルトはウェブサイト)
-     * @param {module:api/RentPropertyQueryAPIApi~getRentPropertyCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/RentProperty}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/RentProperty} and HTTP response
      */
-    getRentProperty(propertyFullKey, opts, callback) {
+    getRentPropertyWithHttpInfo(propertyFullKey, opts) {
       opts = opts || {};
       let postBody = null;
       // verify the required parameter 'propertyFullKey' is set
@@ -1233,17 +1751,25 @@ export default class RentPropertyQueryAPIApi {
       return this.apiClient.callApi(
         '/property/rent/{property_full_key}/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the searchRentPropertyByBuilding operation.
-     * @callback module:api/RentPropertyQueryAPIApi~searchRentPropertyByBuildingCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/BuildingPropertyList} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Get Property
+     * property_full_keyで物件情報を取得する（賃貸）  物件の詳細情報を返す。
+     * @param {String} propertyFullKey 
+     * @param {Object} opts Optional parameters
+     * @param {module:model/RentBaitaiCode} opts.baitaiCode 掲載先(デフォルトはウェブサイト)
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/RentProperty}
      */
+    getRentProperty(propertyFullKey, opts) {
+      return this.getRentPropertyWithHttpInfo(propertyFullKey, opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Search Rent Property
@@ -1439,10 +1965,9 @@ export default class RentPropertyQueryAPIApi {
      * @param {module:model/Order} opts.priceOrder 賃料ソート順
      * @param {module:model/Order} opts.initialCostOrder 初期費用ソート順
      * @param {module:model/Order} opts.monthlyCostSummaryOrder 管理費など込み賃料
-     * @param {module:api/RentPropertyQueryAPIApi~searchRentPropertyByBuildingCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/BuildingPropertyList}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/BuildingPropertyList} and HTTP response
      */
-    searchRentPropertyByBuilding(opts, callback) {
+    searchRentPropertyByBuildingWithHttpInfo(opts) {
       opts = opts || {};
       let postBody = null;
 
@@ -1652,17 +2177,213 @@ export default class RentPropertyQueryAPIApi {
       return this.apiClient.callApi(
         '/property/rent/search/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
     }
 
     /**
-     * Callback function to receive the result of the searchRentPropertyByDwellingUnit operation.
-     * @callback module:api/RentPropertyQueryAPIApi~searchRentPropertyByDwellingUnitCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/PropertyList} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
+     * Search Rent Property
+     * 建物とそれに紐づく物件の一覧を取得する（賃貸）  建物ごとにグルーピングした形式で、検索条件に合致する部屋区画の一覧情報を返す。 レスポンス形式のイメージは以下のようになる。  ``` 建物A -- 区画a       |- 区画b       |- 区画c 建物B -- 区画d       |- 区画e ```
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.startIndex 検索の開始インデックス (default to 1)
+     * @param {Number} opts.itemsPerPage ページあたりの最大表示数 (default to 10)
+     * @param {module:model/RentBaitaiCode} opts.baitaiCode 掲載先<br/>103: EsB2B<br/>105: ウェブサイト
+     * @param {Array.<String>} opts.propertyFullKey 物件完全ID
+     * @param {Array.<Number>} opts.propertyUseCode 募集用途区分<br/>1: 居住用<br/>2: 事業用<br/>3: 投資用
+     * @param {Array.<Number>} opts.propertyTypeCode 募集種別区分<br/>101: マンション<br/>102: リゾートマンション<br/>103: アパート<br/>104: コーポ<br/>105: テラスハウス<br/>106: タウンハウス<br/>107: 戸建<br/>108: 土地<br/>109: 借地権譲渡<br/>110: 底地権譲渡<br/>111: 店舗<br/>112: 店舗事務所<br/>113: 住宅付店舗<br/>114: 事務所<br/>115: ビル<br/>116: 倉庫<br/>117: 工場<br/>118: トランクルーム<br/>119: 駐車場<br/>120: バイク置き場<br/>121: その他<br/>122: 間借り
+     * @param {Number} opts.newUsedCode 新築・中古区分<br/>1: 新築<br/>2: 中古
+     * @param {Number} opts.residenceRentPeriodCode 居住用契約区分<br/>1: 普通借家契約<br/>2: 定期借家契約
+     * @param {Array.<String>} opts.layoutText 間取りテキスト
+     * @param {Array.<Number>} opts.layoutTypeCode 間取りタイプ<br/>1: R<br/>2: K<br/>3: DK<br/>4: SDK<br/>5: LDK<br/>6: SLDK<br/>7: LK<br/>8: SK<br/>9: SLK
+     * @param {Boolean} opts.isLargerThan5k 間取り5K以上。非推奨のため代わりにlayout_codeを使うこと。
+     * @param {Array.<Number>} opts.layoutCode 間取り区分<br/>1: 1R<br/>2: 1K<br/>3: 1DK<br/>4: 1LDK<br/>5: 2K<br/>6: 2DK<br/>7: 2LDK<br/>8: 3K<br/>9: 3DK<br/>10: 3LDK<br/>11: 4K<br/>12: 4DK<br/>13: 4LDK<br/>14: 5K以上
+     * @param {Boolean} opts.isNowAvailable 即入居可フラグ (入居可能区分が即時 or 入居可能日が過去日)
+     * @param {Array.<Number>} opts.availableCode 入居可能区分<br/>1: 即時<br/>2: 相談<br/>3: 期日指定<br/>4: 予定
+     * @param {Array.<Number>} opts.rentTransactionFormCode 賃貸取引態様区分<br/>1: 貸主<br/>2: 代理<br/>3: 仲介元付(専任)<br/>4: 仲介元付(一般)<br/>5: 仲介先物<br/>6: 仲介元付<br/>7: 仲介
+     * @param {Array.<Number>} opts.studentRestrictionCode 学生専用区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.genderRestrictionCode 性別入居条件区分<br/>1: 不問<br/>2: 女性限定<br/>3: 男性限定<br/>4: 女性希望<br/>5: 男性希望
+     * @param {Array.<Number>} opts.kidsRestrictionCode 子供可入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.onePersonRestrictionCode 単身可入居条件<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.twoPersonsRestrictionCode 二人入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.elderRestrictionCode 高齢者入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.manageCostFreeCode 管理費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.serviceFeeFreeCode 共益費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.miscExpenseFreeCode 雑費なし区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Boolean} opts.otherInitialCostFreeFlag その他初期費用無しフラグ
+     * @param {Array.<Number>} opts.petRestrictionCode ペット可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.officeUsageRestrictionCode 事務所利用条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.corporateContractRestrictionCode 法人可条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.musicalInstrumentRestrictionCode 楽器等の使用区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.restaurantUsageRestrictionCode 飲食店可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.roomSharingRestrictionCode ルームシェア区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignerRestrictionCode 外国人入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.friendsRestrictionCode 友人同士入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignStudentRestrictionCode 留学生入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.parkingAvailabilityCode 駐車場の状況区分<br/>1: 無<br/>2: 有(敷地内)<br/>3: 付<br/>4: 近隣駐車場<br/>5: 空無<br/>6: 要問合せ
+     * @param {Array.<Number>} opts.gasCode ガス区分<br/>1: 都市ガス<br/>2: プロパン<br/>3: 共同<br/>4: その他
+     * @param {Array.<Number>} opts.initialCostCode 初期費用区分<br/>1: 五万円以下<br/>2: 十万円以下<br/>3: 十五万円以下<br/>4: 二十万円以下<br/>5: 三十万円以下<br/>99: その他
+     * @param {Array.<Number>} opts.guarantorRequirementsCode 保証人要否区分<br/>1: 要<br/>2: 不要<br/>3: 未入力
+     * @param {Boolean} opts.hasInsurance 損保 有無フラグ
+     * @param {Array.<Number>} opts.depositForStudentCode 学生敷金区分<br/>1: 不要<br/>2: 一ヶ月<br/>3: 二ヶ月
+     * @param {Boolean} opts.itJusetsuFlag IT重説可フラグ
+     * @param {Boolean} opts.noGuarantorFlag 保証人の有無フラグ。非推奨のため代わりにguarantor_requirements_codeを使うこと。
+     * @param {Boolean} opts.isTokuyuchin 特優賃フラグ
+     * @param {Boolean} opts.freeRentFlag フリーレントフラグ
+     * @param {Boolean} opts.managerFlag 管理人有り
+     * @param {Boolean} opts.hasMotorbikeParking バイク置場有フラグ
+     * @param {Boolean} opts.hasBikeParking 駐輪場有フラグ
+     * @param {Boolean} opts.panoramaFlag パノラマ画像付きフラグ
+     * @param {Boolean} opts.floorPlanFlag 間取り図付きフラグ
+     * @param {Boolean} opts.hasExteriorImage 外観画像付きフラグ
+     * @param {Boolean} opts.b2bCustomFlag 業者間用カスタムフラグ（ES-B2B賃貸クローズアップ物件掲載フラグ）
+     * @param {Boolean} opts.isFurnished 家具付きフラグ
+     * @param {Boolean} opts.hasAppliances 家電付きフラグ
+     * @param {Boolean} opts.isNetFree インターネット無料フラグ
+     * @param {Boolean} opts.isOver2f 2階以上フラグ
+     * @param {Boolean} opts.isBathToiletSeparate 風呂トイレ別フラグ
+     * @param {Boolean} opts.hasAircon エアコン付きフラグ
+     * @param {Boolean} opts.hasAutoLock オートロック付きフラグ
+     * @param {Boolean} opts.hasDeliveryBox 宅配ボックス付きフラグ
+     * @param {Boolean} opts.hasElevator エレベーター付きフラグ
+     * @param {Boolean} opts.hasLandryRoom 室内洗濯機置き場フラグ
+     * @param {Boolean} opts.isFlooring フローリングフラグ
+     * @param {Boolean} opts.isDesignersApartment デザイナーズマンションフラグ
+     * @param {Boolean} opts.isBarrierFree バリアフリーフラグ
+     * @param {Boolean} opts.isSouthFacing 南向きフラグ
+     * @param {Boolean} opts.isHighestFloor 最上階フラグ
+     * @param {Boolean} opts.isCornerRoom 角部屋フラグ
+     * @param {Boolean} opts.hasSystemKitchen システムキッチンフラグ
+     * @param {Boolean} opts.hasIhStove IHコンロフラグ
+     * @param {Boolean} opts.hasGasStove ガスコンロフラグ
+     * @param {Boolean} opts.hasMultipleGasStove ガスコンロ２口以上フラグ
+     * @param {Boolean} opts.hasReboilBath 追い焚き機能付きフラグ
+     * @param {Boolean} opts.hasWashlet 温水洗浄便座フラグ
+     * @param {Boolean} opts.hasBathDryer 浴室乾燥機付きフラグ
+     * @param {Boolean} opts.hasFloorHeating 床暖房フラグ
+     * @param {Boolean} opts.hasCloset クローゼットフラグ
+     * @param {Boolean} opts.hasWalkInCloset ウォークインクローゼットフラグ
+     * @param {Boolean} opts.hasCatv CATVフラグ
+     * @param {Boolean} opts.hasCs CSアンテナフラグ
+     * @param {Boolean} opts.hasBs BSアンテナフラグ
+     * @param {Boolean} opts.hasOpticalFiber 光ファイバーフラグ
+     * @param {Boolean} opts.isAllElectric オール電化フラグ
+     * @param {Boolean} opts.hasVerandaBalcony ベランダ・バルコニー付きフラグ
+     * @param {Boolean} opts.isMaisonette メゾネット
+     * @param {Boolean} opts.hasLoft ロフト付き
+     * @param {Boolean} opts.hasSoundproof 防音設備付き
+     * @param {Boolean} opts.hasCounterKitchen カウンターキッチン付き
+     * @param {Boolean} opts.hasGarbageCollectionSite 敷地内ゴミ置場有り
+     * @param {Boolean} opts.hasOwnYard 専用庭付き
+     * @param {Boolean} opts.isQuakeResistantStructure 耐震構造
+     * @param {Boolean} opts.isQuakeAbsorbingStructure 免震構造
+     * @param {Boolean} opts.isDampingStructure 制震構造
+     * @param {Boolean} opts.hasTvIntercom TVインターホン付き
+     * @param {Boolean} opts.hasSecurityCamera 防犯カメラ付き
+     * @param {Boolean} opts.isInternetAvailable インターネット使用可
+     * @param {Boolean} opts.hasTrunkRoom トランクルーム付き
+     * @param {Boolean} opts.isCondominium 分譲賃貸
+     * @param {Boolean} opts.isTowerApartment タワーマンション
+     * @param {Boolean} opts.isRenovated リノベーション
+     * @param {Boolean} opts.hasWashroom 洗面所独立
+     * @param {Number} opts.buildingAgeFrom 建築年数検索区間
+     * @param {Number} opts.buildingAgeTo 建築年数検索区間
+     * @param {Number} opts.priceFrom 現賃貸料検索区間
+     * @param {Number} opts.priceTo 現賃貸料検索区間
+     * @param {Number} opts.manageCostYenFrom 管理費（円）検索区間
+     * @param {Number} opts.manageCostYenTo 管理費（円）検索区間
+     * @param {Number} opts.depositYenFrom 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositYenTo 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositMonthFrom 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.depositMonthTo 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyYenFrom 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyYenTo 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyMonthFrom 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyMonthTo 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.repairCostYenFrom 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostYenTo 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostMonthFrom 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.repairCostMonthTo 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.initialCostFrom 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.initialCostTo 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.monthlyCostSummaryFrom 管理費など込み賃料検索区間
+     * @param {Number} opts.monthlyCostSummaryTo 管理費など込み賃料検索区間
+     * @param {Number} opts.advertisingFeePercentTo 広告料（パーセント）検索区間
+     * @param {Number} opts.advertisingFeePercentFrom 広告料（パーセント）検索区間
+     * @param {Number} opts.areaFrom 専有面積検索区間
+     * @param {Number} opts.areaTo 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaFrom 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaTo 専有面積検索区間
+     * @param {Number} opts.walkFromStationMinutesFrom 駅からの徒歩時間
+     * @param {Number} opts.walkFromStationMinutesTo 駅からの徒歩時間
+     * @param {Date} opts.lastUpdateDatetimeFrom 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.lastUpdateDatetimeTo 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeFrom 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeTo 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateFrom 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateTo 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateFrom 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateTo 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {String} opts.originalPropertyCodeText 自社管理番号
+     * @param {Array.<String>} opts.buildingGuid 建物スペックGUID
+     * @param {Array.<Number>} opts.buildingTypeCode 建物形式区分<br/>1: マンション<br/>2: リゾートマンション<br/>3: アパート<br/>4: テラスハウス<br/>5: タウンハウス<br/>6: 戸建<br/>7: 土地<br/>8: 店舗<br/>9: 事務所<br/>10: ビル<br/>11: 倉庫<br/>12: 工場<br/>13: トランクルーム<br/>14: 駐車場<br/>15: バイク置き場<br/>16: その他
+     * @param {Array.<Number>} opts.structureCode 構造区分<br/>1: 木造<br/>2: 軽量鉄骨<br/>3: 鉄筋コンクリート<br/>4: 鉄骨鉄筋コンクリート<br/>5: ALC<br/>6: プレキャストコンクリート<br/>7: 鉄筋ブロック<br/>8: 鉄骨プレ<br/>9: 鉄骨<br/>10: その他
+     * @param {Number} opts.siteAreaFrom 土地面積検索区間
+     * @param {Number} opts.siteAreaTo 土地面積検索区間
+     * @param {String} opts.buildingName 建物名
+     * @param {String} opts.buildingFurigana 建物名フリガナ
+     * @param {Array.<String>} opts.tagGuid タグGUID
+     * @param {String} opts.prefecture 都道府県
+     * @param {Array.<Number>} opts.prefectureCode 都道府県コード
+     * @param {Array.<String>} opts.city 市区郡
+     * @param {Array.<Number>} opts.cityCode 市区郡コード
+     * @param {Array.<String>} opts.town 町村
+     * @param {Array.<Number>} opts.jisCode JISコード
+     * @param {Array.<String>} opts.address 住所
+     * @param {Array.<Number>} opts.lineCode 沿線コード
+     * @param {Array.<Number>} opts.stationCode 駅コード
+     * @param {Array.<Number>} opts.customerKey カスタマーキー
+     * @param {Boolean} opts.ignorePublishStatus 掲載状態を無視するフラグ (default to false)
+     * @param {String} opts.nameOrCodeText 建物名/物件名フリガナ/自社管理番号のいずれかにマッチするものを対象とする。建物名表示フラグがfalseの物件は自社管理番号のみがマッチング対象となる
+     * @param {Boolean} opts.ignoreNameDisplay 建物名/物件名フリガナでの検索時はデフォルトでは建物名表示フラグがfalseの物件は対象にしない。このフラグを有効化すると表示フラグに関わらず検索対象になる
+     * @param {String} opts.query 詳細検索用特殊パラメータ。検索条件を JSON で記載し、エンコードしたものを     バリューに渡す。          ex) '[{\"building_name\": \"いい生活アパート\", \"price.to\": 700000}, {\"buildinig_name\": \"いい生活ハイツ\", \"walk_from_station_minutes.to\": 10}]'     -> ?query=%5B%7B%22building_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%82%A2%E3%83%91%E3%83%BC%E3%83%88%22%2C%20%22price.to%22%3A%20700000%7D%2C%20%7B%22buildinig_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%83%8F%E3%82%A4%E3%83%84%22%2C%20%22walk_from_station_minutes.to%22%3A%2010%7D%5D          上記の例の場合の絞り込み条件は、抽象的に書き下すと次のようになる。          (building_name like \"%いい生活アパート%\" AND price <= 700000) OR (building_name like \"%いい生活ハイツ%\" AND walk_from_station_minutes <= 10)     
+     * @param {String} opts.order 複数のソート条件を指定したい場合の特殊パラメータ。{.orderを除いたソートパラメータ名}.{asc か desc}を , 区切りで並べて指定すると、その先頭から順にソートが適用される。例: order=property_full_key.desc,layout.asc は、property_full_keyの降順、layoutの昇順でソートされる。このパラメータを個別のソート条件と同時に指定した場合、このパラメータのソート順が先に適用され、その後に個別のソート条件が適用される。
+     * @param {module:model/Order} opts.propertyFullKeyOrder 物件完全IDソート順
+     * @param {module:model/Order} opts.propertyClassCodeOrder 募集種別区分コードソート順
+     * @param {module:model/Order} opts.propertyUseCodeOrder 募集用途区分ソート順
+     * @param {module:model/Order} opts.propertyTypeCodeOrder 募集種別区分ソート順
+     * @param {module:model/Order} opts.modifiedOrder 新着ソート順。非推奨のため代わりにlast_update_datetime.orderを使うこと。
+     * @param {module:model/Order} opts.lastUpdateDatetimeOrder 新着ソート順
+     * @param {module:model/Order} opts.layoutOrder 間取りソート順
+     * @param {module:model/Order} opts.buildingAgeOrder 築年月ソート順
+     * @param {module:model/Order} opts.stationOrder 駅ソート順
+     * @param {module:model/Order} opts.stationNameOrder 駅名ソート順
+     * @param {module:model/Order} opts.lineOrder 沿線ソート順
+     * @param {module:model/Order} opts.lineNameOrder 沿線名ソート順
+     * @param {module:model/Order} opts.walkFromStationMinutesOrder 駅徒歩時間ソート順
+     * @param {module:model/Order} opts.addressOrder 住所コードソート順
+     * @param {module:model/Order} opts.searchAreaOrder 面積ソート順
+     * @param {module:model/Order} opts.exclusiveAreaOrder 専有面積ソート順
+     * @param {module:model/Order} opts.buildingNameOrder 建物名ソート順
+     * @param {module:model/Order} opts.buildingFuriganaOrder 建物名フリガナソート順
+     * @param {module:model/Order} opts.depositPriceOrder 敷金/保証金（円）ソート順
+     * @param {module:model/Order} opts.keyMoneyPriceOrder 礼金/権利金（円）ソート順
+     * @param {module:model/Order} opts.manageCostPriceOrder 管理費/共益費/雑費（円）ソート順
+     * @param {module:model/Order} opts.advertisingFeePercentOrder 広告料（パーセント）ソート順
+     * @param {module:model/Order} opts.advertiseFlagOrder 広告可フラグソート順
+     * @param {module:model/Order} opts.floorNumberOrder 所在階ソート順
+     * @param {module:model/Order} opts.availableDateOrder 入居可能日ソート順
+     * @param {module:model/Order} opts.priceOrder 賃料ソート順
+     * @param {module:model/Order} opts.initialCostOrder 初期費用ソート順
+     * @param {module:model/Order} opts.monthlyCostSummaryOrder 管理費など込み賃料
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/BuildingPropertyList}
      */
+    searchRentPropertyByBuilding(opts) {
+      return this.searchRentPropertyByBuildingWithHttpInfo(opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
 
     /**
      * Search Rent Property Dwelling Unit
@@ -1858,10 +2579,9 @@ export default class RentPropertyQueryAPIApi {
      * @param {module:model/Order} opts.priceOrder 賃料ソート順
      * @param {module:model/Order} opts.initialCostOrder 初期費用ソート順
      * @param {module:model/Order} opts.monthlyCostSummaryOrder 管理費など込み賃料
-     * @param {module:api/RentPropertyQueryAPIApi~searchRentPropertyByDwellingUnitCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/PropertyList}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/PropertyList} and HTTP response
      */
-    searchRentPropertyByDwellingUnit(opts, callback) {
+    searchRentPropertyByDwellingUnitWithHttpInfo(opts) {
       opts = opts || {};
       let postBody = null;
 
@@ -2071,8 +2791,211 @@ export default class RentPropertyQueryAPIApi {
       return this.apiClient.callApi(
         '/property/rent/dwelling_unit/search/', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
+        authNames, contentTypes, accepts, returnType, null
       );
+    }
+
+    /**
+     * Search Rent Property Dwelling Unit
+     * 区画単位での物件一覧を取得する(賃貸)  区画ごとに検索条件に合致する部屋区画の一覧情報を返す。 レスポンス形式のイメージは以下のようになる。   ``` 区画a -- 建物A 区画b -- 建物A 区画c -- 建物A 区画d -- 建物B 区画e -- 建物B ```
+     * @param {Object} opts Optional parameters
+     * @param {Number} opts.startIndex 検索の開始インデックス (default to 1)
+     * @param {Number} opts.itemsPerPage ページあたりの最大表示数 (default to 10)
+     * @param {module:model/RentBaitaiCode} opts.baitaiCode 掲載先<br/>103: EsB2B<br/>105: ウェブサイト
+     * @param {Array.<String>} opts.propertyFullKey 物件完全ID
+     * @param {Array.<Number>} opts.propertyUseCode 募集用途区分<br/>1: 居住用<br/>2: 事業用<br/>3: 投資用
+     * @param {Array.<Number>} opts.propertyTypeCode 募集種別区分<br/>101: マンション<br/>102: リゾートマンション<br/>103: アパート<br/>104: コーポ<br/>105: テラスハウス<br/>106: タウンハウス<br/>107: 戸建<br/>108: 土地<br/>109: 借地権譲渡<br/>110: 底地権譲渡<br/>111: 店舗<br/>112: 店舗事務所<br/>113: 住宅付店舗<br/>114: 事務所<br/>115: ビル<br/>116: 倉庫<br/>117: 工場<br/>118: トランクルーム<br/>119: 駐車場<br/>120: バイク置き場<br/>121: その他<br/>122: 間借り
+     * @param {Number} opts.newUsedCode 新築・中古区分<br/>1: 新築<br/>2: 中古
+     * @param {Number} opts.residenceRentPeriodCode 居住用契約区分<br/>1: 普通借家契約<br/>2: 定期借家契約
+     * @param {Array.<String>} opts.layoutText 間取りテキスト
+     * @param {Array.<Number>} opts.layoutTypeCode 間取りタイプ<br/>1: R<br/>2: K<br/>3: DK<br/>4: SDK<br/>5: LDK<br/>6: SLDK<br/>7: LK<br/>8: SK<br/>9: SLK
+     * @param {Boolean} opts.isLargerThan5k 間取り5K以上。非推奨のため代わりにlayout_codeを使うこと。
+     * @param {Array.<Number>} opts.layoutCode 間取り区分<br/>1: 1R<br/>2: 1K<br/>3: 1DK<br/>4: 1LDK<br/>5: 2K<br/>6: 2DK<br/>7: 2LDK<br/>8: 3K<br/>9: 3DK<br/>10: 3LDK<br/>11: 4K<br/>12: 4DK<br/>13: 4LDK<br/>14: 5K以上
+     * @param {Boolean} opts.isNowAvailable 即入居可フラグ (入居可能区分が即時 or 入居可能日が過去日)
+     * @param {Array.<Number>} opts.availableCode 入居可能区分<br/>1: 即時<br/>2: 相談<br/>3: 期日指定<br/>4: 予定
+     * @param {Array.<Number>} opts.rentTransactionFormCode 賃貸取引態様区分<br/>1: 貸主<br/>2: 代理<br/>3: 仲介元付(専任)<br/>4: 仲介元付(一般)<br/>5: 仲介先物<br/>6: 仲介元付<br/>7: 仲介
+     * @param {Array.<Number>} opts.studentRestrictionCode 学生専用区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.genderRestrictionCode 性別入居条件区分<br/>1: 不問<br/>2: 女性限定<br/>3: 男性限定<br/>4: 女性希望<br/>5: 男性希望
+     * @param {Array.<Number>} opts.kidsRestrictionCode 子供可入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.onePersonRestrictionCode 単身可入居条件<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.twoPersonsRestrictionCode 二人入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.elderRestrictionCode 高齢者入居条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望<br/>6: 歓迎
+     * @param {Array.<Number>} opts.manageCostFreeCode 管理費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.serviceFeeFreeCode 共益費無し区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Array.<Number>} opts.miscExpenseFreeCode 雑費なし区分<br/>0: 未入力<br/>1: 有<br/>2: 無<br/>3: 実費
+     * @param {Boolean} opts.otherInitialCostFreeFlag その他初期費用無しフラグ
+     * @param {Array.<Number>} opts.petRestrictionCode ペット可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.officeUsageRestrictionCode 事務所利用条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.corporateContractRestrictionCode 法人可条件区分<br/>1: 不可<br/>2: 可<br/>3: 相談<br/>4: 限定<br/>5: 希望
+     * @param {Array.<Number>} opts.musicalInstrumentRestrictionCode 楽器等の使用区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.restaurantUsageRestrictionCode 飲食店可区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.roomSharingRestrictionCode ルームシェア区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignerRestrictionCode 外国人入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.friendsRestrictionCode 友人同士入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.foreignStudentRestrictionCode 留学生入居区分<br/>1: 不可<br/>2: 可<br/>3: 相談
+     * @param {Array.<Number>} opts.parkingAvailabilityCode 駐車場の状況区分<br/>1: 無<br/>2: 有(敷地内)<br/>3: 付<br/>4: 近隣駐車場<br/>5: 空無<br/>6: 要問合せ
+     * @param {Array.<Number>} opts.gasCode ガス区分<br/>1: 都市ガス<br/>2: プロパン<br/>3: 共同<br/>4: その他
+     * @param {Array.<Number>} opts.initialCostCode 初期費用区分<br/>1: 五万円以下<br/>2: 十万円以下<br/>3: 十五万円以下<br/>4: 二十万円以下<br/>5: 三十万円以下<br/>99: その他
+     * @param {Array.<Number>} opts.guarantorRequirementsCode 保証人要否区分<br/>1: 要<br/>2: 不要<br/>3: 未入力
+     * @param {Boolean} opts.hasInsurance 損保 有無フラグ
+     * @param {Array.<Number>} opts.depositForStudentCode 学生敷金区分<br/>1: 不要<br/>2: 一ヶ月<br/>3: 二ヶ月
+     * @param {Boolean} opts.itJusetsuFlag IT重説可フラグ
+     * @param {Boolean} opts.noGuarantorFlag 保証人の有無フラグ。非推奨のため代わりにguarantor_requirements_codeを使うこと。
+     * @param {Boolean} opts.isTokuyuchin 特優賃フラグ
+     * @param {Boolean} opts.freeRentFlag フリーレントフラグ
+     * @param {Boolean} opts.managerFlag 管理人有り
+     * @param {Boolean} opts.hasMotorbikeParking バイク置場有フラグ
+     * @param {Boolean} opts.hasBikeParking 駐輪場有フラグ
+     * @param {Boolean} opts.panoramaFlag パノラマ画像付きフラグ
+     * @param {Boolean} opts.floorPlanFlag 間取り図付きフラグ
+     * @param {Boolean} opts.hasExteriorImage 外観画像付きフラグ
+     * @param {Boolean} opts.b2bCustomFlag 業者間用カスタムフラグ（ES-B2B賃貸クローズアップ物件掲載フラグ）
+     * @param {Boolean} opts.isFurnished 家具付きフラグ
+     * @param {Boolean} opts.hasAppliances 家電付きフラグ
+     * @param {Boolean} opts.isNetFree インターネット無料フラグ
+     * @param {Boolean} opts.isOver2f 2階以上フラグ
+     * @param {Boolean} opts.isBathToiletSeparate 風呂トイレ別フラグ
+     * @param {Boolean} opts.hasAircon エアコン付きフラグ
+     * @param {Boolean} opts.hasAutoLock オートロック付きフラグ
+     * @param {Boolean} opts.hasDeliveryBox 宅配ボックス付きフラグ
+     * @param {Boolean} opts.hasElevator エレベーター付きフラグ
+     * @param {Boolean} opts.hasLandryRoom 室内洗濯機置き場フラグ
+     * @param {Boolean} opts.isFlooring フローリングフラグ
+     * @param {Boolean} opts.isDesignersApartment デザイナーズマンションフラグ
+     * @param {Boolean} opts.isBarrierFree バリアフリーフラグ
+     * @param {Boolean} opts.isSouthFacing 南向きフラグ
+     * @param {Boolean} opts.isHighestFloor 最上階フラグ
+     * @param {Boolean} opts.isCornerRoom 角部屋フラグ
+     * @param {Boolean} opts.hasSystemKitchen システムキッチンフラグ
+     * @param {Boolean} opts.hasIhStove IHコンロフラグ
+     * @param {Boolean} opts.hasGasStove ガスコンロフラグ
+     * @param {Boolean} opts.hasMultipleGasStove ガスコンロ２口以上フラグ
+     * @param {Boolean} opts.hasReboilBath 追い焚き機能付きフラグ
+     * @param {Boolean} opts.hasWashlet 温水洗浄便座フラグ
+     * @param {Boolean} opts.hasBathDryer 浴室乾燥機付きフラグ
+     * @param {Boolean} opts.hasFloorHeating 床暖房フラグ
+     * @param {Boolean} opts.hasCloset クローゼットフラグ
+     * @param {Boolean} opts.hasWalkInCloset ウォークインクローゼットフラグ
+     * @param {Boolean} opts.hasCatv CATVフラグ
+     * @param {Boolean} opts.hasCs CSアンテナフラグ
+     * @param {Boolean} opts.hasBs BSアンテナフラグ
+     * @param {Boolean} opts.hasOpticalFiber 光ファイバーフラグ
+     * @param {Boolean} opts.isAllElectric オール電化フラグ
+     * @param {Boolean} opts.hasVerandaBalcony ベランダ・バルコニー付きフラグ
+     * @param {Boolean} opts.isMaisonette メゾネット
+     * @param {Boolean} opts.hasLoft ロフト付き
+     * @param {Boolean} opts.hasSoundproof 防音設備付き
+     * @param {Boolean} opts.hasCounterKitchen カウンターキッチン付き
+     * @param {Boolean} opts.hasGarbageCollectionSite 敷地内ゴミ置場有り
+     * @param {Boolean} opts.hasOwnYard 専用庭付き
+     * @param {Boolean} opts.isQuakeResistantStructure 耐震構造
+     * @param {Boolean} opts.isQuakeAbsorbingStructure 免震構造
+     * @param {Boolean} opts.isDampingStructure 制震構造
+     * @param {Boolean} opts.hasTvIntercom TVインターホン付き
+     * @param {Boolean} opts.hasSecurityCamera 防犯カメラ付き
+     * @param {Boolean} opts.isInternetAvailable インターネット使用可
+     * @param {Boolean} opts.hasTrunkRoom トランクルーム付き
+     * @param {Boolean} opts.isCondominium 分譲賃貸
+     * @param {Boolean} opts.isTowerApartment タワーマンション
+     * @param {Boolean} opts.isRenovated リノベーション
+     * @param {Boolean} opts.hasWashroom 洗面所独立
+     * @param {Number} opts.buildingAgeFrom 建築年数検索区間
+     * @param {Number} opts.buildingAgeTo 建築年数検索区間
+     * @param {Number} opts.priceFrom 現賃貸料検索区間
+     * @param {Number} opts.priceTo 現賃貸料検索区間
+     * @param {Number} opts.manageCostYenFrom 管理費（円）検索区間
+     * @param {Number} opts.manageCostYenTo 管理費（円）検索区間
+     * @param {Number} opts.depositYenFrom 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositYenTo 敷金/保証金（円）検索区間
+     * @param {Number} opts.depositMonthFrom 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.depositMonthTo 敷金/保証金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyYenFrom 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyYenTo 礼金/権利金（円）検索区間
+     * @param {Number} opts.keyMoneyMonthFrom 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.keyMoneyMonthTo 礼金/権利金（ヶ月）検索区間
+     * @param {Number} opts.repairCostYenFrom 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostYenTo 敷引/償却（円）検索区間
+     * @param {Number} opts.repairCostMonthFrom 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.repairCostMonthTo 敷引/償却（ヶ月）検索区間
+     * @param {Number} opts.initialCostFrom 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.initialCostTo 初期費用検索区間。非推奨のため代わりにinitial_cost_codeを使うこと。
+     * @param {Number} opts.monthlyCostSummaryFrom 管理費など込み賃料検索区間
+     * @param {Number} opts.monthlyCostSummaryTo 管理費など込み賃料検索区間
+     * @param {Number} opts.advertisingFeePercentTo 広告料（パーセント）検索区間
+     * @param {Number} opts.advertisingFeePercentFrom 広告料（パーセント）検索区間
+     * @param {Number} opts.areaFrom 専有面積検索区間
+     * @param {Number} opts.areaTo 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaFrom 専有面積検索区間
+     * @param {Number} opts.exclusiveAreaTo 専有面積検索区間
+     * @param {Number} opts.walkFromStationMinutesFrom 駅からの徒歩時間
+     * @param {Number} opts.walkFromStationMinutesTo 駅からの徒歩時間
+     * @param {Date} opts.lastUpdateDatetimeFrom 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.lastUpdateDatetimeTo 情報更新日検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeFrom 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.publishedDatetimeTo 公開日時検索区間。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateFrom 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.priceUpdateDateTo 現賃料更新日検索区間。検索対象は賃料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateFrom 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {Date} opts.advertisingFeeUpdateDateTo 広告料更新日検索区間。検索対象は広告料更新日が公開日時以降のものに限られる。timezoneを明示しない場合はUTCとして解釈される
+     * @param {String} opts.originalPropertyCodeText 自社管理番号
+     * @param {Array.<String>} opts.buildingGuid 建物スペックGUID
+     * @param {Array.<Number>} opts.buildingTypeCode 建物形式区分<br/>1: マンション<br/>2: リゾートマンション<br/>3: アパート<br/>4: テラスハウス<br/>5: タウンハウス<br/>6: 戸建<br/>7: 土地<br/>8: 店舗<br/>9: 事務所<br/>10: ビル<br/>11: 倉庫<br/>12: 工場<br/>13: トランクルーム<br/>14: 駐車場<br/>15: バイク置き場<br/>16: その他
+     * @param {Array.<Number>} opts.structureCode 構造区分<br/>1: 木造<br/>2: 軽量鉄骨<br/>3: 鉄筋コンクリート<br/>4: 鉄骨鉄筋コンクリート<br/>5: ALC<br/>6: プレキャストコンクリート<br/>7: 鉄筋ブロック<br/>8: 鉄骨プレ<br/>9: 鉄骨<br/>10: その他
+     * @param {Number} opts.siteAreaFrom 土地面積検索区間
+     * @param {Number} opts.siteAreaTo 土地面積検索区間
+     * @param {String} opts.buildingName 建物名
+     * @param {String} opts.buildingFurigana 建物名フリガナ
+     * @param {Array.<String>} opts.tagGuid タグGUID
+     * @param {String} opts.prefecture 都道府県
+     * @param {Array.<Number>} opts.prefectureCode 都道府県コード
+     * @param {Array.<String>} opts.city 市区郡
+     * @param {Array.<Number>} opts.cityCode 市区郡コード
+     * @param {Array.<String>} opts.town 町村
+     * @param {Array.<Number>} opts.jisCode JISコード
+     * @param {Array.<String>} opts.address 住所
+     * @param {Array.<Number>} opts.lineCode 沿線コード
+     * @param {Array.<Number>} opts.stationCode 駅コード
+     * @param {Array.<Number>} opts.customerKey カスタマーキー
+     * @param {Boolean} opts.ignorePublishStatus 掲載状態を無視するフラグ (default to false)
+     * @param {String} opts.nameOrCodeText 建物名/物件名フリガナ/自社管理番号のいずれかにマッチするものを対象とする。建物名表示フラグがfalseの物件は自社管理番号のみがマッチング対象となる
+     * @param {Boolean} opts.ignoreNameDisplay 建物名/物件名フリガナでの検索時はデフォルトでは建物名表示フラグがfalseの物件は対象にしない。このフラグを有効化すると表示フラグに関わらず検索対象になる
+     * @param {String} opts.query 詳細検索用特殊パラメータ。検索条件を JSON で記載し、エンコードしたものを     バリューに渡す。          ex) '[{\"building_name\": \"いい生活アパート\", \"price.to\": 700000}, {\"buildinig_name\": \"いい生活ハイツ\", \"walk_from_station_minutes.to\": 10}]'     -> ?query=%5B%7B%22building_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%82%A2%E3%83%91%E3%83%BC%E3%83%88%22%2C%20%22price.to%22%3A%20700000%7D%2C%20%7B%22buildinig_name%22%3A%20%22%E3%81%84%E3%81%84%E7%94%9F%E6%B4%BB%E3%83%8F%E3%82%A4%E3%83%84%22%2C%20%22walk_from_station_minutes.to%22%3A%2010%7D%5D          上記の例の場合の絞り込み条件は、抽象的に書き下すと次のようになる。          (building_name like \"%いい生活アパート%\" AND price <= 700000) OR (building_name like \"%いい生活ハイツ%\" AND walk_from_station_minutes <= 10)     
+     * @param {String} opts.order 複数のソート条件を指定したい場合の特殊パラメータ。{.orderを除いたソートパラメータ名}.{asc か desc}を , 区切りで並べて指定すると、その先頭から順にソートが適用される。例: order=property_full_key.desc,layout.asc は、property_full_keyの降順、layoutの昇順でソートされる。このパラメータを個別のソート条件と同時に指定した場合、このパラメータのソート順が先に適用され、その後に個別のソート条件が適用される。
+     * @param {module:model/Order} opts.propertyFullKeyOrder 物件完全IDソート順
+     * @param {module:model/Order} opts.propertyClassCodeOrder 募集種別区分コードソート順
+     * @param {module:model/Order} opts.propertyUseCodeOrder 募集用途区分ソート順
+     * @param {module:model/Order} opts.propertyTypeCodeOrder 募集種別区分ソート順
+     * @param {module:model/Order} opts.modifiedOrder 新着ソート順。非推奨のため代わりにlast_update_datetime.orderを使うこと。
+     * @param {module:model/Order} opts.lastUpdateDatetimeOrder 新着ソート順
+     * @param {module:model/Order} opts.layoutOrder 間取りソート順
+     * @param {module:model/Order} opts.buildingAgeOrder 築年月ソート順
+     * @param {module:model/Order} opts.stationOrder 駅ソート順
+     * @param {module:model/Order} opts.stationNameOrder 駅名ソート順
+     * @param {module:model/Order} opts.lineOrder 沿線ソート順
+     * @param {module:model/Order} opts.lineNameOrder 沿線名ソート順
+     * @param {module:model/Order} opts.walkFromStationMinutesOrder 駅徒歩時間ソート順
+     * @param {module:model/Order} opts.addressOrder 住所コードソート順
+     * @param {module:model/Order} opts.searchAreaOrder 面積ソート順
+     * @param {module:model/Order} opts.exclusiveAreaOrder 専有面積ソート順
+     * @param {module:model/Order} opts.buildingNameOrder 建物名ソート順
+     * @param {module:model/Order} opts.buildingFuriganaOrder 建物名フリガナソート順
+     * @param {module:model/Order} opts.depositPriceOrder 敷金/保証金（円）ソート順
+     * @param {module:model/Order} opts.keyMoneyPriceOrder 礼金/権利金（円）ソート順
+     * @param {module:model/Order} opts.manageCostPriceOrder 管理費/共益費/雑費（円）ソート順
+     * @param {module:model/Order} opts.advertisingFeePercentOrder 広告料（パーセント）ソート順
+     * @param {module:model/Order} opts.advertiseFlagOrder 広告可フラグソート順
+     * @param {module:model/Order} opts.floorNumberOrder 所在階ソート順
+     * @param {module:model/Order} opts.availableDateOrder 入居可能日ソート順
+     * @param {module:model/Order} opts.priceOrder 賃料ソート順
+     * @param {module:model/Order} opts.initialCostOrder 初期費用ソート順
+     * @param {module:model/Order} opts.monthlyCostSummaryOrder 管理費など込み賃料
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/PropertyList}
+     */
+    searchRentPropertyByDwellingUnit(opts) {
+      return this.searchRentPropertyByDwellingUnitWithHttpInfo(opts)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
     }
 
 
