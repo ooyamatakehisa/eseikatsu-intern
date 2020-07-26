@@ -6,8 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "generate-dejima-client": "openapi-generator generate -g javascript -i ./dejima-client-oas/openapi_dejima.json -o ./src/dejima/dejima-client",
-    "generate-dejima-image-client": "openapi-generator generate -g javascript -i ./dejima-client-oas/openapi_dejima_image.json -o ./src/dejima/dejima-image-client"
+    "generate-dejima-client": "openapi-generator generate -g javascript -i ./dejima-client-oas/openapi_dejima.json -o ./src/dejima/dejima-client --additional-properties usePromises=true",
+    "generate-dejima-image-client": "openapi-generator generate -g javascript -i ./dejima-client-oas/openapi_dejima_image.json -o ./src/dejima/dejima-image-client --additional-properties usePromises=true"
   },
   "dependencies": {
     "core-js": "^3.6.5",
