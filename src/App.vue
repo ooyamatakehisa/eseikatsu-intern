@@ -75,19 +75,15 @@ const dejima_test = async () => {
     process.env.VUE_APP_DEJIMA_API_KEY;
 
   const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
-  const callback = function(error, data, response) {
-    if (error) {
-      console.error(error);
-    } else {
-      console.log("API called successfully. Returned data: ");
-      console.log(data);
-    }
-  };
   const opt = {
     startIndex: 1,
     itemsPerPage: 20,
   };
-  rentPropertyQueryAPIApi.searchRentPropertyByBuilding(opt, callback);
+  const result = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(
+    opt
+  );
+  console.log("API called successfully. Returned data: ");
+  console.log(result);
 };
 
 const firebase_test = async () => {
