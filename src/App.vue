@@ -34,7 +34,7 @@
     </v-app-bar>
 
     <v-content>
-      <HelloWorld />
+      <router-view />
     </v-content>
   </v-app>
 </template>
@@ -52,19 +52,23 @@ import { FirebaseService } from "./firebase/FirebaseService.js";
 export default {
   name: "App",
 
-  components: {
-    HelloWorld,
-  },
+  components: {},
 
   data: () => ({
     //
   }),
   methods: {
-    window: (onload = async () => {
+    // vueのmethods内でアロー関数を使うとthisなどの参照がおかしくなるので注意
+    window: (onload = async function() {
       await dejima_test();
       await firebase_test();
       await firebase_auth_test();
     }),
+    transitTest: function() {
+      this.$router.push({
+        path: "test",
+      });
+    },
   },
 };
 

@@ -25,6 +25,12 @@
       </v-col>
 
       <v-col class="mb-5" cols="12">
+        <router-link to="/test">
+          <h2>Router Test</h2>
+        </router-link>
+      </v-col>
+
+      <v-col class="mb-5" cols="12">
         <h2 class="headline font-weight-bold mb-3">
           What's next?
         </h2>
