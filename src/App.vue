@@ -26,11 +26,7 @@
       <v-toolbar-items>
         <v-btn color="primary" depressed to="/">Home</v-btn>
 
-        <v-btn
-          href="https://github.com/vuetifyjs/vuetify/releases/latest"
-          target="_blank"
-          text
-        >
+        <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
           <span class="mr-2">Latest Release</span>
           <v-icon>mdi-open-in-new</v-icon>
         </v-btn>
@@ -44,7 +40,6 @@
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
 import {
   ApiClient,
   AgentQueryAPIApi,
@@ -61,64 +56,6 @@ export default {
   data: () => ({
     //
   }),
-  methods: {
-    // vueのmethods内でアロー関数を使うとthisなどの参照がおかしくなるので注意
-    window: (onload = async function() {
-      await dejima_test();
-      await firebase_test();
-      await firebase_auth_test();
-    }),
-    transitTest: function() {
-      this.$router.push({
-        path: "test",
-      });
-    },
-  },
-};
-
-const dejima_test = async () => {
-  const apiClient = new ApiClient();
-  apiClient.basePath = process.env.VUE_APP_DEJIMA_API_ROOT;
-  apiClient.authentications["APIKeyHeader"].apiKey =
-    process.env.VUE_APP_DEJIMA_API_KEY;
-
-  const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
-  const opt = {
-    startIndex: 1,
-    itemsPerPage: 20,
-  };
-  const result = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(
-    opt
-  );
-  console.log("API called successfully. Returned data: ");
-  console.log(result);
-};
-
-const firebase_test = async () => {
-  console.log(process.env.VUE_APP_FIREBASE_API_KEY);
-  const firebaseService = new FirebaseService();
-  await firebaseService.database
-    .ref(`users/usertest`)
-    .set({ query: "query set test" });
-  const result = await firebaseService.database
-    .ref(`users/usertest`)
-    .once("value");
-  console.log(result.val().query);
-};
-
-const firebase_auth_test = async () => {
-  const firebaseService = new FirebaseService();
-  const authenticationService = new FirebaseAuthenticationService(
-    firebaseService
-  );
-
-  const address = "logintest@example.com";
-  const password = "logintest";
-  try {
-    await authenticationService.signInWithEMailAndPassword(address, password);
-    console.log(`success to login (${address})`);
-  } catch (error) {
-    console.log(`fail to login (${address})`);
-  }
+  methods: {},
 };
 </script>
