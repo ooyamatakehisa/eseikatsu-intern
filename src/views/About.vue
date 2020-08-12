@@ -5,7 +5,6 @@
         <h1>吾輩はボイラープレートである。</h1>
         <p>名前はまだない。</p>
       </div>
-      <counter />
     </div>
   </section>
 </template>
