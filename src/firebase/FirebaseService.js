@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
+import "firebase/storage";
 
 export class FirebaseService {
   static s_firebaseApp = firebase.initializeApp({
@@ -16,5 +17,6 @@ export class FirebaseService {
   constructor() {
     this.auth = FirebaseService.s_firebaseApp.auth();
     this.database = FirebaseService.s_firebaseApp.database();
+    this.storage = FirebaseService.s_firebaseApp.storage();
   }
 }
