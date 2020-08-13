@@ -4,12 +4,12 @@
     <v-row class="d-flex justify-center">
       <v-col cols="12" sm="12" md="6">
         <v-alert border="left" colored-border type="info" elevation="2" dismissible>
-          <div>このコンポーネントでは以下の機能を使えます。</div>
+          <div>このコンポーネントでは以下のFirebase Cloud Storageを利用した機能を使えます。</div>
           <div class="d-flex justify-center">
             <ul class="text-left">
               <li>アップロード</li>
               <li>ダウンロード</li>
-              <li>リスト表示</li>
+              <li>Storage上のファイルのリスト表示</li>
             </ul>
           </div>
           <div>
@@ -110,7 +110,7 @@
           placeholder="path/to/your/directory"
         />
         <v-card v-else>
-          <v-list>
+          <v-list dense>
             <v-list-item class="text-left">
               <v-list-item-content>
                 <v-list-item-title>
