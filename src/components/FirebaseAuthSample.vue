@@ -46,17 +46,7 @@
       </v-col>
     </v-row>
     <v-alert
-      v-if="isSuccessLogin == true"
-      border="left"
-      colored-border
-      type="info"
-      elevation="2"
-      dismissible
-    >
-      <div>ログインに成功しました</div>
-    </v-alert>
-    <v-alert
-      v-else-if="isSuccessLogin == false"
+      v-if="isSuccessLogin == false"
       border="left"
       colored-border
       type="error"
@@ -65,6 +55,26 @@
     >
       <div>ログインに失敗しました</div>
     </v-alert>
+    <div v-else-if="isSuccessLogin == true">
+      <v-alert border="left" colored-border type="info" elevation="2" dismissible>
+        <div>ログインに成功しました</div>
+        <div>ユーザーIDは{{loginedUserId}}です。</div>
+      </v-alert>
+      <v-text-field v-model="savedStr" label="DBに保存する文字列" />
+      <v-btn color="primary" @click="firebaseDatabaseSample">保存</v-btn>
+      <v-snackbar v-model="saveSuccessSnackbar">
+        保存に成功しました
+        <template v-slot:action="{ attrs }">
+          <v-btn color="pink" text v-bind="attrs" @click="saveSuccessSnackbar = false">Close</v-btn>
+        </template>
+      </v-snackbar>
+      <v-snackbar v-model="saveFailedSnackbar">
+        保存に成功しました
+        <template v-slot:action="{ attrs }">
+          <v-btn color="pink" text v-bind="attrs" @click="saveFailedSnackbar = false">Close</v-btn>
+        </template>
+      </v-snackbar>
+    </div>
   </v-container>
 </template>
 <script>
@@ -77,17 +87,20 @@ export default {
     password: "",
     passwordShow: false,
     isSuccessLogin: null,
-    logginedUserName: null,
+    loginedUserId: null,
+    savedStr: "",
+    authenticationService: null,
+    saveSuccessSnackbar: false,
+    saveFailedSnackbar: false,
   }),
   props: {},
   methods: {
     login: async function(event) {
       console.log(this.mailAddress + " - " + this.password);
-      const authenticationService = await this.firebaseAuthSample(
+      this.authenticationService = await this.firebaseAuthSample(
         this.mailAddress,
         this.password
       );
-      await this.firebaseDatabaseSample(authenticationService);
     },
     // 認証機能のサンプル
     firebaseAuthSample: async function(mailAddress, password) {
@@ -102,7 +115,7 @@ export default {
           password
         );
         this.isSuccessLogin = true;
-        this.logginedUserName = this.mailAddress;
+        this.loginedUserId = authenticationService.currentUserId();
         console.log(`success to login (${mailAddress})`);
       } catch (error) {
         this.isSuccessLogin = false;
@@ -111,13 +124,16 @@ export default {
       return authenticationService;
     },
     // 認証機能とデータベースを連携させてユーザー固有の情報をFirebase Databaseに保存させる処理のサンプル
-    firebaseDatabaseSample: async function(authenticationService) {
+    firebaseDatabaseSample: async function() {
       const firebaseService = new FirebaseService();
-      console.log(authenticationService.currentUserEmail());
-      console.log(authenticationService.currentUserId());
-      await firebaseService.database
-        .ref(`users/${authenticationService.currentUserId()}`)
-        .set({ query: "hogehogehoge" });
+      try {
+        await firebaseService.database
+          .ref(`users/${this.authenticationService.currentUserId()}`)
+          .set({ query: this.savedStr });
+        this.saveSuccessSnackbar = true;
+      } catch (error) {
+        this.saveFailedSnackbar = true;
+      }
     },
   },
 };
