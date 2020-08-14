@@ -63,7 +63,7 @@
       elevation="2"
       dismissible
     >
-      <div>ログインに成功しました</div>
+      <div>ログインに失敗しました</div>
     </v-alert>
   </v-container>
 </template>
@@ -83,9 +83,14 @@ export default {
   methods: {
     login: async function(event) {
       console.log(this.mailAddress + " - " + this.password);
-      this.firebase_auth_sample(this.mailAddress, this.password);
+      const authenticationService = await this.firebaseAuthSample(
+        this.mailAddress,
+        this.password
+      );
+      await this.firebaseDatabaseSample(authenticationService);
     },
-    firebase_auth_sample: async function(mailAddress, password) {
+    // 認証機能のサンプル
+    firebaseAuthSample: async function(mailAddress, password) {
       const firebaseService = new FirebaseService();
       const authenticationService = new FirebaseAuthenticationService(
         firebaseService
@@ -103,6 +108,16 @@ export default {
         this.isSuccessLogin = false;
         console.log(`fail to login (${mailAddress})`);
       }
+      return authenticationService;
+    },
+    // 認証機能とデータベースを連携させてユーザー固有の情報をFirebase Databaseに保存させる処理のサンプル
+    firebaseDatabaseSample: async function(authenticationService) {
+      const firebaseService = new FirebaseService();
+      console.log(authenticationService.currentUserEmail());
+      console.log(authenticationService.currentUserId());
+      await firebaseService.database
+        .ref(`users/${authenticationService.currentUserId()}`)
+        .set({ query: "hogehogehoge" });
     },
   },
 };
