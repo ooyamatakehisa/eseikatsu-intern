@@ -7,15 +7,14 @@
           <div>このコンポーネントでは以下のFirebase Authenticationを利用した機能を使えます。</div>
           <div class="d-flex justify-center">
             <ul class="text-left">
-              <li>アップロード</li>
-              <li>ダウンロード</li>
-              <li>Storage上のファイルのリスト表示</li>
+              <li>ログイン</li>
+              <li>認証情報を用いたユーザーごとの情報の保存</li>
             </ul>
           </div>
           <div>
             サンプルコード以外の機能については
             <a
-              href="https://firebase.google.com/docs/storage/web/start"
+              href="https://firebase.google.com/docs/auth/web/start"
               target="_blank"
             >
               こちら
@@ -55,6 +54,7 @@
     >
       <div>ログインに失敗しました</div>
     </v-alert>
+    <!--認証情報を利用したDBへのデータ保存-->
     <div v-else-if="isSuccessLogin == true">
       <v-alert border="left" colored-border type="info" elevation="2" dismissible>
         <div>ログインに成功しました</div>
