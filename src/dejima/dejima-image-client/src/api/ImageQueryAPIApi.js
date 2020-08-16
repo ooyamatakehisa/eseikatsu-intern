@@ -13,7 +13,7 @@
 
 
 import ApiClient from "../ApiClient";
-import AnyType from '../model/AnyType';
+// import AnyType from '../../model/AnyType';
 import ErrorResponse from '../model/ErrorResponse';
 import HTTPValidationError from '../model/HTTPValidationError';
 import MetadataResponse from '../model/MetadataResponse';
