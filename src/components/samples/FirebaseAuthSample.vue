@@ -3,8 +3,17 @@
     <!-- 機能紹介・お知らせ -->
     <v-row class="d-flex justify-center">
       <v-col cols="12" sm="12" md="6">
-        <v-alert border="left" colored-border type="info" elevation="2" dismissible>
-          <div>このコンポーネントでは以下のFirebase Authenticationを利用した機能を使えます。</div>
+        <v-alert
+          border="left"
+          colored-border
+          type="info"
+          elevation="2"
+          dismissible
+        >
+          <div>
+            このコンポーネントでは以下のFirebase
+            Authenticationを利用した機能を使えます。
+          </div>
           <div class="d-flex justify-center">
             <ul class="text-left">
               <li>ログイン</li>
@@ -56,30 +65,48 @@
     </v-alert>
     <!--認証情報を利用したDBへのデータ保存-->
     <div v-else-if="isSuccessLogin == true">
-      <v-alert border="left" colored-border type="info" elevation="2" dismissible>
+      <v-alert
+        border="left"
+        colored-border
+        type="info"
+        elevation="2"
+        dismissible
+      >
         <div>ログインに成功しました</div>
-        <div>ユーザーIDは{{loginedUserId}}です。</div>
+        <div>ユーザーIDは{{ loginedUserId }}です。</div>
       </v-alert>
       <v-text-field v-model="savedStr" label="DBに保存する文字列" />
       <v-btn color="primary" @click="firebaseDatabaseSample">保存</v-btn>
       <v-snackbar v-model="saveSuccessSnackbar">
         保存に成功しました
         <template v-slot:action="{ attrs }">
-          <v-btn color="pink" text v-bind="attrs" @click="saveSuccessSnackbar = false">Close</v-btn>
+          <v-btn
+            color="pink"
+            text
+            v-bind="attrs"
+            @click="saveSuccessSnackbar = false"
+            >Close</v-btn
+          >
         </template>
       </v-snackbar>
       <v-snackbar v-model="saveFailedSnackbar">
         保存に成功しました
         <template v-slot:action="{ attrs }">
-          <v-btn color="pink" text v-bind="attrs" @click="saveFailedSnackbar = false">Close</v-btn>
+          <v-btn
+            color="pink"
+            text
+            v-bind="attrs"
+            @click="saveFailedSnackbar = false"
+            >Close</v-btn
+          >
         </template>
       </v-snackbar>
     </div>
   </v-container>
 </template>
 <script>
-import { FirebaseService } from "../firebase/FirebaseService";
-import { FirebaseAuthenticationService } from "../firebase/FirebaseAuthenticationService";
+import { FirebaseService } from "../../firebase/FirebaseService";
+import { FirebaseAuthenticationService } from "../../firebase/FirebaseAuthenticationService";
 
 export default {
   data: () => ({

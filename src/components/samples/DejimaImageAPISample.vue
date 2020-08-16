@@ -72,10 +72,10 @@
   </v-container>
 </template>
 <script>
-import { ApiClient } from "../dejima/dejima-client/src";
-import RentPropertyQueryAPIApi from "../dejima/dejima-client/src/api/RentPropertyQueryAPIApi";
-import ImageApiClient from "../dejima/dejima-image-client/src/ApiClient";
-import ImageQueryAPIApi from "../dejima/dejima-image-client/src/api/ImageQueryAPIApi";
+import { ApiClient } from "../../dejima/dejima-client/src";
+import RentPropertyQueryAPIApi from "../../dejima/dejima-client/src/api/RentPropertyQueryAPIApi";
+import ImageApiClient from "../../dejima/dejima-image-client/src/ApiClient";
+import ImageQueryAPIApi from "../../dejima/dejima-image-client/src/api/ImageQueryAPIApi";
 
 export default {
   data: () => ({

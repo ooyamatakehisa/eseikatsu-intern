@@ -3,8 +3,17 @@
     <!-- 機能紹介・お知らせ -->
     <v-row class="d-flex justify-center">
       <v-col cols="12" sm="12" md="6">
-        <v-alert border="left" colored-border type="info" elevation="2" dismissible>
-          <div>このコンポーネントでは以下のFirebase Cloud Storageを利用した機能を使えます。</div>
+        <v-alert
+          border="left"
+          colored-border
+          type="info"
+          elevation="2"
+          dismissible
+        >
+          <div>
+            このコンポーネントでは以下のFirebase Cloud
+            Storageを利用した機能を使えます。
+          </div>
           <div class="d-flex justify-center">
             <ul class="text-left">
               <li>アップロード</li>
@@ -27,7 +36,13 @@
     </v-row>
     <v-row class="d-flex justify-center">
       <v-col cols="12" sm="12" md="6">
-        <v-alert border="left" colored-border type="warning" elevation="2" dismissible>
+        <v-alert
+          border="left"
+          colored-border
+          type="warning"
+          elevation="2"
+          dismissible
+        >
           <div class="d-flex justify-center">
             <ol class="text-left">
               <li>
@@ -54,7 +69,10 @@
           </div>
           <div>
             制限についての詳細は
-            <a href="https://firebase.google.com/pricing/#storage" target="_blank">
+            <a
+              href="https://firebase.google.com/pricing/#storage"
+              target="_blank"
+            >
               こちら
               <v-icon small color="primary">mdi-open-in-new</v-icon>
             </a>
@@ -67,7 +85,11 @@
     <!-- アップロード（ローカルのファイルを指定 -> Storage上のパスに保存） -->
     <v-row>
       <v-col cols="12" sm="12" md="5">
-        <v-file-input v-model="uploadFrom" :error="uploadError" label="アップロード元" />
+        <v-file-input
+          v-model="uploadFrom"
+          :error="uploadError"
+          label="アップロード元"
+        />
       </v-col>
       <v-col cols="12" sm="12" md="5">
         <v-text-field
@@ -120,34 +142,60 @@
                   <span>..</span>
                   <v-btn
                     icon
-                    @click="listRoot = listRoot.substring(0, listRoot.lastIndexOf('/')); listAll()"
+                    @click="
+                      listRoot = listRoot.substring(
+                        0,
+                        listRoot.lastIndexOf('/')
+                      );
+                      listAll();
+                    "
                   >
                     <v-icon>mdi-magnify</v-icon>
                   </v-btn>
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item v-for="item in listPrefixes" :key="item" class="text-left">
+            <v-list-item
+              v-for="item in listPrefixes"
+              :key="item"
+              class="text-left"
+            >
               <v-list-item-content>
                 <v-list-item-title>
                   <v-list-item-avatar>
                     <v-icon>mdi-folder</v-icon>
                   </v-list-item-avatar>
-                  <span>{{item}}/</span>
-                  <v-btn icon @click="listRoot = item; listAll()">
+                  <span>{{ item }}/</span>
+                  <v-btn
+                    icon
+                    @click="
+                      listRoot = item;
+                      listAll();
+                    "
+                  >
                     <v-icon>mdi-magnify</v-icon>
                   </v-btn>
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item v-for="item in listItems" :key="item" class="text-left">
+            <v-list-item
+              v-for="item in listItems"
+              :key="item"
+              class="text-left"
+            >
               <v-list-item-content>
                 <v-list-item-title>
                   <v-list-item-avatar>
                     <v-icon>mdi-file</v-icon>
                   </v-list-item-avatar>
-                  <span>{{item}}</span>
-                  <v-btn icon @click="downloadFrom = item; download()">
+                  <span>{{ item }}</span>
+                  <v-btn
+                    icon
+                    @click="
+                      downloadFrom = item;
+                      download();
+                    "
+                  >
                     <v-icon>mdi-download</v-icon>
                   </v-btn>
                 </v-list-item-title>
@@ -161,8 +209,17 @@
           v-if="listPrefixes === null && listItems === null"
           color="primary"
           @click="listAll"
-        >list</v-btn>
-        <v-btn v-else color="secondary" @click="listPrefixes = null; listItems = null">edit</v-btn>
+          >list</v-btn
+        >
+        <v-btn
+          v-else
+          color="secondary"
+          @click="
+            listPrefixes = null;
+            listItems = null;
+          "
+          >edit</v-btn
+        >
       </v-col>
     </v-row>
     <!-- リスト表示ここまで -->
@@ -171,7 +228,7 @@
 
 <script lang="js">
 
-import {FirebaseService} from '../firebase/FirebaseService.js';
+import { FirebaseService } from "../../firebase/FirebaseService";
 
 export default {
   name: "SampleStoragePanal",
