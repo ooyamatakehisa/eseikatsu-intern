@@ -228,8 +228,6 @@
 
 <script lang="js">
 
-import { FirebaseService } from "../../firebase/FirebaseService";
-
 export default {
   name: "SampleStoragePanal",
 
@@ -259,8 +257,7 @@ export default {
     // アップロード（ローカルのファイルを指定 -> Storage上のパスに保存）
     upload: async function(event) {
       // ref の生成
-      var firebase = new FirebaseService();
-      var uploadRef = firebase.storage.ref().child(this.uploadTo);
+      var uploadRef = this.$store.state.apiServices.firebaseService.storage.ref().child(this.uploadTo);
 
       try {
         // put でアップロード
@@ -277,8 +274,7 @@ export default {
     // ダウンロード（Storage上のパスを指定 -> ブラウザ標準機能でローカルに保存）
     download: async function(event) {
       // ref の生成
-      var firebase = new FirebaseService();
-      var downloadRef = firebase.storage.ref().child(this.downloadFrom);
+      var downloadRef = this.$store.state.apiServices.firebaseService.storage.ref().child(this.downloadFrom);
 
       try {
         // getDownloadURL でダウンロード用の URL を取得
@@ -320,8 +316,7 @@ export default {
     // リスト表示（Storage上のパスを指定 -> prefixes=フォルダとitems=ファイルに分けて表示）
     listAll: async function(event) {
       // ref の生成
-      var firebase = new FirebaseService();
-      var listAllRef = firebase.storage.ref().child(this.listRoot);
+      var listAllRef = this.$store.state.apiServices.firebaseService.storage.ref().child(this.listRoot);
 
       try {
         // listAll で当該パス内のフォルダとファイルを取得

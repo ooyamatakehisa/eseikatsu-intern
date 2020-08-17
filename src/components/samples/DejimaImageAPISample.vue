@@ -111,11 +111,9 @@ export default {
     },
     // キーワードに一致する物件の内先頭10件を取得
     getBuildings: async function() {
-      const apiClient = new ApiClient();
-      apiClient.basePath = "https://nightly.stg.es-e-bukken.jp";
-      apiClient.authentications["APIKeyHeader"].apiKey =
-        "9FJAuOlAwFBXJJeFNYOU4ujqVlynytVLaJQM2sYHdkcnKGO6Pm";
-      const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
+      const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(
+        this.$store.state.apiServices.dejimaApiClient
+      );
 
       return await rentPropertyQueryAPIApi.searchRentPropertyByBuilding({
         buildingName: this.query,
@@ -124,9 +122,9 @@ export default {
     },
     // 画像APIにより、検索結果の物件に対応する外観画像のURLを取得する。
     getImageURL: async function(buildingDataList) {
-      const imageApiClient = new ImageApiClient();
-      imageApiClient.basePath = "https://image-nightly.stg.es-e-bukken.jp";
-      const imageQueryAPIApi = new ImageQueryAPIApi(imageApiClient);
+      const imageQueryAPIApi = new ImageQueryAPIApi(
+        this.$store.state.apiServices.dejimaImageApiClient
+      );
 
       const propertyFullKeyList = buildingDataList.map(
         it => it.buildingData.property[0].property_full_key

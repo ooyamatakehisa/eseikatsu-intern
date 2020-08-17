@@ -90,7 +90,7 @@
         </template>
       </v-snackbar>
       <v-snackbar v-model="saveFailedSnackbar">
-        保存に成功しました
+        保存に失敗しました
         <template v-slot:action="{ attrs }">
           <v-btn
             color="pink"
@@ -105,9 +105,6 @@
   </v-container>
 </template>
 <script>
-import { FirebaseService } from "../../firebase/FirebaseService";
-import { FirebaseAuthenticationService } from "../../firebase/FirebaseAuthenticationService";
-
 export default {
   data: () => ({
     mailAddress: "",
@@ -124,42 +121,35 @@ export default {
   methods: {
     login: async function(event) {
       console.log(this.mailAddress + " - " + this.password);
-      this.authenticationService = await this.firebaseAuthSample(
-        this.mailAddress,
-        this.password
-      );
+      await this.firebaseAuthSample(this.mailAddress, this.password);
     },
     // 認証機能のサンプル
     firebaseAuthSample: async function(mailAddress, password) {
-      const firebaseService = new FirebaseService();
-      const authenticationService = new FirebaseAuthenticationService(
-        firebaseService
-      );
-
       try {
-        await authenticationService.signInWithEMailAndPassword(
+        await this.$store.state.apiServices.firebaseAuthService.signInWithEMailAndPassword(
           mailAddress,
           password
         );
         this.isSuccessLogin = true;
-        this.loginedUserId = authenticationService.currentUserId();
+        this.loginedUserId = this.$store.state.apiServices.firebaseAuthService.currentUserId();
         console.log(`success to login (${mailAddress})`);
       } catch (error) {
         this.isSuccessLogin = false;
         console.log(`fail to login (${mailAddress})`);
       }
-      return authenticationService;
     },
     // 認証機能とデータベースを連携させてユーザー固有の情報をFirebase Databaseに保存させる処理のサンプル
     firebaseDatabaseSample: async function() {
-      const firebaseService = new FirebaseService();
       try {
-        await firebaseService.database
-          .ref(`users/${this.authenticationService.currentUserId()}`)
+        await this.$store.state.apiServices.firebaseService.database
+          .ref(
+            `users/${this.$store.state.apiServices.firebaseAuthService.currentUserId()}`
+          )
           .set({ query: this.savedStr });
         this.saveSuccessSnackbar = true;
       } catch (error) {
         this.saveFailedSnackbar = true;
+        console.error(error);
       }
     },
   },
