@@ -20,13 +20,16 @@ const mutations = {
     state.firebaseAuthService = new FirebaseAuthenticationService(
       state.firebaseService
     );
-    state.dejimaApiClient = new DejimaApiClient();
-    state.dejimaApiClient.basePath = "https://nightly.stg.es-e-bukken.jp";
-    state.dejimaApiClient.authentications["APIKeyHeader"].apiKey =
-      "9FJAuOlAwFBXJJeFNYOU4ujqVlynytVLaJQM2sYHdkcnKGO6Pm";
-    state.dejimaImageApiClient = new ImageApiClient();
-    state.dejimaImageApiClient.basePath =
-      "https://image-nightly.stg.es-e-bukken.jp";
+
+    const dejimaApiClient = new DejimaApiClient();
+    dejimaApiClient.basePath = process.env.VUE_APP_DEJIMA_API_ROOT;
+    dejimaApiClient.authentications["APIKeyHeader"].apiKey =
+      process.env.VUE_APP_DEJIMA_API_KEY;
+    state.dejimaApiClient = dejimaApiClient;
+
+    const dejimaImageApiClient = new ImageApiClient();
+    dejimaImageApiClient.basePath = process.env.VUE_APP_DEJIMA_IMAGE_API_ROOT;
+    state.dejimaImageApiClient = dejimaImageApiClient;
   },
 };
 
