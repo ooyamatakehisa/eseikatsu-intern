@@ -132,7 +132,7 @@ export default {
       const result = await imageQueryAPIApi.bulkGetMetadataRentRentListGet(
         propertyFullKeyList.join(","),
         {
-          // baitaiCode: 103,
+          baitaiCode: 105, // 媒体コードは105の指定を推奨
           kindCode: 10, // 画像種別：外観（https://proxy-api-property-swagger.s3-ap-northeast-1.amazonaws.com/gpool.html を参照）
         }
       );
