@@ -3,8 +3,16 @@
     <!-- 機能紹介・お知らせ -->
     <v-row class="d-flex justify-center">
       <v-col cols="12" sm="12" md="6">
-        <v-alert border="left" colored-border type="info" elevation="2" dismissible>
-          <div>このコンポーネントでは以下のdejima画像APIを利用した機能を使えます。</div>
+        <v-alert
+          border="left"
+          colored-border
+          type="info"
+          elevation="2"
+          dismissible
+        >
+          <div>
+            このコンポーネントでは以下のdejima画像APIを利用した機能を使えます。
+          </div>
           <div class="d-flex justify-center">
             <ul class="text-left">
               <li>画像URLなどの画像メタデータの取得</li>
@@ -44,7 +52,9 @@
         <v-list-item three-line>
           <v-list-item-content>
             <div class="overline mb-4">OVERLINE</div>
-            <v-list-item-title class="headline mb-1">{{ buildingItem.buildingData.building_name }}</v-list-item-title>
+            <v-list-item-title class="headline mb-1">{{
+              buildingItem.buildingData.building_name
+            }}</v-list-item-title>
             <v-list-item-subtitle>
               {{ buildingItem.buildingData.address_text }}
               {{ buildingItem.buildingData.branch_number_text }}
