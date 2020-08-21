@@ -257,11 +257,11 @@ export default {
     // アップロード（ローカルのファイルを指定 -> Storage上のパスに保存）
     upload: async function(event) {
       // ref の生成
-      var uploadRef = this.$store.state.apiServices.firebaseService.storage.ref().child(this.uploadTo);
+      const uploadRef = this.$store.state.apiServices.firebaseService.storage.ref().child(this.uploadTo);
 
       try {
         // put でアップロード
-        var uploaded = await uploadRef.put(this.uploadFrom);
+        const uploaded = await uploadRef.put(this.uploadFrom);
         console.log(uploaded);
       } catch (ex) {
         this.uploadError = true;
@@ -274,27 +274,29 @@ export default {
     // ダウンロード（Storage上のパスを指定 -> ブラウザ標準機能でローカルに保存）
     download: async function(event) {
       // ref の生成
-      var downloadRef = this.$store.state.apiServices.firebaseService.storage.ref().child(this.downloadFrom);
+      const downloadRef = this.$store.state.apiServices.firebaseService.storage.ref().child(this.downloadFrom);
+
+      const link = document.createElement("a");
 
       try {
         // getDownloadURL でダウンロード用の URL を取得
-        var url = await downloadRef.getDownloadURL();
+        const url = await downloadRef.getDownloadURL();
         console.log("download url:", url);
 
         // バックグラウンドでダウンロードして Blob の URL を取得
         // img タグで直接画像を表示したいのであれば、前段の URL をそのまま src に指定すれば見られるはずです
         // 今回のダウンロード手法ではポップアップブロッカーに引っかかる場合があるため、 Blob を経由しています
-        var content = await fetch(url);
-        var blob = await content.blob()
-        var blobUrl = URL.createObjectURL(blob);
-        console.log("blob url of content:", blobUrl);
+        const content = await fetch(url);
+        const blob = await content.blob()
+        link.href = URL.createObjectURL(blob);
+        console.log("blob url of content:", link.href);
 
         // getMetadata でファイルの情報を取得
         // ダウンロード時のデフォルトのファイル名を設定するのに使っています
         // メタデータはこちらから書き換えることもできます
         // https://firebase.google.com/docs/storage/web/file-metadata
-        var metadata = await downloadRef.getMetadata();
-        var downloadTo = metadata.name;
+        const metadata = await downloadRef.getMetadata();
+        link.download = metadata.name;
         console.log("content metadata:", metadata);
       } catch (ex) {
         this.downloadError = true;
@@ -305,10 +307,6 @@ export default {
 
       // a タグをクリックした *ことにして* ダウンロード
       // ページ遷移が発生して Console のログが飛ぶと思いますので、必要に応じて Preserve log にチェックを入れてください
-      var link = document.createElement("a");
-      link.href = blobUrl;
-      link.target = "_blank";
-      link.download = downloadTo;
       link.click();
     },
 
@@ -316,14 +314,14 @@ export default {
     // リスト表示（Storage上のパスを指定 -> prefixes=フォルダとitems=ファイルに分けて表示）
     listAll: async function(event) {
       // ref の生成
-      var listAllRef = this.$store.state.apiServices.firebaseService.storage.ref().child(this.listRoot);
+      const listAllRef = this.$store.state.apiServices.firebaseService.storage.ref().child(this.listRoot);
 
       try {
         // listAll で当該パス内のフォルダとファイルを取得
         // すべてのファイルをリストアップしたい場合は、取得したフォルダについて再帰的にリストアップしていってください
         // あまりに多くのリストを取得したい場合は、 listAll の代わりに list を使ってページネーションしたほうがおそらく親切です
         // https://firebase.google.com/docs/storage/web/list-files
-        var list = await listAllRef.listAll();
+        const list = await listAllRef.listAll();
         console.log("list of prefixed and items:", list);
 
         // prefixes（フォルダ）のパスのみを配列として抽出
