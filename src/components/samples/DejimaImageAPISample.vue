@@ -52,15 +52,15 @@
         <v-list-item three-line>
           <v-list-item-content>
             <div class="overline mb-4">OVERLINE</div>
-            <v-list-item-title class="headline mb-1">
-              {{ buildingItem.buildingData.building_name }}
-            </v-list-item-title>
+            <v-list-item-title class="headline mb-1">{{
+              buildingItem.buildingData.building_name
+            }}</v-list-item-title>
             <v-list-item-subtitle>
               {{ buildingItem.buildingData.address_text }}
               {{ buildingItem.buildingData.branch_number_text }}
             </v-list-item-subtitle>
           </v-list-item-content>
-          <v-list-item-avatar tile size="80" color="grey">
+          <v-list-item-avatar tile size="140" color="grey">
             <v-img v-if="buildingItem.imageURL" :src="buildingItem.imageURL" />
           </v-list-item-avatar>
         </v-list-item>
