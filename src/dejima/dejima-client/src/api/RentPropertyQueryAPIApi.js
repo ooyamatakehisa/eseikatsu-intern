@@ -1495,7 +1495,11 @@ export default class RentPropertyQueryAPIApi {
         'available_date.order': opts['availableDateOrder'],
         'price.order': opts['priceOrder'],
         'initial_cost.order': opts['initialCostOrder'],
-        'monthly_cost_summary.order': opts['monthlyCostSummaryOrder']
+        'monthly_cost_summary.order': opts['monthlyCostSummaryOrder'],
+        'latitude.from': opts['latitudeFrom'],
+        'latitude.to': opts['latitudeTo'],
+        'longitude.from': opts['longitudeFrom'],
+        'longitude.to': opts['longitudeTo'],
       };
       let headerParams = {
       };
@@ -2163,7 +2167,11 @@ export default class RentPropertyQueryAPIApi {
         'available_date.order': opts['availableDateOrder'],
         'price.order': opts['priceOrder'],
         'initial_cost.order': opts['initialCostOrder'],
-        'monthly_cost_summary.order': opts['monthlyCostSummaryOrder']
+        'monthly_cost_summary.order': opts['monthlyCostSummaryOrder'],
+        'latitude.from': opts['latitudeFrom'],
+        'latitude.to': opts['latitudeTo'],
+        'longitude.from': opts['longitudeFrom'],
+        'longitude.to': opts['longitudeTo'],
       };
       let headerParams = {
       };
@@ -2777,7 +2785,11 @@ export default class RentPropertyQueryAPIApi {
         'available_date.order': opts['availableDateOrder'],
         'price.order': opts['priceOrder'],
         'initial_cost.order': opts['initialCostOrder'],
-        'monthly_cost_summary.order': opts['monthlyCostSummaryOrder']
+        'monthly_cost_summary.order': opts['monthlyCostSummaryOrder'],
+        'latitude.from': opts['latitudeFrom'],
+        'latitude.to': opts['latitudeTo'],
+        'longitude.from': opts['longitudeFrom'],
+        'longitude.to': opts['longitudeTo'],
       };
       let headerParams = {
       };
