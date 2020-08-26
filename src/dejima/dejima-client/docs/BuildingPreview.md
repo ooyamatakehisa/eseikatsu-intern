@@ -41,5 +41,8 @@ Name | Type | Description | Notes
 **hasVisitorsParking** | **Boolean** |  | 
 **hasGarage** | **Boolean** |  | 
 **hasDeliveryBox** | **Boolean** |  | 
+**architecturalCondition** | **String** |  | [optional] [readonly] 
+**architecturalConditionCode** | **Number** | 1: 条件有り&lt;br/&gt;2: 条件無し&lt;br/&gt;3: One未入力 | [optional] [default to 3]
+**useDistrict** | [**[UseDistrict]**](UseDistrict.md) |  | [optional] 
 
 

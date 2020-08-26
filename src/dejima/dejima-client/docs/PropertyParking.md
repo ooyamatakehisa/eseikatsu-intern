@@ -19,5 +19,6 @@ Name | Type | Description | Notes
 **parkingDeposit** | [**PriceWithUnit**](PriceWithUnit.md) |  | [optional] 
 **hasBikeParking** | **Boolean** |  | [optional] 
 **hasMotorbikeParking** | **Boolean** |  | [optional] 
+**remark** | **String** |  | [optional] 
 
 

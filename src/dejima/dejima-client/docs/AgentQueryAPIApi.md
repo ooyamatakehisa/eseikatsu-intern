@@ -16,7 +16,7 @@ Method | HTTP request | Description
 
 Get Agent By Customer Key
 
-customer_key または agent_guidで問い合わせ先情報を取得する agent_guidは非推奨
+customer_key または agent_guidで問い合わせ先情報を取得する（賃貸） agent_guidは非推奨
 
 ### Example
 
@@ -116,7 +116,7 @@ Name | Type | Description  | Notes
 
 List Agent
 
-API_KEYに紐づくカスタマーキーと一致する問い合わせ先組織情報一覧を取得する  クエリで customer_key を指定すれば対象を絞り込める
+API_KEYに紐づくカスタマーキーと一致する問い合わせ先組織情報一覧を取得する（賃貸）  クエリで customer_key を指定すれば対象を絞り込める
 
 ### Example
 

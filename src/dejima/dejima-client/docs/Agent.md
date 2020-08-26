@@ -18,5 +18,6 @@ Name | Type | Description | Notes
 **agentUrl** | **String** |  | [optional] 
 **agentLicenseNumber** | **String** |  | [optional] 
 **staff** | [**[Staff]**](Staff.md) |  | 
+**staffComment** | **String** |  | [optional] 
 
 
