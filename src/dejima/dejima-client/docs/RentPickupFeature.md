@@ -36,6 +36,7 @@ Name | Type | Description | Notes
 **isAllElectric** | **Boolean** |  | [optional] [default to false]
 **hasWashroom** | **Boolean** |  | [optional] [default to false]
 **isNoBuildingInFront** | **Boolean** |  | [optional] [default to false]
+**hasWashstand** | **Boolean** |  | [optional] [default to false]
 **hasVerandaBalcony** | **Boolean** |  | [optional] [default to false]
 
 

@@ -111,6 +111,7 @@ Name | Type | Description | Notes
 **availableDatejun** | [**DateJun**](DateJun.md) | 入居可能日／引渡可能日 | [optional] 
 **departureDate** | **Date** |  | [optional] 
 **salesPoint** | **String** |  | [optional] 
+**websiteComment** | **String** |  | [optional] 
 **messageToOtherCompany** | **String** |  | [optional] 
 **originalPropertyCodeText** | **String** |  | [optional] 
 **advertiseFlag** | **Boolean** |  | [optional] 

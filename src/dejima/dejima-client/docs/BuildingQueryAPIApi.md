@@ -97,8 +97,14 @@ let opts = {
   'town': ["null"], // [String] | 町村
   'jisCode': [null], // [Number] | JISコード
   'address': ["null"], // [String] | 住所
+  'zipcode': "zipcode_example", // String | 建物郵便番号
+  'latitudeFrom': 3.4, // Number | 緯度(世界測地系)検索区間（DEG形式。単位:ミリ秒）
+  'latitudeTo': 3.4, // Number | 緯度(世界測地系)検索区間（DEG形式。単位:ミリ秒）
+  'longitudeFrom': 3.4, // Number | 経度(世界測地系)検索区間（DEG形式。単位:ミリ秒）
+  'longitudeTo': 3.4, // Number | 経度(世界測地系)検索区間（DEG形式。単位:ミリ秒）
   'customerKey': [null], // [Number] | カスタマーキー
-  'tatemonoGuid': ["null"] // [String] | One建物GUID
+  'tatemonoGuid': ["null"], // [String] | One建物GUID
+  'buildingFullKey': ["null"] // [String] | 建物フルID
 };
 apiInstance.searchBuilding(opts).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
@@ -130,8 +136,14 @@ Name | Type | Description  | Notes
  **town** | [**[String]**](String.md)| 町村 | [optional] 
  **jisCode** | [**[Number]**](Number.md)| JISコード | [optional] 
  **address** | [**[String]**](String.md)| 住所 | [optional] 
+ **zipcode** | **String**| 建物郵便番号 | [optional] 
+ **latitudeFrom** | **Number**| 緯度(世界測地系)検索区間（DEG形式。単位:ミリ秒） | [optional] 
+ **latitudeTo** | **Number**| 緯度(世界測地系)検索区間（DEG形式。単位:ミリ秒） | [optional] 
+ **longitudeFrom** | **Number**| 経度(世界測地系)検索区間（DEG形式。単位:ミリ秒） | [optional] 
+ **longitudeTo** | **Number**| 経度(世界測地系)検索区間（DEG形式。単位:ミリ秒） | [optional] 
  **customerKey** | [**[Number]**](Number.md)| カスタマーキー | [optional] 
  **tatemonoGuid** | [**[String]**](String.md)| One建物GUID | [optional] 
+ **buildingFullKey** | [**[String]**](String.md)| 建物フルID | [optional] 
 
 ### Return type
 

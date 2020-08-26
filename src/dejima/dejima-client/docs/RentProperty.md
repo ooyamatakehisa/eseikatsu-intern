@@ -40,6 +40,7 @@ Name | Type | Description | Notes
 **specialityPdfComment** | **String** |  | [optional] 
 **equipmentComment** | **String** |  | [optional] 
 **equipmentPdfComment** | **String** |  | [optional] 
+**externalUrl** | [**[RentExternalUrl]**](RentExternalUrl.md) |  | [optional] 
 **customerKey** | **Number** |  | 
 **agentGuid** | **String** |  | 
 **staffGuid** | **String** |  | [optional] 
