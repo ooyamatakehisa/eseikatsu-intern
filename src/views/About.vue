@@ -1,12 +1,8 @@
 <template>
-  <section class="section">
-    <div class="container">
-      <div class="content">
-        <h1>吾輩はボイラープレートである。</h1>
-        <p>名前はまだない。</p>
-      </div>
-    </div>
-  </section>
+  <v-container>
+    <h1>吾輩はボイラープレートである。</h1>
+    <p>名前はまだない。</p>
+  </v-container>
 </template>
 
 <script lang="js">
