@@ -23,8 +23,5 @@ export default {
 
   methods: {
   },
-  created : function() {
-    this.$store.commit("apiServices/initialize");
-  }
 };
 </script>
