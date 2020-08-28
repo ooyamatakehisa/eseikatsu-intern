@@ -20,6 +20,19 @@
               <v-icon small color="primary">mdi-open-in-new</v-icon>
             </a>
           </div>
+          <div>
+            地図タイルとして地理院タイルを利用しています。他のタイルも組み込み可能ですが規約の関係上使用不可能な場合が多いので注意してください。
+          </div>
+          <div>
+            地理院タイルの詳細については
+            <a
+              href="https://maps.gsi.go.jp/development/ichiran.html"
+              target="_blank"
+            >
+              こちら
+              <v-icon small color="primary">mdi-open-in-new</v-icon>
+            </a>
+          </div>
         </v-alert>
       </v-col>
     </v-row>
@@ -37,8 +50,8 @@
       ></l-control-scale>
 
       <l-tile-layer
-        url="https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
-        attribution="<a href='https://wikimediafoundation.org/wiki/Maps_Terms_of_Use'>Wikimedia</a>"
+        url="https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png"
+        attribution="<a href='https://maps.gsi.go.jp/development/ichiran.html'>国土地理院</a>"
       ></l-tile-layer>
       <l-marker :lat-lng="marker">
         <l-tooltip :options="{ permanent: true, interactive: true }">
