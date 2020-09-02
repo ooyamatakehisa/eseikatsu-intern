@@ -15,7 +15,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import { BuildingPropertyPreview } from "../dejima/dejima-client/src";
 
 export default {
