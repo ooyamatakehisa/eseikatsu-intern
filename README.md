@@ -62,10 +62,5 @@ npx firebase deploy
 
 **注意: `functions/public/` の下にファイルやフォルダを置いて `deploy` コマンドを実行しないでください。必要なアクセス制御が実施されません。**
 
-#### Disable published release
-```
-npx firebase hosting:disable
-```
-
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
