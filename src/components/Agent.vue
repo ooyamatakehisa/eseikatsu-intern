@@ -9,7 +9,7 @@
 </template>
 
 <script lang="js">
-import { AgentQueryAPIApi } from "../dejima/dejima-client/src/index";
+import { AgentQueryAPIApi } from "../../dejima/dejima-client/src/index";
 
 export default {
   name: "Agent",
@@ -21,13 +21,16 @@ export default {
   }),
 
   methods: {
-    fetchAgentData() {
+    getCustomerKey() {
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const AgentQueryAPIApi = new AgentQueryAPIApi(apiClient);
       const propertyDetals = this.$store.getters.getProperty;
-      const customerKey = propertyDetals.customerKey;
-      this.agentData = await AgentQueryAPIApi.getAgentByCustomerKey(customerKey);
+      return propertyDetals.customerKey;
+    },
+    fetchAgentData: async function() {
+      this.agentData = await AgentQueryAPIApi.getAgentByCustomerKey(this.getCustomerKey());
     }
+
   },
 
   mounted() {
