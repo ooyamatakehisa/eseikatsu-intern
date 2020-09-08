@@ -2,25 +2,17 @@
   <v-container fluid>
     <v-row justify="center" class="text-center">
       <v-col>
-        <img v-if="logoVisible" src="../assets/logo.png" />
-        <v-container>Hello World</v-container>
-        <v-btn @click="onClicked">V-ON テスト</v-btn>
-        <v-text-field v-model="text" placeholder="edit me"></v-text-field>
-        <v-text-field v-model="text" placeholder="edit me"></v-text-field>
-        <v-btn @click="resetText">リセットボタン</v-btn>
-        <HopButton :understand="text"></HopButton>
-
-        <v-btn @click="onSearch">検索</v-btn>
-      </v-col>
-
-      <v-col>
-        <div>
+        <v-text-field v-model="priceDown" placeholder="例）30000（円以上）" />
+        <v-text-field v-model="priceUp" placeholder="例）50000（円以下）" />
+        <v-btn v-on:click="onSearch()">検索</v-btn>
+        <v-btn v-on:click="reset()">リセット</v-btn>
+        <!-- <p>{{ queryResults }}</p> -->
+        <div class="container" v-if="queryResults !== null">
           <bukken-property-card
             v-for="result in queryResults.results"
             :key="result.buildingGuid"
             :value="result"
-          >
-          </bukken-property-card>
+          ></bukken-property-card>
         </div>
       </v-col>
     </v-row>
@@ -30,56 +22,54 @@
 </template>
 
 <script lang="js">
-import HopButton from "../components/HopButton.vue";
-import { RentPropertyQueryAPIApi } from "../dejima/dejima-client/src/index.js";
-import BuildingPropertyCardComponent from "../components/BukkenPropertyCard";
+import { RentPropertyQueryAPIApi } from "../dejima/dejima-client/src/index";
+import BukkenPropertyCardComponent from "../components/BukkenPropertyCard.vue";
 
 export default {
   name: "Home",
 
   components: {
-    HopButton,
-    "bukken-property-card": BuildingPropertyCardComponent,
+    "bukken-property-card": BukkenPropertyCardComponent,
   },
 
   data: () => ({
-    logoVisible: true,
-    text: "",
     queryResults: "",
+    priceDown: "",
+    priceUp: "",
   }),
 
   methods: {
-    onClicked() {
-      this.logoVisible = !this.logoVisible;
+    reset: function() {
+      this.priceDown = "";
+      this.priceUp = "";
     },
-    resetText() {
-      this.text = "";
-    },
-    async onSearch() {
+    onSearch: async function(){
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
       this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding({
-        buildingName: this.text,
+        priceFrom: this.priceDown,
+        priceTo: this.priceUp,
       });
-      this.saveSearchQuery(this.text);
+      this.saveSearchQuery(this.priceDown);
+      this.saveSearchQuery(this.priceUp);
     },
-
-    async saveSearchQuery() {
-      await this.$store.state.apiServices.firebaseService.database.ref("users/sugimoto").set({query: this.text});
+    saveSearchQuery: async function() {
+      await this.$store.state.apiServices.firebaseService.database
+        .ref("users/username")
+        .set({ query: [this.priceDown, this.priceUp] });
     },
-
-    async loadSearchQuery() {
+    loadSearchQuery: async function() {
       const firebaseService = this.$store.state.apiServices.firebaseService;
-      const result = await firebaseService.database.ref("user/username").once("value");
+      const result = await firebaseService.database
+        .ref(`users/username`)
+        .once("value");
       return result.val() ? result.val().query : "";
     },
-    toImgAPI() {
-      this.$router.push("/dejimaImageAPISample")
-    }
   },
-
-  async mounted() {
-    this.text = await this.loadSearchQuery();
+  mounted: async function(){
+    const getQuery = await this.loadSearchQuery();
+    this.priceDown = getQuery[0];
+    this.priceUp = getQuery[1];
   },
 
   // created() {
