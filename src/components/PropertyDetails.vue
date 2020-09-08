@@ -4,7 +4,7 @@
       <v-col>
         <h2>受け取ったpropertyFullKey: {{propertyFullKey}}</h2>
         <br>
-        <v-btn @click="runQuery">クエリ実行</v-btn>
+        <v-btn @click="searchRentPropertyByDwellingUnit">クエリ実行</v-btn>
       </v-col>
 
       <v-col>{{queryResults}}</v-col>
@@ -27,17 +27,12 @@ export default {
     }
   },
 
-  components: {
-    "bukken-property-card": BuildingPropertyCardComponent,
-  },
-
   created() {
     this.propertyFullKey = this.$route.params.id.toString();
   },
 
   methods: {
-    async runQuery() {
-      console.log("実行します");
+    async searchRentPropertyByDwellingUnit() {
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
       this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByDwellingUnit({"propertyFullKey": [this.propertyFullKey]});
