@@ -21,14 +21,13 @@ export default {
   }),
 
   methods: {
-    getCustomerKey() {
+    
+    fetchAgentData: async function() {
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const AgentQueryAPIApi = new AgentQueryAPIApi(apiClient);
       const propertyDetals = this.$store.getters.getProperty;
-      return propertyDetals.customerKey;
-    },
-    fetchAgentData: async function() {
-      this.agentData = await AgentQueryAPIApi.getAgentByCustomerKey(this.getCustomerKey());
+      const customerKey = propertyDetals.customerKey;
+      this.agentData = await AgentQueryAPIApi.getAgentByCustomerKey(tcustomerKey);
     }
 
   },
