@@ -1,0 +1,37 @@
+[
+  {
+    "name": "由比ヶ浜",
+    "latitude": 35.310915,
+    "longitude": 139.544548
+  },
+  {
+    "name": "静波",
+    "latitude": 34.730849,
+    "longitude": 138.232300
+  },
+  {
+    "name": "江ノ島",
+    "latitude": 35.300304,
+    "longitude": 139.480432
+  },
+  {
+    "name": "観音崎",
+    "latitude": 35.258649,
+    "longitude": 139.740606
+  },
+  {
+    "name": "波崎",
+    "latitude": 35.753674,
+    "longitude": 140.831199
+  },
+  {
+    "name": "熱海",
+    "latitude": 35.099513,
+    "longitude": 139.078122
+  },
+  {
+    "name": "九十九里浜",
+    "latitude": 35.516309,
+    "longitude": 140.446993
+  }
+]
