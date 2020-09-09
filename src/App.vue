@@ -25,6 +25,7 @@
 
       <v-toolbar-items>
         <v-btn color="primary" depressed to="/">Home</v-btn>
+        <v-btn color="primary" depressed to="/detail/1107373796920000006226">Detail</v-btn>
 
         <v-btn
           href="https://github.com/vuetifyjs/vuetify/releases/latest"
@@ -58,7 +59,6 @@ export default {
   components: {},
 
   data: () => ({
-    //
   }),
   methods: {},
   created: function() {
