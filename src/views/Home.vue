@@ -53,11 +53,13 @@ export default {
     onSearch: async function(){
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
-      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding({
-        priceFrom: this.priceDown,
-        priceTo: this.priceUp,
-      });
-      console.log(this.queryResults)
+      const searchObeject = {};
+      if (this.priceDown) { searchObeject.priceFrom = this.priceDown; }
+      if (this.priceUp) { searchObeject.priceTo = this.priceUp; }
+      if (this.stationCode) { searchObeject.stationCode = this.stationCode; }
+      if (this.areaCode) { searchObeject.cityCode = this.areaCode; }
+      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObeject);
+
       this.saveSearchQuery(this.priceDown);
       this.saveSearchQuery(this.priceUp);
     },
