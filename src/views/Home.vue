@@ -36,7 +36,6 @@
         </div>
       </v-col>
     </v-row>
-    <v-btn @click="toImgAPI">imageAPI</v-btn>
   </v-container>
 </template>
 
