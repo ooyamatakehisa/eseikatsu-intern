@@ -10,10 +10,10 @@
     </v-row>
     <v-row justify="center" class="text-center">
       <v-col cols="6">
-        <SeaDistance />
+        <sea-distance />
       </v-col>
       <v-col>
-        <v-card><PropertyInfo /></v-card>
+        <v-card><property-info /></v-card>
         <br>
         <v-card><agent customerKey=""/></v-card>
       </v-col>
@@ -44,8 +44,8 @@ export default {
     "agent": Agent,
     "property-map": propertyMap,
     "property-image": propertyImage,
-    SeaDistance,
-    PropertyInfo,
+    "sea-distance": SeaDistance,
+    "property-info": PropertyInfo,
   },
 
   async created() {

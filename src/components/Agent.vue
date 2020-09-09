@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4>不動産情報</h4>
+    <h4>営業所</h4>
     {{ agentData.agent_shop_name }}<br>
     TEL: {{ agentData.agent_tel_number }}<br>
     Email: {{ agentData.agent_email }}<br>
