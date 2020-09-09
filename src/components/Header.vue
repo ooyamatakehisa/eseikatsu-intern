@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-app-bar app color="#E3F2FD" dark>
+    <v-app-bar app color="#E3F2FD">
       <template class="d-flex align-center">
         <v-img
           alt="Vuetify Name"
@@ -14,8 +14,8 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        <v-btn color="black" depressed to="/">検索</v-btn>
-        <v-btn color="black" depressed to="/detail/1107373796920000006226">詳細画面</v-btn>
+        <v-btn color="#7B1FA2" depressed to="/">検索</v-btn>
+        <v-btn color="#7B1FA2" depressed to="/detail/1107373796920000006226">詳細画面</v-btn>
       </v-toolbar-items>
     </v-app-bar>
   </v-container>
