@@ -2,15 +2,13 @@
   <v-container>
     <agent customerKey=""/>
     <property-map/>
+    <property-image/>
     <v-row justify="center" class="text-center">
-      <v-col>
+      <v-col cols="6">
         <h2>受け取ったpropertyFullKey: {{propertyFullKey}}</h2>
         <br>
-        <!-- <v-btn @click="searchRentPropertyByDwellingUnit">クエリ実行</v-btn> -->
+        <SeaDistance />
       </v-col>
-
-      <v-col>{{ queryResults }}</v-col>
-
     </v-row>
   </v-container>
 </template>
@@ -19,14 +17,18 @@
 <script>
 import { RentPropertyQueryAPIApi } from "../dejima/dejima-client/src/index.js";
 import BuildingPropertyCardComponent from "../components/BukkenPropertyCard";
+import SeaDistance from "./SeaDistance";
 import Agent from "./Agent.vue";
 import propertyMap from "./Map.vue";
+import propertyImage from "./Image.vue";
 
 
 export default {
+  components: {
+    SeaDistance,
+  },
   data() {
     return {
-      text: "",
       queryResults: "",
       propertyFullKey: null,
     }
@@ -34,7 +36,8 @@ export default {
 
   components: {
     "agent": Agent,
-    "property-map": propertyMap
+    "property-map": propertyMap,
+    "property-image": propertyImage
   },
 
   async created() {
@@ -49,6 +52,10 @@ export default {
       this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByDwellingUnit({"propertyFullKey": [this.propertyFullKey]});
       this.$store.commit("propertyDetails/updateProperty", this.queryResults);
     },
+  },
+
+  mounted() {
+    this.searchRentPropertyByDwellingUnit();
   },
 
 }
