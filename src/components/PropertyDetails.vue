@@ -1,13 +1,21 @@
 <template>
   <v-container>
-    <agent customerKey=""/>
-    <property-map/>
-    <property-image/>
+    <v-row>
+      <v-col cols="6">
+        <property-map/>
+      </v-col>
+      <v-col cols="6">
+        <property-image/>
+      </v-col>
+    </v-row>
     <v-row justify="center" class="text-center">
       <v-col cols="6">
-        <h2>受け取ったpropertyFullKey: {{propertyFullKey}}</h2>
-        <br>
         <SeaDistance />
+      </v-col>
+      <v-col>
+        <v-card><PropertyInfo /></v-card>
+        <br>
+        <v-card><agent customerKey=""/></v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -21,12 +29,10 @@ import SeaDistance from "./SeaDistance";
 import Agent from "./Agent.vue";
 import propertyMap from "./Map.vue";
 import propertyImage from "./Image.vue";
+import PropertyInfo from "./PropertyInfo";
 
 
 export default {
-  components: {
-    SeaDistance,
-  },
   data() {
     return {
       queryResults: "",
@@ -37,7 +43,9 @@ export default {
   components: {
     "agent": Agent,
     "property-map": propertyMap,
-    "property-image": propertyImage
+    "property-image": propertyImage,
+    SeaDistance,
+    PropertyInfo,
   },
 
   async created() {

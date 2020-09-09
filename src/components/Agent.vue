@@ -1,11 +1,10 @@
 <template>
   <div>
-    不動産情報<br>
+    <h4>不動産情報</h4>
     {{ agentData.agent_shop_name }}<br>
     TEL: {{ agentData.agent_tel_number }}<br>
     Email: {{ agentData.agent_email }}<br>
     住所: {{ agentData.agent_shop_address }}
-  
   </div>
 </template>
 
@@ -34,7 +33,6 @@ export default {
       const customerKey = propertyDetails.results[0].customer_key;
       this.agentData = await agentQueryAPIApi.getAgentByCustomerKey(customerKey);
       this.agentShopName = this.agentData.agentShopName;
-      console.log(propertyDetails)
     }
   },
 
@@ -42,6 +40,6 @@ export default {
   methods: {
   },
 
-  
+
 }
 </script>

@@ -1,14 +1,31 @@
 <template>
   <v-container>
-    <h4 v-if="longitude">longitude: {{longitude}}</h4>
-    <h4 v-if="latitude">latitude: {{latitude}}</h4>
 
-    <v-card v-for="item in sea" :key="item.name">
-      <p>{{item.name}}</p>
-      <p>経度：{{item.longitude}}</p>
-      <p>緯度：{{item.latitude}}</p>
-      <p>距離：{{item.distance}} km</p>
-    </v-card>
+    <v-simple-table height="300px">
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th class="text-center">浜</th>
+            <th class="text-center">距離</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="sea in seas" :key="sea.name">
+            <td>{{sea.name}}</td>
+            <td>{{Math.floor(sea.distance)}} km</td>
+          </tr>
+        </tbody>
+      </template>
+
+    </v-simple-table>
+
+    <template>
+      <v-data-table
+        :headers="['浜', '距離']"
+        :items="seas"
+        :items-per-page="5"
+      ></v-data-table>
+    </template>
 
   </v-container>
 </template>
@@ -20,7 +37,7 @@ export default {
     return {
       longitude: null,
       latitude: null,
-      sea: jsonSea,
+      seas: jsonSea,
     }
   },
   computed: {
@@ -30,16 +47,16 @@ export default {
   },
   watch: {
     getProperty(val) {
-      const data = val.results[0].building_preview;
-      this.longitude = data.longitude / 3600000;
-      this.latitude = data.latitude / 3600000;
+      const propertyData = val.results[0].building_preview;
+      this.longitude = propertyData.longitude / 3600000;
+      this.latitude = propertyData.latitude / 3600000;
 
-      this.sea.forEach(element => {
+      this.seas.forEach(element => {
         const distance = this.calculateDistance(this.latitude, this.longitude, element.latitude, element.longitude);
         element["distance"] = distance;
       });
 
-      this.sea.sort((a,b) => {
+      this.seas.sort((a,b) => {
         if (a.distance < b.distance) return -1
         else return 1;
       })

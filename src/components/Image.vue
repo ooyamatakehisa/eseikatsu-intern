@@ -1,12 +1,20 @@
 <template>
   <v-container fluid>
-    <v-carousel :show-arrows="false">
-      <v-carousel-item
-        v-for="(imageMetadata, index) in imageMetadatas"
-        :key="index"
-        :src="imageMetadata.url"
-      ></v-carousel-item>
-    </v-carousel>
+
+    <template>
+      <v-carousel
+        hide-delimiters
+        cycle
+      >
+      <template>
+        <v-carousel-item
+          v-for="(imageMetadata, index) in imageMetadatas"
+          :key="index"
+          :src="imageMetadata.url"
+        ></v-carousel-item>
+      </template>
+      </v-carousel>
+    </template>
   </v-container>
 </template>
 <script>
@@ -17,11 +25,11 @@ import ImageQueryAPIApi from "../dejima/dejima-image-client/src/api/ImageQueryAP
 
 export default {
   data: () => ({
-    imageMetadatas: []
+    imageMetadatas: [],
   }),
-  
+
   computed: {
-    propertyDetails: function() { return this.$store.getters["propertyDetails/getProperty"] }
+    propertyDetails: function() { return this.$store.getters["propertyDetails/getProperty"] },
   },
 
   watch: {
@@ -32,7 +40,6 @@ export default {
       this.imageMetadatas = await imageQueryAPIApi.getMetadataRentRentPropertyKeyGet(propertyFullKey);
     }
   },
-     
-  
+
 };
 </script>
