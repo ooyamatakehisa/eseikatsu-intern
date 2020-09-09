@@ -1,6 +1,6 @@
 <template>
   <v-container fluid v-if="imageMetadatas">
-    <v-carousel :show-arrows="false">
+    <v-carousel hide-delimiters cycle>
       <v-carousel-item
         v-for="(imageMetadata, index) in imageMetadatas"
         :key="index"
@@ -19,9 +19,9 @@ export default {
   data: () => ({
     imageMetadatas: null
   }),
-  
+
   computed: {
-    propertyDetails: function() { return this.$store.getters["propertyDetails/getProperty"] }
+    propertyDetails: function() { return this.$store.getters["propertyDetails/getProperty"] },
   },
 
   watch: {
@@ -36,7 +36,6 @@ export default {
       }
     }
   },
-     
-  
+
 };
 </script>
