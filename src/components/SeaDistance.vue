@@ -16,16 +16,7 @@
           </tr>
         </tbody>
       </template>
-
     </v-simple-table>
-
-    <template>
-      <v-data-table
-        :headers="['浜', '距離']"
-        :items="seas"
-        :items-per-page="5"
-      ></v-data-table>
-    </template>
 
   </v-container>
 </template>
