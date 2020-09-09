@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid v-if="center[0] && center[1]">
     <l-map
       :zoom="zoom"
       :center="center"
@@ -43,7 +43,7 @@ export default {
 
   data() {
     return {
-      center: [35.6812405, 139.7649361],
+      center: [null, null],
       marker: [35.6812405, 139.7649361],
       zoom: 15,
       options: {
@@ -62,8 +62,13 @@ export default {
 
   watch: {
     propertyDetails: function (newVal, oldVal) {
-      const latitude = newVal.results[0].building_preview.latitude / 36e5 ;
-      const longitude = newVal.results[0].building_preview.longitude / 36e5;
+      console.log(newVal)
+      const latitude = newVal.results[0].building_preview.latitude 
+        ? newVal.results[0].building_preview.latitude / 36e5
+        : null;
+      const longitude = newVal.results[0].building_preview.longitude
+        ? newVal.results[0].building_preview.longitude / 36e5
+        : null;
       this.propertyName = newVal.results[0].building_preview.building_name;
       this.center = [latitude, longitude];
       this.marker = [latitude, longitude];
