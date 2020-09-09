@@ -128,7 +128,6 @@ Finally, you need to build the module:
 
 ```shell
 npm run build
-```
 
 #### git
 
