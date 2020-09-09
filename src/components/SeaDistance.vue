@@ -21,7 +21,6 @@ export default {
       longitude: null,
       latitude: null,
       sea: jsonSea,
-      distanceList: [],
     }
   },
   computed: {
@@ -37,7 +36,6 @@ export default {
 
       this.sea.forEach(element => {
         const distance = this.calculateDistance(this.latitude, this.longitude, element.latitude, element.longitude);
-        // this.distanceList.push(distance);
         element["distance"] = distance;
       });
 
