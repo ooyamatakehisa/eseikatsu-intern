@@ -2,8 +2,6 @@
   <v-container fluid>
     <v-text-field v-model="priceFrom" placeholder="例）30000（円以上）" />
     <v-text-field v-model="priceTo" placeholder="例）50000（円以下）" />
-    <v-btn v-on:click="onSearch()">検索</v-btn>
-    <v-btn v-on:click="reset()">リセット</v-btn>
 
     <h5>駅指定</h5>
     <v-row>
@@ -23,17 +21,25 @@
       </template>
     </v-row>
 
-    <div class="container" v-if="queryResults !== null">
-        <div v-for="(building, index) in queryResults.results" :key="building.id">
-          <router-link 
-            :to="{ name: 'detail', params: { id: queryResults.results[index].property[0].property_full_key } }"
-          >
-            <bukken-property-card
-              :key="building.buildingGuid"
-              :value="building"
-            ></bukken-property-card>
-          </router-link>
-        </div>
+    <v-btn v-on:click="onSearch()">検索</v-btn>
+    <v-btn v-on:click="reset()">リセット</v-btn>
+
+    <div class="container" v-if="queryResults">
+      並び替え
+      <v-radio-group v-model="sortKey" row>
+        <v-radio label="家賃" value="price"></v-radio>
+        <v-radio label="帖数" value="size"></v-radio>
+      </v-radio-group>
+      <div v-for="(building, index) in queryResults.results" :key="building.id">
+        <router-link 
+          :to="{ name: 'detail', params: { id: queryResults.results[index].property[0].property_full_key } }"
+        >
+          <bukken-property-card
+            :key="building.buildingGuid"
+            :value="building"
+          ></bukken-property-card>
+        </router-link>
+      </div>
     </div>
   </v-container>
 </template>
@@ -50,7 +56,7 @@ export default {
   },
 
   data: () => ({
-    queryResults: "",
+    queryResults: null,
     queryStations: "", // 駅の情報
     queryAreas: "", // cityの情報
     priceFrom: "",  // 家賃下限
@@ -58,6 +64,7 @@ export default {
     stationCode: [],  // 駅コード
     areaCode: [], // エリア(市区群)のコード
     stationNameList: "", // queryStationsから重複をなくした駅の情報
+    sortKey: null
   }),
 
   methods: {
@@ -100,7 +107,17 @@ export default {
         .ref(`users/username`)
         .once("value");
       return result.val() ? result.val().query : "";
-    },
+    }
+  },
+  
+  watch: {
+    sortKey: function() {
+      console.log(this.sortKey)
+      const func = this.sortKey === "price"
+        ? ((o, next_o) => { return o.property[0].price.amount < next_o.property[0].price.amount ? -1 : 1})
+        : ((o, next_o) => { return o.property[0].exclusive_area.area > next_o.property[0].exclusive_area.area ? -1 : 1});
+      this.queryResults.results.sort(func);
+    }
   },
 
   mounted: async function(){
@@ -126,6 +143,5 @@ export default {
       }
     });
   }
-
 };
 </script>
