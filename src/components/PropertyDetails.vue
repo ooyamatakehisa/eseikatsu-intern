@@ -1,14 +1,11 @@
 <template>
   <v-container>
     <v-row justify="center" class="text-center">
-      <v-col>
+      <v-col cols="6">
         <h2>受け取ったpropertyFullKey: {{propertyFullKey}}</h2>
         <br>
-        <v-btn @click="searchRentPropertyByDwellingUnit">クエリ実行</v-btn>
+        <SeaDistance />
       </v-col>
-
-      <v-col>{{queryResults}}</v-col>
-
     </v-row>
   </v-container>
 </template>
@@ -17,11 +14,14 @@
 <script>
 import { RentPropertyQueryAPIApi } from "../dejima/dejima-client/src/index.js";
 import BuildingPropertyCardComponent from "../components/BukkenPropertyCard";
+import SeaDistance from "./SeaDistance";
 
 export default {
+  components: {
+    SeaDistance,
+  },
   data() {
     return {
-      text: "",
       queryResults: "",
       propertyFullKey: null,
     }
@@ -40,9 +40,10 @@ export default {
     },
   },
 
-  async mounted() {
-    this.text = await this.loadSearchQuery();
+  mounted() {
+    this.searchRentPropertyByDwellingUnit();
   },
+
 }
 </script>
 
