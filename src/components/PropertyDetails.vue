@@ -1,5 +1,7 @@
 <template>
   <v-container>
+    <agent customerKey=""/>
+    <property-map/>
     <v-row justify="center" class="text-center">
       <v-col>
         <h2>受け取ったpropertyFullKey: {{propertyFullKey}}</h2>
@@ -7,10 +9,9 @@
         <!-- <v-btn @click="searchRentPropertyByDwellingUnit">クエリ実行</v-btn> -->
       </v-col>
 
-      <v-col>{{queryResults}}</v-col>
+      <v-col>{{ queryResults }}</v-col>
 
     </v-row>
-    <agent customerKey=""/>
   </v-container>
 </template>
 
@@ -19,6 +20,7 @@
 import { RentPropertyQueryAPIApi } from "../dejima/dejima-client/src/index.js";
 import BuildingPropertyCardComponent from "../components/BukkenPropertyCard";
 import Agent from "./Agent.vue";
+import propertyMap from "./Map.vue";
 
 
 export default {
@@ -31,7 +33,8 @@ export default {
   },
 
   components: {
-    "agent": Agent
+    "agent": Agent,
+    "property-map": propertyMap
   },
 
   async created() {
