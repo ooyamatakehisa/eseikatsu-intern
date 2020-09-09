@@ -6,6 +6,19 @@
         <v-text-field v-model="priceUp" placeholder="例）50000（円以下）" />
         <v-btn v-on:click="onSearch()">検索</v-btn>
         <v-btn v-on:click="reset()">リセット</v-btn>
+
+        <!-- 駅周辺指定のラジオボタン -->
+        <label v-for="(station, index) in stationNameList" :key="`station-${index}`">
+          <input v-model="stationCode" :value="station.code" type="radio" />
+          {{ station.name }}
+        </label>
+
+        <!-- エリア指定のラジオボタン -->
+        <label v-for="(area, index) in queryAreas.results" :key="`area-${index}`">
+          <input v-model="areaCode" :value="area.city_code" type="radio" />
+          {{ area.city }}
+        </label>
+
         <!-- <p>{{ queryResults }}</p> -->
         <div class="container" v-if="queryResults !== null">
           
@@ -24,7 +37,7 @@
         </div>
       </v-col>
     </v-row>
-
+    <v-btn @click="toImgAPI">imageAPI</v-btn>
   </v-container>
 </template>
 
@@ -41,14 +54,21 @@ export default {
 
   data: () => ({
     queryResults: "",
-    priceDown: "",
-    priceUp: "",
+    queryStations: "", // 駅の情報
+    queryAreas: "", // cityの情報
+    priceDown: "",  // 家賃下限
+    priceUp: "",  // 家賃上限
+    stationCode: "",  // 駅コード
+    areaCode: "", // エリア(市区群)のコード
+    stationNameList: "", // queryStationsから重複をなくした駅の情報
   }),
 
   methods: {
     reset: function() {
       this.priceDown = "";
       this.priceUp = "";
+      this.stationCode = "";
+      this.areaCode = "";
     },
     onSearch: async function(){
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
@@ -56,15 +76,19 @@ export default {
       this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding({
         priceFrom: this.priceDown,
         priceTo: this.priceUp,
+        stationCode: [this.stationCode],
+        cityCode: [this.areaCode],
       });
-      console.log(this.queryResults)
+
       this.saveSearchQuery(this.priceDown);
       this.saveSearchQuery(this.priceUp);
+      this.saveSearchQuery(this.stationCode);
+      this.saveSearchQuery(this.areaCode);
     },
     saveSearchQuery: async function() {
       await this.$store.state.apiServices.firebaseService.database
         .ref("users/username")
-        .set({ query: [this.priceDown, this.priceUp] });
+        .set({ query: [this.priceDown, this.priceUp, this.stationCode, this.areaCode] });
     },
     loadSearchQuery: async function() {
       const firebaseService = this.$store.state.apiServices.firebaseService;
@@ -74,11 +98,30 @@ export default {
       return result.val() ? result.val().query : "";
     },
   },
+
   mounted: async function(){
     const getQuery = await this.loadSearchQuery();
-    this.priceDown = getQuery[0];
-    this.priceUp = getQuery[1];
+    this.priceDown = getQuery[0]; // 家賃の下限
+    this.priceUp = getQuery[1];   // 家賃の上限
+    this.stationCode = getQuery[2]; // 駅コード
+    this.areaCode = getQuery[3];  // 市区郡コード
   },
+
+  created: async function() {
+    const apiClient = this.$store.state.apiServices.dejimaApiClient;
+    const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
+    this.queryStations = await rentPropertyQueryAPIApi.aggregateRentPropertyByLine("station");
+    this.queryAreas = await rentPropertyQueryAPIApi.aggregateRentPropertyByArea("city");
+
+    let values = [];
+    this.stationNameList = this.queryStations.results.filter(e => {
+      if (values.indexOf(e["name"]) === -1) {
+        // values に値が存在しない要素のみをフィルタリング
+        values.push(e["name"]);
+        return e;
+      }
+    });
+  }
 
 };
 </script>
