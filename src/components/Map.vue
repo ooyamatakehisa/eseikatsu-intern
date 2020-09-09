@@ -62,8 +62,7 @@ export default {
 
   watch: {
     propertyDetails: function (newVal, oldVal) {
-      console.log(newVal)
-      const latitude = newVal.results[0].building_preview.latitude 
+      const latitude = newVal.results[0].building_preview.latitude
         ? newVal.results[0].building_preview.latitude / 36e5
         : null;
       const longitude = newVal.results[0].building_preview.longitude
