@@ -2,6 +2,7 @@
   <v-container>
     <agent customerKey=""/>
     <property-map/>
+    <property-image/>
     <v-row justify="center" class="text-center">
       <v-col>
         <h2>受け取ったpropertyFullKey: {{propertyFullKey}}</h2>
@@ -21,6 +22,7 @@ import { RentPropertyQueryAPIApi } from "../dejima/dejima-client/src/index.js";
 import BuildingPropertyCardComponent from "../components/BukkenPropertyCard";
 import Agent from "./Agent.vue";
 import propertyMap from "./Map.vue";
+import propertyImage from "./Image.vue";
 
 
 export default {
@@ -34,7 +36,8 @@ export default {
 
   components: {
     "agent": Agent,
-    "property-map": propertyMap
+    "property-map": propertyMap,
+    "property-image": propertyImage
   },
 
   async created() {
