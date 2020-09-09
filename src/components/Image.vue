@@ -1,20 +1,12 @@
 <template>
-  <v-container fluid>
-
-    <template>
-      <v-carousel
-        hide-delimiters
-        cycle
-      >
-      <template>
-        <v-carousel-item
-          v-for="(imageMetadata, index) in imageMetadatas"
-          :key="index"
-          :src="imageMetadata.url"
-        ></v-carousel-item>
-      </template>
-      </v-carousel>
-    </template>
+  <v-container fluid v-if="imageMetadatas">
+    <v-carousel hide-delimiters cycle>
+      <v-carousel-item
+        v-for="(imageMetadata, index) in imageMetadatas"
+        :key="index"
+        :src="imageMetadata.url"
+      ></v-carousel-item>
+    </v-carousel>
   </v-container>
 </template>
 <script>
@@ -25,7 +17,7 @@ import ImageQueryAPIApi from "../dejima/dejima-image-client/src/api/ImageQueryAP
 
 export default {
   data: () => ({
-    imageMetadatas: [],
+    imageMetadatas: null
   }),
 
   computed: {
@@ -34,10 +26,14 @@ export default {
 
   watch: {
     propertyDetails: async function (newVal, oldVal) {
-      const imageApiClient = this.$store.state.apiServices.dejimaImageApiClient
-      const imageQueryAPIApi = new ImageQueryAPIApi(imageApiClient);
-      const propertyFullKey = newVal.results[0].property_full_key;
-      this.imageMetadatas = await imageQueryAPIApi.getMetadataRentRentPropertyKeyGet(propertyFullKey);
+      try {
+        const imageApiClient = this.$store.state.apiServices.dejimaImageApiClient
+        const imageQueryAPIApi = new ImageQueryAPIApi(imageApiClient);
+        const propertyFullKey = newVal.results[0].property_full_key;
+        this.imageMetadatas = await imageQueryAPIApi.getMetadataRentRentPropertyKeyGet(propertyFullKey);
+      } catch (error) {
+        this.imageMetadatas = null;
+      }
     }
   },
 
