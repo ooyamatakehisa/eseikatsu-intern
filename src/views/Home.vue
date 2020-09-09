@@ -19,21 +19,20 @@
           {{ area.city }}
         </label>
 
-        <!-- <p>{{ queryResults }}</p> -->
+        <!-- 検索時の物件ヒット数 -->
+        <div v-if="queryResults !== ''">
+          <p v-if="queryResults.total_counts !== 0">{{ queryResults.total_counts }}件</p>
+          <p v-else>検索に一致する物件はありませんでした。</p>
+        </div>
+
         <div class="container" v-if="queryResults !== null">
-          
-            <div v-for="(building, index) in queryResults.results" :key="building.id">
-              <router-link 
-                :to="{ name : 'detail', params : { id: queryResults.results[index].property[0].property_full_key }}"
-              >
-                <bukken-property-card
-                  :key="building.buildingGuid"
-                  :value="building"
-                ></bukken-property-card>
-              </router-link>
-            </div>
-        
-          
+          <div v-for="(building, index) in queryResults.results" :key="building.id">
+            <router-link
+              :to="{ name : 'detail', params : { id: queryResults.results[index].property[0].property_full_key }}"
+            >
+              <bukken-property-card :key="building.buildingGuid" :value="building"></bukken-property-card>
+            </router-link>
+          </div>
         </div>
       </v-col>
     </v-row>
