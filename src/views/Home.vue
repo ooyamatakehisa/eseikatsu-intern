@@ -21,11 +21,19 @@
 
         <!-- <p>{{ queryResults }}</p> -->
         <div class="container" v-if="queryResults !== null">
-          <bukken-property-card
-            v-for="result in queryResults.results"
-            :key="result.buildingGuid"
-            :value="result"
-          ></bukken-property-card>
+          
+            <div v-for="(building, index) in queryResults.results" :key="building.id">
+              <router-link 
+                :to="{ name : 'detail', params : { id: queryResults.results[index].property[0].property_full_key }}"
+              >
+                <bukken-property-card
+                  :key="building.buildingGuid"
+                  :value="building"
+                ></bukken-property-card>
+              </router-link>
+            </div>
+        
+          
         </div>
       </v-col>
     </v-row>
