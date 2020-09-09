@@ -2,6 +2,7 @@
   <v-container>
     <agent customerKey=""/>
     <property-map/>
+    <property-image/>
     <v-row justify="center" class="text-center">
       <v-col cols="6">
         <h2>受け取ったpropertyFullKey: {{propertyFullKey}}</h2>
@@ -19,6 +20,7 @@ import BuildingPropertyCardComponent from "../components/BukkenPropertyCard";
 import SeaDistance from "./SeaDistance";
 import Agent from "./Agent.vue";
 import propertyMap from "./Map.vue";
+import propertyImage from "./Image.vue";
 
 
 export default {
@@ -34,7 +36,8 @@ export default {
 
   components: {
     "agent": Agent,
-    "property-map": propertyMap
+    "property-map": propertyMap,
+    "property-image": propertyImage
   },
 
   async created() {
