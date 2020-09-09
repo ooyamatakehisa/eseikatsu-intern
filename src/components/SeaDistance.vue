@@ -5,8 +5,9 @@
 
     <v-card v-for="item in sea" :key="item.name">
       <p>{{item.name}}</p>
-      <p>{{item.longitude}}</p>
-      <p>{{item.latitude}}</p>
+      <p>経度：{{item.longitude}}</p>
+      <p>緯度：{{item.latitude}}</p>
+      <p>距離：{{item.distance}} km</p>
     </v-card>
 
   </v-container>
@@ -36,9 +37,14 @@ export default {
 
       this.sea.forEach(element => {
         const distance = this.calculateDistance(this.latitude, this.longitude, element.latitude, element.longitude);
-        console.log(this.latitude, this.longitude, element.latitude, element.longitude);
-        this.distanceList.push(distance);
+        // this.distanceList.push(distance);
+        element["distance"] = distance;
       });
+
+      this.sea.sort((a,b) => {
+        if (a.distance < b.distance) return -1
+        else return 1;
+      })
     }
   },
   methods: {

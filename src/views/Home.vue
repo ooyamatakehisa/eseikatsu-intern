@@ -16,7 +16,6 @@
         </div>
       </v-col>
     </v-row>
-      <v-btn @click="toImgAPI">imageAPI</v-btn>
 
   </v-container>
 </template>
@@ -71,10 +70,6 @@ export default {
     this.priceDown = getQuery[0];
     this.priceUp = getQuery[1];
   },
-
-  // created() {
-  //   this.$store.commit("apiServices/initialize");
-  // }
 
 };
 </script>
