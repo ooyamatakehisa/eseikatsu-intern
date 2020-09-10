@@ -88,7 +88,6 @@ export default {
 
       this.nearestSea.name = tempName;
       this.nearestSea.distance = tempDistance;
-      console.log("get");
     }
   },
 
