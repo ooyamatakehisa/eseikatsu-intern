@@ -162,7 +162,7 @@
             <h3>並び替え条件</h3>
             <v-radio-group v-model="sortKey" row>
               <v-row justify="center">
-                <v-col cols="2"><v-radio label="家賃" value="price.asc"></v-radio></v-col>
+                <v-col cols="2"><v-radio label="家賃(安い順)" value="price.asc"></v-radio></v-col>
                 <v-col cols="2"><v-radio label="帖数" value="exclusive_area.desc"></v-radio></v-col>
                 <v-col cols="2"><v-radio label="築年月" value="building_age.desc"></v-radio></v-col>
                 <v-col cols="2"><v-radio label="駅徒歩時間" value="walk_from_station_minutes.asc"></v-radio></v-col>
