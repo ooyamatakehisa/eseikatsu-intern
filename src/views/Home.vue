@@ -170,7 +170,7 @@
             </router-link>
           </div>
         </v-col>
-        <v-col>
+        <v-col cols="8">
           <v-pagination
             v-model="page"
             :length="this.pageLength"
