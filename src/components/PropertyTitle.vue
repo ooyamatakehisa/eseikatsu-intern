@@ -2,9 +2,8 @@
   <v-container>
     <v-card>
       <v-row justify="center">
-        <v-col cols="8"><p>基本情報</p></v-col>
-        <v-col cols="8"><p>{{address}} </p></v-col>
-        <v-col cols="8"><p>竣工年: {{completionDatejun}} </p></v-col>
+        <v-col cols="8"><h2>{{buildingName}} </h2><hr></v-col>
+        <v-col cols="8"><p>{{salesPoint}} </p></v-col>
       </v-row>
 
     </v-card>
@@ -19,6 +18,8 @@ export default {
       completionDatejun: null,
       buildingName: null,
       address: null,
+      salesPoint: null,
+
     }
   },
   computed: {
@@ -31,7 +32,7 @@ export default {
     getProperty(val) {
       const propertyData = val.results[0].building_preview;
       this.completionDatejun = propertyData.completion_datejun.text;
-      this.address = propertyData.address_text;
+      this.salesPoint = val.results[0].sales_point;
       this.buildingName = propertyData.building_name;
     }
   },

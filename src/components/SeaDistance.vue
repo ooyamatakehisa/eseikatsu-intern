@@ -1,25 +1,20 @@
 <template>
-  <v-container>
+  <v-container center-text>
+    <v-card color="#80D8FF">
+      <h2>この物件から近い浜<v-icon color="#FF8F00" large>mdi-beach</v-icon></h2><hr>
+      <v-simple-table >
+        <template v-slot:default>
+          <tbody>
+            <tr v-for="(sea, index) in seas" :key="sea.name">
+              <td>{{index + 1}}</td>
+              <td>{{sea.name}}</td>
+              <td>{{Math.floor(sea.distance)}} km</td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+    </v-card>
 
-    <h3>この物件から近い浜<v-icon color="#1E88E5">mdi-beach</v-icon> </h3>
-    <v-simple-table>
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th class="text-center"></th>
-            <th class="text-center">浜</th>
-            <th class="text-center">距離</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(sea, index) in seas" :key="sea.name">
-            <td>{{index+1}}</td>
-            <td>{{sea.name}}</td>
-            <td>{{Math.floor(sea.distance)}} km</td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
 
   </v-container>
 </template>
@@ -70,7 +65,8 @@ export default {
 
 <style scoped>
 .center-text {
-
+  text-align: center;
+  word-break: keep-all;
 }
 </style>
 
