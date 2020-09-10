@@ -128,7 +128,7 @@
               </v-col>
 
               <v-col>
-                <v-btn id="search_button" v-on:click="serachFirst()" width="30%">検索</v-btn>
+                <v-btn v-on:click="searchProperties()" width="30%">検索</v-btn>
               </v-col>
             </template>
             <br>
@@ -141,7 +141,7 @@
 
     <!-- 検索結果表示部分 -->
     <v-row justify="center">
-      <v-col lg="10" class="center-text"><h2>検索結果</h2><hr><br></v-col>
+      <v-col lg="10" id="result" class="center-text"><h2>検索結果</h2><hr><br></v-col>
       <template class="container" v-if="queryResults">
         <v-col cols="10">
           <v-card class="center-text" outlined>
@@ -173,6 +173,7 @@
           <v-pagination
             v-model="page"
             :length="this.pageLength"
+            @input="pageChange(page)"
           ></v-pagination>
         </v-col>
       </template>
@@ -218,9 +219,6 @@ export default {
     areaReset: function() {
       this.areaCode = [];
     },
-    serachFirst() {
-      this.page = 1;
-    },
     createSearchObject: function() {
       const searchObject = { startIndex: (this.page - 1) * 10 + 1 };
       if (this.priceFrom) {
@@ -242,7 +240,7 @@ export default {
       searchObject.order = this.sortKey;
       return searchObject;
     },
-    onSearch: async function() {
+    fetchProperties: async function() {
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
       const searchObject = this.createSearchObject();
@@ -260,6 +258,18 @@ export default {
         .ref(`users/username`)
         .once("value");
       return result.val() ? result.val().query : "";
+    },
+    searchProperties() {
+      this.page = 1;
+      this.pageChange(this.page);
+    },
+    async pageChange(page) {
+      await this.fetchProperties();
+      this.$router.push({
+        path: "/",
+          hash: "#result",
+          query: { page }
+      }).catch(err => console.log(err));
     }
   },
 
@@ -271,16 +281,6 @@ export default {
       searchObject.order = this.sortKey;
       this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObject);
     },
-    page: async function(newVal, oldVal) {
-      await this.onSearch();
-      if (oldVal) {
-        this.$router.push({
-          path: "/",
-          hash: "#search_button",
-          query: { page: this.page }
-        }).catch(err => console.log(err));
-      }
-    }
   },
 
   mounted: async function(){
@@ -289,10 +289,11 @@ export default {
     this.priceTo = getQuery[1];   // 家賃の上限
     this.stationCode = getQuery[2] ? getQuery[2] : []; // 駅コード
     this.areaCode = getQuery[3] ? getQuery[3] : [];  // 市区郡コード
+    if (this.$route.query.page) { this.pageChange(this.$route.query.page)}
   },
 
   created: async function() {
-    this.page = this.$route.query.page ? Number(this.$route.query.page) : null;
+    this.page = this.$route.query.page ? Number(this.$route.query.page) : 1;
     const apiClient = this.$store.state.apiServices.dejimaApiClient;
     const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
     this.queryStations = await rentPropertyQueryAPIApi.aggregateRentPropertyByLine("station");
