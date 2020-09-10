@@ -20,7 +20,6 @@ export default {
       buildingName: null,
       address: null,
       rent: null,
-      katsuoNoKodawari: [],
     }
   },
   computed: {
@@ -36,19 +35,6 @@ export default {
       this.address = propertyData.building_preview.address_text;
       this.buildingName = propertyData.building_preview.building_name;
       this.rent = propertyData.price.amount;
-      const feature = propertyData.pickup_feature;
-      if (feature.is_net_free) {
-        this.katsuoNoKodawari.push("インターネット無料！");
-      }
-      if (feature.has_appliances) {
-        this.katsuoNoKodawari.push("家電付き物件！");
-      }
-      if (feature.is_furnished) {
-        this.katsuoNoKodawari.push("家具付き物件！");
-      }
-      if (feature.has_aircon) {
-        this.katsuoNoKodawari.push("エアコン付き物件！");
-      }
     }
   },
 }
