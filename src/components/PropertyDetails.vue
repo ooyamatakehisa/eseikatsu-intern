@@ -1,17 +1,19 @@
 <template>
   <v-container>
     <v-row>
+      <v-col cols="12">
+        <property-image/>
+      </v-col>
       <v-col cols="6">
         <property-map/>
       </v-col>
       <v-col cols="6">
-        <property-image/>
-      </v-col>
-    </v-row>
-    <v-row justify="center" class="text-center">
-      <v-col cols="6">
         <sea-distance />
       </v-col>
+
+    </v-row>
+    <v-row justify="center" class="text-center">
+
       <v-col>
         <v-card><property-info /></v-card>
         <br>

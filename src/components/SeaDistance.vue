@@ -1,16 +1,19 @@
 <template>
   <v-container>
 
-    <v-simple-table height="300px">
+    <h3>この物件から近い浜<v-icon color="#1E88E5">mdi-beach</v-icon> </h3>
+    <v-simple-table>
       <template v-slot:default>
         <thead>
           <tr>
+            <th class="text-center"></th>
             <th class="text-center">浜</th>
             <th class="text-center">距離</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="sea in seas" :key="sea.name">
+          <tr v-for="(sea, index) in seas" :key="sea.name">
+            <td>{{index+1}}</td>
             <td>{{sea.name}}</td>
             <td>{{Math.floor(sea.distance)}} km</td>
           </tr>
@@ -64,6 +67,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.center-text {
+
+}
+</style>
 
 
 
