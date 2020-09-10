@@ -11,15 +11,20 @@
         <property-image/>
       </v-col>
 
-      <!-- 地図 -->
-      <v-col cols="6">
-        <property-map/>
+      <!-- カツオのこだわり（あれば表示） -->
+      <v-col cols="12" class="center-text">
+        <kodawari />
       </v-col>
 
       <!-- 浜までの距離　&　基本情報 -->
       <v-col cols="6">
-        <property-info />
+        <property-info class="center-text" />
         <sea-distance />
+      </v-col>
+
+      <!-- 地図 -->
+      <v-col cols="6">
+        <property-map/>
       </v-col>
 
     </v-row>
@@ -43,6 +48,7 @@ import propertyMap from "./Map.vue";
 import propertyImage from "./Image.vue";
 import PropertyInfo from "./PropertyInfo";
 import PropertyTitle from "./PropertyTitle";
+import KatsuoNoKodawari from "./KatsuoNoKodawari";
 
 
 export default {
@@ -60,6 +66,7 @@ export default {
     "sea-distance": SeaDistance,
     "property-info": PropertyInfo,
     "property-title": PropertyTitle,
+    "kodawari": KatsuoNoKodawari,
   },
 
   async created() {

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card outlined>
       <v-row justify="center">
         <v-col cols="8"><h2>{{buildingName}} </h2><hr></v-col>
         <v-col cols="8"><p>{{salesPoint}} </p></v-col>

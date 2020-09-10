@@ -1,6 +1,6 @@
 <template>
   <v-container center-text>
-    <v-card color="#80D8FF">
+    <v-card color="#80D8FF" outlined>
       <h2>この物件から近い浜<v-icon color="#FF8F00" large>mdi-beach</v-icon></h2><hr>
       <v-simple-table >
         <template v-slot:default>
