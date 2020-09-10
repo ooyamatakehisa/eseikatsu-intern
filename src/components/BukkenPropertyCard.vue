@@ -91,8 +91,7 @@ export default {
     }
   },
 
-
-  watch:{
+  watch: {
     value: async function() {
       this.getNearestSea();
       try {
@@ -105,9 +104,23 @@ export default {
         this.pictureUrl = "";
       }
     }
+  },
+
+
+  mounted: async function() {
+    this.getNearestSea();
+    try {
+      const imageApiClient = this.$store.state.apiServices.dejimaImageApiClient
+      const imageQueryAPIApi = new ImageQueryAPIApi(imageApiClient);
+      const propertyFullKey = this.value.property[0].property_full_key;
+      const imageMetadatas = await imageQueryAPIApi.getMetadataRentRentPropertyKeyGet(propertyFullKey);
+      this.pictureUrl = imageMetadatas[0].url;
+    } catch (error) {
+      this.pictureUrl = "";
+    }
   } 
   
-};
+}
 </script>
 
 <style scoped>
