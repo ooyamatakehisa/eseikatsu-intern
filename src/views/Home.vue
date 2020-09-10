@@ -27,8 +27,10 @@
     <div class="container" v-if="queryResults">
       並び替え
       <v-radio-group v-model="sortKey" row>
-        <v-radio label="家賃" value="price"></v-radio>
-        <v-radio label="帖数" value="size"></v-radio>
+        <v-radio label="家賃" value="price.asc"></v-radio>
+        <v-radio label="帖数" value="exclusive_area.desc"></v-radio>
+        <v-radio label="築年月" value="building_age.desc"></v-radio>
+        <v-radio label="駅徒歩時間" value="walk_from_station_minutes.asc"></v-radio>
       </v-radio-group>
       <div v-for="(building, index) in queryResults.results" :key="building.id">
         <router-link 
@@ -64,7 +66,7 @@ export default {
     stationCode: [],  // 駅コード
     areaCode: [], // エリア(市区群)のコード
     stationNameList: "", // queryStationsから重複をなくした駅の情報
-    sortKey: null
+    sortKey: "price.asc"
   }),
 
   methods: {
@@ -74,9 +76,7 @@ export default {
       this.stationCode = [];
       this.areaCode = [];
     },
-    onSearch: async function(){
-      const apiClient = this.$store.state.apiServices.dejimaApiClient;
-      const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
+    createSearchObject: function() {
       const searchObeject = {};
       if (this.priceFrom) { 
         searchObeject.priceFrom = this.priceFrom;
@@ -94,8 +94,14 @@ export default {
         searchObeject.cityCode = this.areaCode;
         this.saveSearchQuery(this.areaCode);
       }
+      searchObeject.order = this.sortKey;
+      return searchObeject;
+    },
+    onSearch: async function() {
+      const apiClient = this.$store.state.apiServices.dejimaApiClient;
+      const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
+      const searchObeject = this.createSearchObject();
       this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObeject);
-      console.log(this.queryResults.results)
     },
     saveSearchQuery: async function() {
       await this.$store.state.apiServices.firebaseService.database
@@ -112,11 +118,12 @@ export default {
   },
   
   watch: {
-    sortKey: function() {
-      const func = this.sortKey === "price"
-        ? ((o, next_o) => { return o.property[0].price.amount < next_o.property[0].price.amount ? -1 : 1})
-        : ((o, next_o) => { return o.property[0].exclusive_area.area > next_o.property[0].exclusive_area.area ? -1 : 1});
-      this.queryResults.results.sort(func);
+    sortKey: async function() {
+      const apiClient = this.$store.state.apiServices.dejimaApiClient;
+      const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
+      const searchObeject = this.createSearchObject();
+      searchObeject.order = this.sortKey;
+      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObeject);
     }
   },
 
