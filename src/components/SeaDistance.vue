@@ -42,9 +42,9 @@ export default {
       this.longitude = propertyData.longitude / 3600000;
       this.latitude = propertyData.latitude / 3600000;
 
-      this.seas.forEach(element => {
-        const distance = this.calculateDistance(this.latitude, this.longitude, element.latitude, element.longitude);
-        element["distance"] = distance;
+      this.seas.forEach(sea => {
+        const distance = this.calculateDistance(this.latitude, this.longitude, sea.latitude, sea.longitude);
+        sea["distance"] = distance;
       });
 
       this.seas.sort((a,b) => {

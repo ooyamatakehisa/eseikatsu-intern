@@ -9,6 +9,8 @@
         <p class="text-left">家賃 : {{ value.property[0].price.amount }} 円</p>
         <p class="text-left">最寄り駅 : {{ value.property[0].transportation[0].station.station_name }} 駅</p>
         <p class="text-left">エリア : {{ value.city }}</p>
+        <p class="text-left">最寄りの浜 : {{ value.nearestSea.name }}</p>
+        <p class="text-left">最寄りの浜までの距離 : {{ Math.floor(value.nearestSea.distance) }} km</p>
       </v-card-text>
     </v-card>
   </v-container>
@@ -16,19 +18,55 @@
 
 <script lang="js">
 import { BuildingPropertyPreview } from "../dejima/dejima-client/src";
+import seaJson from "../assets/sea.json";
 
 export default {
   name: "BukkenPropertyCardComponent",
 
   components: {},
 
-  data: () => ({}),
+  data: () => ({
+    seas: seaJson,
+  }),
 
   props: {
     value: BuildingPropertyPreview,
   },
 
-  methods: {},
+  methods: {
+    calculateDistance(lat1, lng1, lat2, lng2) {
+      lat1 *= Math.PI / 180;
+      lng1 *= Math.PI / 180;
+      lat2 *= Math.PI / 180;
+      lng2 *= Math.PI / 180;
+      return 6371 * Math.acos(Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1) + Math.sin(lat1) * Math.sin(lat2));
+    },
+  },
+
+  created() {
+    const lng = this.value.longitude / 3600000;
+    const lat = this.value.latitude / 3600000;
+    const nearestSea = {
+      name: null,
+      distance: null,
+    };
+
+    let tempDistance = 10000;
+    let tempName = "";
+
+    this.seas.forEach(sea => {
+      const distance = this.calculateDistance(lat, lng, sea.latitude, sea.longitude);
+      if (distance < tempDistance) {
+        tempDistance = distance;
+        tempName = sea.name;
+      }
+    });
+
+    nearestSea.name = tempName;
+    nearestSea.distance = tempDistance;
+    this.value.nearestSea = nearestSea;
+
+  },
 };
 </script>
 
