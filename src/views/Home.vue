@@ -155,7 +155,7 @@
     <v-row v-if="page" justify="center">
       <!-- 検索結果表示 -->
       <template v-if="queryResults" class="container">
-        <v-col lg="10" class="center-text"><h2>検索結果</h2><hr><br></v-col>
+        <v-col lg="10" class="center-text" id="result"><h2>検索結果</h2><hr><br></v-col>
         <!-- 並び替え条件選択部分 -->
         <v-col cols="8">
           <v-card class="center-text" outlined>
