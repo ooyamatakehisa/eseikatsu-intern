@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-app-bar app color="#E3F2FD">
+    <v-app-bar app fixed color="#E3F2FD" style="z-index:9999;">
       <template class="d-flex align-center">
         <v-img
           alt="Vuetify Name"
