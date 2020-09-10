@@ -86,11 +86,11 @@ export default {
         searchObeject.priceTo = this.priceTo;
         this.saveSearchQuery(this.priceTo);
       }
-      if (this.stationCode) {
+      if (this.stationCode[0]) {
         searchObeject.stationCode = this.stationCode;
         this.saveSearchQuery(this.stationCode);
       }
-      if (this.areaCode) {
+      if (this.areaCode[0]) {
         searchObeject.cityCode = this.areaCode;
         this.saveSearchQuery(this.areaCode);
       }
@@ -112,7 +112,6 @@ export default {
   
   watch: {
     sortKey: function() {
-      console.log(this.sortKey)
       const func = this.sortKey === "price"
         ? ((o, next_o) => { return o.property[0].price.amount < next_o.property[0].price.amount ? -1 : 1})
         : ((o, next_o) => { return o.property[0].exclusive_area.area > next_o.property[0].exclusive_area.area ? -1 : 1});
