@@ -200,7 +200,7 @@ export default {
     priceTo: "",  // 家賃上限
     stationCode: [],  // 駅コード
     areaCode: [], // エリア(市区群)のコード
-    stationNameList: "", // queryStationsから重複をなくした駅の情報
+    stationNameList: [], // queryStationsから重複をなくした駅の情報
     sortKey: "price.asc",
     space: "　",
     areaNameList: null,  // queryAreasから重複をなくした駅の情報
