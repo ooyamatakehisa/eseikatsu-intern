@@ -2,11 +2,12 @@
   <v-container fluid>
 
     <v-row justify="center">
+
       <!-- 絞り込み条件の選択画面 -->
       <v-col cols="12" lg="5">
         <v-card>
           <v-row justify="center">
-            <v-col cols="12"><h3>検索：絞り込み条件</h3></v-col>
+            <v-col cols="10" class="center-text"><h3>検索：絞り込み条件</h3><hr></v-col>
             <v-col cols="10" lg="11">
               <v-expansion-panels hover>
                 <v-expansion-panel>
@@ -75,66 +76,64 @@
 
       <!-- 選択された絞り込み条件 -->
       <v-col cols="12" lg="5">
-        <v-row justify="center">
-          <v-col cols="10">
-            <v-card class="center-text">
-              <template>
-                <v-row justify="center">
-                  <v-col cols="10"><h3>選択されている絞り込み条件</h3><hr></v-col>
-                  <v-col cols="11">
-                    <!-- 選択した絞り込み条件の表示 -->
-                    <v-card elevation="0">
+        <v-card class="center-text">
+          <v-row justify="center">
+            <template>
+              <v-col cols="10"><h3>選択されている絞り込み条件</h3><hr></v-col>
+              <v-col cols="11">
+                <!-- 選択した絞り込み条件の表示 -->
+                <v-card elevation="0">
+                  <v-row>
+                    <v-col cols="12">
                       <v-row>
-                        <v-col cols="12">
-                          <v-row>
-                            <v-col cols="10">
-                              <h3>家賃の範囲</h3>
-                              <h4> {{priceFrom}} 〜 {{priceTo}} 円</h4>
-                            </v-col>
-                            <v-col cols="2">
-                              <v-btn v-on:click="rentReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
-                            </v-col>
-                          </v-row>
+                        <v-col cols="10">
+                          <h3>家賃の範囲</h3>
+                          <h4> {{priceFrom}} 〜 {{priceTo}} 円</h4>
                         </v-col>
-
-                        <v-col cols="12">
-                          <v-row>
-                            <v-col>
-                              <h3>駅指定</h3>
-                              <template v-for="name in selectedStationsNames">
-                                {{name}}{{space}}
-                              </template>
-                            </v-col>
-                            <v-col cols="2">
-                              <v-btn v-on:click="stationReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
-                            </v-col>
-                          </v-row>
-                        </v-col>
-
-                        <v-col cols="12">
-                          <v-row>
-                            <v-col>
-                              <h3>エリア指定</h3>
-                              <template v-for="area in selectedAreas">
-                                {{area}}{{space}}
-                              </template>
-                            </v-col>
-                            <v-col cols="2">
-                              <v-btn v-on:click="areaReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
-                            </v-col>
-                          </v-row>
+                        <v-col cols="2">
+                          <v-btn v-on:click="rentReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
                         </v-col>
                       </v-row>
-                    </v-card>
-                  </v-col>
+                    </v-col>
 
-                  <v-btn id="search_button" v-on:click="serachFirst()" width="30%">検索</v-btn>
-                </v-row>
-              </template>
-              <br>
-            </v-card>
-          </v-col>
-        </v-row>
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col>
+                          <h3>駅指定</h3>
+                          <template v-for="name in selectedStationsNames">
+                            {{name}}{{space}}
+                          </template>
+                        </v-col>
+                        <v-col cols="2">
+                          <v-btn v-on:click="stationReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col>
+                          <h3>エリア指定</h3>
+                          <template v-for="area in selectedAreas">
+                            {{area}}{{space}}
+                          </template>
+                        </v-col>
+                        <v-col cols="2">
+                          <v-btn v-on:click="areaReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-col>
+
+              <v-col>
+                <v-btn id="search_button" v-on:click="serachFirst()" width="30%">検索</v-btn>
+              </v-col>
+            </template>
+            <br>
+          </v-row>
+        </v-card>
       </v-col>
 
     </v-row>
