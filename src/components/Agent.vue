@@ -1,11 +1,21 @@
 <template>
-  <div>
-    <h4>営業所</h4>
-    {{ agentData.agent_shop_name }}<br>
-    TEL: {{ agentData.agent_tel_number }}<br>
-    Email: {{ agentData.agent_email }}<br>
-    住所: {{ agentData.agent_shop_address }}
-  </div>
+  <v-container>
+    <v-card color="#FBE9E7">
+      <v-row justify="center">
+        <v-col cols="6"><h3>営業所<v-icon large color="#FFA000">mdi-store</v-icon></h3><hr></v-col>
+      </v-row>
+      <v-row justify="center">
+        <v-col cols="10">
+          <p v-if="agentData.agent_shop_name">{{ agentData.agent_shop_name }}</p>
+          <p v-if="agentData.agent_tel_number">TEL: {{ agentData.agent_tel_number }}</p>
+          <p v-if="agentData.agent_email">Email: {{ agentData.agent_email }}</p>
+          <p v-if="agentData.agent_shop_address">住所: {{ agentData.agent_shop_address }}</p>
+          <h6 v-if="agentData.agent_license_number">{{ agentData.agent_license_number }}</h6>
+        </v-col>
+      </v-row>
+    </v-card>
+
+  </v-container>
 </template>
 
 <script lang="js">

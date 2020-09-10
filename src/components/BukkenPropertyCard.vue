@@ -2,7 +2,7 @@
   <v-container>
     <v-card>
       <v-card-title>{{ value.building_name }}</v-card-title>
-      <v-card-subtitle class="text-left">{{ value.property[0].room_number_text }}号室</v-card-subtitle>
+      <v-card-subtitle v-if="value.property[0].room_number_text" class="text-left">{{ value.property[0].room_number_text }}号室</v-card-subtitle>
       <v-row>
         <v-col sm=6 md=6>
           <v-card-text>
@@ -118,8 +118,8 @@ export default {
     } catch (error) {
       this.pictureUrl = "";
     }
-  } 
-  
+  }
+
 }
 </script>
 
