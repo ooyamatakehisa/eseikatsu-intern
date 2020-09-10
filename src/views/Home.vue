@@ -32,8 +32,8 @@
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
-
             </v-col>
+            
             <v-col cols="10" lg="11">
               <v-expansion-panels hover>
                 <v-expansion-panel>
