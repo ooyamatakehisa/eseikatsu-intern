@@ -21,10 +21,10 @@
       </template>
     </v-row>
 
-    <v-btn v-on:click="onSearch()">検索</v-btn>
+    <v-btn id="search_button" v-on:click="serachFirst()">検索</v-btn>
     <v-btn v-on:click="reset()">リセット</v-btn>
 
-    <div class="container" v-if="queryResults">
+    <div class="container"  v-if="queryResults">
       並び替え
       <v-radio-group v-model="sortKey" row>
         <v-radio label="家賃" value="price.asc"></v-radio>
@@ -42,6 +42,10 @@
           ></bukken-property-card>
         </router-link>
       </div>
+      <v-pagination
+        v-model="page"
+        :length="this.pageLength"
+      ></v-pagination>
     </div>
   </v-container>
 </template>
@@ -66,7 +70,9 @@ export default {
     stationCode: [],  // 駅コード
     areaCode: [], // エリア(市区群)のコード
     stationNameList: "", // queryStationsから重複をなくした駅の情報
-    sortKey: "price.asc"
+    sortKey: "price.asc",
+    page: null,
+    pageLength: null
   }),
 
   methods: {
@@ -76,32 +82,36 @@ export default {
       this.stationCode = [];
       this.areaCode = [];
     },
+    serachFirst() {
+      this.page = 1;
+    },
     createSearchObject: function() {
-      const searchObeject = {};
+      const searchObject = { startIndex: (this.page - 1) * 10 + 1 };
       if (this.priceFrom) { 
-        searchObeject.priceFrom = this.priceFrom;
+        searchObject.priceFrom = this.priceFrom;
         this.saveSearchQuery(this.priceFrom);
       }
       if (this.priceTo) { 
-        searchObeject.priceTo = this.priceTo;
+        searchObject.priceTo = this.priceTo;
         this.saveSearchQuery(this.priceTo);
       }
       if (this.stationCode[0]) {
-        searchObeject.stationCode = this.stationCode;
+        searchObject.stationCode = this.stationCode;
         this.saveSearchQuery(this.stationCode);
       }
       if (this.areaCode[0]) {
-        searchObeject.cityCode = this.areaCode;
+        searchObject.cityCode = this.areaCode;
         this.saveSearchQuery(this.areaCode);
       }
-      searchObeject.order = this.sortKey;
-      return searchObeject;
+      searchObject.order = this.sortKey;
+      return searchObject;
     },
     onSearch: async function() {
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
-      const searchObeject = this.createSearchObject();
-      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObeject);
+      const searchObject = this.createSearchObject();
+      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObject);
+      this.pageLength = Math.ceil(this.queryResults.total_counts / this.queryResults.items_per_page);
     },
     saveSearchQuery: async function() {
       await this.$store.state.apiServices.firebaseService.database
@@ -121,9 +131,19 @@ export default {
     sortKey: async function() {
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
-      const searchObeject = this.createSearchObject();
-      searchObeject.order = this.sortKey;
-      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObeject);
+      const searchObject = this.createSearchObject();
+      searchObject.order = this.sortKey;
+      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObject);
+    },
+    page: async function(newVal, oldVal) {
+      await this.onSearch();
+      if (oldVal) {
+        this.$router.push({
+          path: "/",
+          hash: "#search_button",
+          query: { page: this.page }
+        }).catch(err => console.log(err));
+      }
     }
   },
 
@@ -136,6 +156,7 @@ export default {
   },
 
   created: async function() {
+    this.page = this.$route.query.page ? Number(this.$route.query.page) : null;
     const apiClient = this.$store.state.apiServices.dejimaApiClient;
     const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
     this.queryStations = await rentPropertyQueryAPIApi.aggregateRentPropertyByLine("station");
