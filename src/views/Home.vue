@@ -158,7 +158,7 @@
         </v-col>
 
         <v-col cols="10">
-          <div v-for="(building, index) in queryResults.results" :key="building.id">
+          <div v-for="(building, index) in queryResults.results" :key="building.buildingGuid">
             <router-link
               :to="{ name: 'detail', params: { id: queryResults.results[index].property[0].property_full_key } }"
             >
