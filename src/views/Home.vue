@@ -95,7 +95,6 @@ export default {
         this.saveSearchQuery(this.areaCode);
       }
       this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObeject);
-      console.log(this.queryResults.results)
     },
     saveSearchQuery: async function() {
       await this.$store.state.apiServices.firebaseService.database
