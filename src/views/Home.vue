@@ -193,17 +193,18 @@
         </v-col>
 
         <!-- 検索結果（物件カード） -->
-        <v-col cols="10">
-          <div v-for="(building, index) in queryResults.results" :key="building.buildingGuid">
-            <router-link
-              :to="{ name: 'detail', params: { id: queryResults.results[index].property[0].property_full_key } }"
-            >
-              <bukken-property-card
-                :key="building.buildingGuid"
-                :value="building"
-              ></bukken-property-card>
-            </router-link>
-          </div>
+        <v-col cols="8">
+          <template v-for="(building, index) in queryResults.results">
+            <v-hover v-slot:default="{ hover }">
+            <v-card :key="building.buildingGuid" @click="toDetailesPage(index)" :elevation="hover ? 12 : 2">
+                <bukken-property-card
+                  :key="building.buildingGuid"
+                  :value="building"
+                ></bukken-property-card>
+            </v-card>
+            </v-hover>
+            <br>
+          </template>
         </v-col>
 
         <!-- ページネーション -->
@@ -221,7 +222,7 @@
         <v-col lg="10">
           <hr><br>
           <h1 class="center-text">
-            検索中
+            <p>検索中<v-icon color="#455A64" x-large>mdi-run-fast</v-icon></p>
             <v-progress-circular
               :width="3"
               :size="32"
@@ -333,7 +334,10 @@ export default {
           hash: "#result",
           query: { page }
       }).catch(err => console.log(err));
-    }
+    },
+    toDetailesPage(index) {
+      this.$router.push({ name: 'detail', params: { id: this.queryResults.results[index].property[0].property_full_key } });
+    },
   },
 
   watch: {

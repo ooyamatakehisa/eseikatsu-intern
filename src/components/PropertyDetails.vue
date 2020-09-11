@@ -1,13 +1,13 @@
 <template>
   <v-container>
-    <v-row justify="center">
+    <v-row justify="center" align="center">
       <!-- 物件タイトル -->
       <v-col cols="12" class="center-text">
         <property-title />
       </v-col>
 
       <!-- 物件画像 -->
-      <v-col cols="12">
+      <v-col cols="10">
         <property-image/>
       </v-col>
 

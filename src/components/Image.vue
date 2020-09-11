@@ -1,11 +1,18 @@
 <template>
   <v-container fluid v-if="imageMetadatas">
     <v-carousel hide-delimiters cycle>
-      <v-carousel-item
+      <!-- <v-carousel-item
         v-for="(imageMetadata, index) in imageMetadatas"
         :key="index"
         :src="imageMetadata.url"
-      ></v-carousel-item>
+      ></v-carousel-item> -->
+
+
+      <template v-for="(imageMetadata, index) in imageMetadatas">
+        <v-carousel-item>
+          <v-img :src="imageMetadata.url" :key="index" contain aspect-ratio="3"></v-img>
+        </v-carousel-item>
+      </template>
     </v-carousel>
   </v-container>
 </template>
