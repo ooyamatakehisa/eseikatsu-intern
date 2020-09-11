@@ -201,7 +201,7 @@
         <v-col lg="10">
           <hr><br>
           <h1 class="center-text">
-            検索中
+            <p>検索中<v-icon color="#455A64" x-large>mdi-run-fast</v-icon></p>
             <v-progress-circular
               :width="3"
               :size="32"
