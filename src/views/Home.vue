@@ -574,6 +574,7 @@ export default {
       return tmpSearchObject;
     },
     fetchProperties: async function() {
+      this.queryResults = null;
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
       const tmpSearchObject = this.createSearchObject();
@@ -606,7 +607,6 @@ export default {
       this.pageChange(this.page);
     },
     async pageChange(page) {
-      this.queryResults = null;
       await this.fetchProperties();
       this.$router.push({
         path: "/",
