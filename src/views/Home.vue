@@ -170,13 +170,28 @@
                     <v-card elevation="0">
                       <v-row justify="center">
                         <v-col cols="12">
-                          <v-checkbox v-model="searchObject.isDesignersApartment" label="デザイナーズマンション"></v-checkbox>
+                          <v-checkbox v-model="searchObject.isNetFree" label="インターネット無料"></v-checkbox>
                         </v-col>
                         <v-col cols="12">
-                          <v-checkbox v-model="searchObject.hasReboilBath" label="追い焚き機能"></v-checkbox>
+                          <v-checkbox v-model="searchObject.hasAppliances" label="家電付き"></v-checkbox>
                         </v-col>
                         <v-col cols="12">
-                          <v-checkbox v-model="searchObject.hasWashlet" label="温水洗浄便座"></v-checkbox>
+                          <v-checkbox v-model="searchObject.isFurnished" label="家具付き"></v-checkbox>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-checkbox v-model="searchObject.hasAircon" label="エアコン付き"></v-checkbox>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-checkbox v-model="searchObject.isBathToiletSeparate" label="風呂とトイレがセパレート"></v-checkbox>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-checkbox v-model="searchObject.hasWashroom" label="洗面所独立"></v-checkbox>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-checkbox v-model="searchObject.hasCloset" label="クローゼット有り"></v-checkbox>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-checkbox v-model="searchObject.hasFloorHeating" label="床暖房有り"></v-checkbox>
                         </v-col>
                       </v-row>
                     </v-card>
@@ -335,13 +350,28 @@
                     <v-card elevation="0">
                       <v-row justify="center">
                         <v-col cols="6" md="3" lg="4">
-                          <v-checkbox v-model="searchObject.isDesignersApartment" label="デザイナーズマンション"></v-checkbox>
+                          <v-checkbox v-model="searchObject.isNetFree" label="インターネット無料"></v-checkbox>
                         </v-col>
                         <v-col cols="6" md="3" lg="4">
-                          <v-checkbox v-model="searchObject.hasReboilBath" label="追い焚き機能"></v-checkbox>
+                          <v-checkbox v-model="searchObject.hasAppliances" label="家電付き"></v-checkbox>
                         </v-col>
                         <v-col cols="6" md="3" lg="4">
-                          <v-checkbox v-model="searchObject.hasWashlet" label="温水洗浄便座"></v-checkbox>
+                          <v-checkbox v-model="searchObject.isFurnished" label="家具付き"></v-checkbox>
+                        </v-col>
+                        <v-col cols="6" md="3" lg="4">
+                          <v-checkbox v-model="searchObject.hasAircon" label="エアコン付き"></v-checkbox>
+                        </v-col>
+                        <v-col cols="6" md="3" lg="4">
+                          <v-checkbox v-model="searchObject.isBathToiletSeparate" label="風呂とトイレがセパレート"></v-checkbox>
+                        </v-col>
+                        <v-col cols="6" md="3" lg="4">
+                          <v-checkbox v-model="searchObject.hasWashroom" label="洗面所独立"></v-checkbox>
+                        </v-col>
+                        <v-col cols="6" md="3" lg="4">
+                          <v-checkbox v-model="searchObject.hasCloset" label="クローゼット有り"></v-checkbox>
+                        </v-col>
+                        <v-col cols="6" md="3" lg="4">
+                          <v-checkbox v-model="searchObject.hasFloorHeating" label="床暖房有り"></v-checkbox>
                         </v-col>
                       </v-row>
                     </v-card>
@@ -535,9 +565,14 @@ export default {
       areaCode: [], // エリア(市区群)のコード
       priceFrom: "",  // 家賃下限
       priceTo: "",  // 家賃上限
-      isDesignersApartment: null,
-      hasWashlet: null,
-      hasReboilBath: null
+      isNetFree: null,
+      hasAppliances: null,
+      isFurnished: null,
+      hasAircon: null,
+      isBathToiletSeparate: null,
+      hasWashroom: null,
+      hasCloset: null,
+      hasFloorHeating: null,
     },
     selectedRentColor: "#ECEFF1",
     selectedStationsColor: "#ECEFF1",
@@ -558,9 +593,14 @@ export default {
       this.searchObject.areaCode = [];
     },
     kodawariReset () {
-      this.searchObject.hasReboilBath = false;
-      this.searchObject.hasWashlet = false;
-      this.searchObject.isDesignersApartment = false;
+      this.searchObject.isNetFree = false;
+      this.searchObject.hasAppliances = false;
+      this.searchObject.isFurnished = false;
+      this.searchObject.hasAircon = false;
+      this.searchObject.isBathToiletSeparate = false;
+      this.searchObject.hasWashroom = false;
+      this.searchObject.hasCloset = false;
+      this.searchObject.hasFloorHeating = false;
     },
     createSearchObject: function() {
       let tmpSearchObject = {};
@@ -590,9 +630,14 @@ export default {
           this.searchObject.priceTo,
           this.searchObject.stationCode,
           this.searchObject.areaCode,
-          this.searchObject.isDesignersApartment ? this.searchObject.isDesignersApartment : null,
-          this.searchObject.hasReboilBath ? this.searchObject.hasReboilBath : null,
-          this.searchObject.hasWashlet ? this.searchObject.hasWashlet : null,
+          this.searchObject.isNetFree ? this.searchObject.isNetFree  : null, 
+          this.searchObject.hasAppliances ? this.searchObject.hasAppliances  : null, 
+          this.searchObject.isFurnished ? this.searchObject.isFurnished  : null, 
+          this.searchObject.hasAircon ? this.searchObject.hasAircon  : null, 
+          this.searchObject.isBathToiletSeparate ? this.searchObject.isBathToiletSeparate  : null, 
+          this.searchObject.hasWashroom ? this.searchObject.hasWashroom  : null, 
+          this.searchObject.hasCloset ? this.searchObject.hasCloset  : null, 
+          this.searchObject.hasFloorHeating ? this.searchObject.hasFloorHeating  : null, 
         ]});
     },
     loadSearchQuery: async function() {
@@ -632,9 +677,14 @@ export default {
       priceTo: getQuery[1],
       stationCode: getQuery[2] ? getQuery[2] : [],
       areaCode: getQuery[3] ? getQuery[3] : [],
-      isDesignersApartment: getQuery[4] ? getQuery[4] : null,
-      hasReboilBath: getQuery[5] ? getQuery[5] : null,
-      hasWashlet: getQuery[6] ? getQuery[6] : null,
+      isNetFree: getQuery[4] ? getQuery[4] : null,
+      hasAppliances: getQuery[5] ? getQuery[5] : null,
+      isFurnished: getQuery[6] ? getQuery[6] : null,
+      hasAircon: getQuery[7] ? getQuery[7] : null,
+      isBathToiletSeparate: getQuery[8] ? getQuery[8] : null,
+      hasWashroom: getQuery[9] ? getQuery[9] : null,
+      hasCloset: getQuery[10] ? getQuery[10] : null,
+      hasFloorHeating: getQuery[11] ? getQuery[11] : null,
     }
     if (this.$route.query.page) { this.pageChange(this.$route.query.page) }
   },
@@ -715,14 +765,29 @@ export default {
     },
     selectedKodawari() {
       let selectedList = []
-      if (this.searchObject.isDesignersApartment) {
-        selectedList.push("デザイナーズマンション")
+      if (this.searchObject.isNetFree) {
+        selectedList.push("インターネット無料")
       }
-      if (this.searchObject.hasReboilBath) {
-        selectedList.push("追い焚き機能")
+      if (this.searchObject.hasAppliances) {
+        selectedList.push("家電付き")
       }
-      if (this.searchObject.hasWashlet) {
-        selectedList.push("温水洗浄便座")
+      if (this.searchObject.isFurnished) {
+        selectedList.push("家具付き")
+      }
+      if (this.searchObject.hasAircon) {
+        selectedList.push("エアコン付き")
+      }
+      if (this.searchObject.isBathToiletSeparate) {
+        selectedList.push("風呂とトイレがセパレート")
+      }
+      if (this.searchObject.hasWashroom) {
+        selectedList.push("洗面所独立")
+      }
+      if (this.searchObject.hasCloset) {
+        selectedList.push("クローゼット有り")
+      }
+      if (this.searchObject.hasFloorHeating) {
+        selectedList.push("床暖房有り")
       }
       if (selectedList.length == 0) {
         this.selectedKodawariColor = "#ECEFF1"

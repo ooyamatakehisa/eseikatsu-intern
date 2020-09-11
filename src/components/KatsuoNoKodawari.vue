@@ -84,10 +84,10 @@ export default {
         this.katsuoNoKodawari.push("エアコン付き物件！");
       }
       if (feature.is_bath_toilet_separate) {
-        this.katsuoNoKodawari.push("お風呂とトイレはセパレート！！");
+        this.katsuoNoKodawari.push("お風呂とトイレはセパレート！");
       }
       if (feature.has_washroom) {
-        this.katsuoNoKodawari.push("洗面所独立！！");
+        this.katsuoNoKodawari.push("洗面所独立！");
       }
       if (feature.has_closet) {
         this.katsuoNoKodawari.push("クローゼット有り！");
