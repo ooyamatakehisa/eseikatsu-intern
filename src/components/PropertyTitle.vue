@@ -2,8 +2,8 @@
   <v-container>
     <v-card outlined>
       <v-row justify="center">
-        <v-col cols="8"><h2>{{buildingName}} </h2><hr></v-col>
-        <v-col cols="8"><p>{{salesPoint}} </p></v-col>
+        <v-col cols="11" lg="8"><h2>{{buildingName}} </h2><hr></v-col>
+        <v-col v-if="!isMobile" cols="8"><p>{{salesPoint}} </p></v-col>
       </v-row>
 
     </v-card>
@@ -25,6 +25,9 @@ export default {
   computed: {
     getProperty() {
       return this.$store.getters["propertyDetails/getProperty"];
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.name === "xs" ? true : false;
     },
   },
 
