@@ -19,11 +19,11 @@
                           <v-row>
                             <v-col cols="6">
                               <h4>下限</h4>
-                              <v-text-field v-model="priceFrom" placeholder="例）30000（円以上）" />
+                              <v-text-field v-model="searchObject.priceFrom" placeholder="例）30000（円以上）" />
                             </v-col>
                             <v-col cols="6">
                               <h4>上限</h4>
-                              <v-text-field v-model="priceTo" placeholder="例）50000（円以下）" />
+                              <v-text-field v-model="searchObject.priceTo" placeholder="例）50000（円以下）" />
                             </v-col>
                           </v-row>
                         </v-col>
@@ -33,7 +33,6 @@
                 </v-expansion-panel>
               </v-expansion-panels>
             </v-col>
-            
             <v-col cols="10" lg="11">
               <v-expansion-panels hover>
                 <v-expansion-panel>
@@ -43,7 +42,7 @@
                       <v-row>
                         <template v-for="(station,index) in stationNameList">
                           <v-col cols="6" md="3" lg="4" :key="index">
-                            <v-checkbox v-model="stationCode" :label="station.name" :value="station.code"></v-checkbox>
+                            <v-checkbox v-model="searchObject.stationCode" :label="station.name" :value="station.code"></v-checkbox>
                           </v-col>
                         </template>
                       </v-row>
@@ -61,9 +60,31 @@
                       <v-row justify="center">
                         <template v-for="(area, index) in queryAreas.results">
                           <v-col cols="6" md="3" lg="4" :key="index">
-                            <v-checkbox v-model="areaCode" :label="area.city" :value="area.city_code"></v-checkbox>
+                            <v-checkbox v-model="searchObject.areaCode" :label="area.city" :value="area.city_code"></v-checkbox>
                           </v-col>
                         </template>
+                      </v-row>
+                    </v-card>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-col>
+            <v-col cols="10" lg="11">
+              <v-expansion-panels hover>
+                <v-expansion-panel>
+                  <v-expansion-panel-header><h3>こだわり条件</h3></v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-card elevation="0">
+                      <v-row justify="center">
+                        <v-col cols="6" md="3" lg="4">
+                          <v-checkbox v-model="searchObject.isDesignersApartment" label="デザイナーズマンション"></v-checkbox>
+                        </v-col>
+                        <v-col cols="6" md="3" lg="4">
+                          <v-checkbox v-model="searchObject.hasReboilBath" label="追い焚き機能"></v-checkbox>
+                        </v-col>
+                        <v-col cols="6" md="3" lg="4">
+                          <v-checkbox v-model="searchObject.hasWashlet" label="温水洗浄便座"></v-checkbox>
+                        </v-col>
                       </v-row>
                     </v-card>
                   </v-expansion-panel-content>
@@ -88,7 +109,7 @@
                       <v-row>
                         <v-col cols="10">
                           <h3>家賃の範囲</h3>
-                          <h4> {{priceFrom}} 〜 {{priceTo}} 円</h4>
+                          <h4> {{searchObject.priceFrom}} 〜 {{searchObject.priceTo}} 円</h4>
                         </v-col>
                         <v-col cols="2">
                           <v-btn v-on:click="rentReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
@@ -146,11 +167,11 @@
         <v-col cols="10">
           <v-card class="center-text" outlined>
             <h3>並び替え条件</h3>
-            <v-radio-group v-model="sortKey" row>
+            <v-radio-group v-model="order" row>
               <v-row justify="center">
                 <v-col cols="2"><v-radio label="家賃" value="price.asc"></v-radio></v-col>
                 <v-col cols="2"><v-radio label="帖数" value="exclusive_area.desc"></v-radio></v-col>
-                <v-col cols="2"><v-radio label="築年月" value="building_age.desc"></v-radio></v-col>
+                <v-col cols="2"><v-radio label="築年月" value="building_age.asc"></v-radio></v-col>
                 <v-col cols="2"><v-radio label="駅徒歩時間" value="walk_from_station_minutes.asc"></v-radio></v-col>
               </v-row>
             </v-radio-group>
@@ -196,61 +217,67 @@ export default {
     queryResults: null,
     queryStations: "", // 駅の情報
     queryAreas: "", // cityの情報
-    priceFrom: "",  // 家賃下限
-    priceTo: "",  // 家賃上限
-    stationCode: [],  // 駅コード
-    areaCode: [], // エリア(市区群)のコード
     stationNameList: [], // queryStationsから重複をなくした駅の情報
-    sortKey: "price.asc",
-    space: "　",
     areaNameList: null,  // queryAreasから重複をなくした駅の情報
+    space: "　",
     page: null,
-    pageLength: null
+    pageLength: null,
+    order: "price.asc",
+    searchObject: {
+      stationCode: [],  // 駅コード
+      areaCode: [], // エリア(市区群)のコード
+      priceFrom: "",  // 家賃下限
+      priceTo: "",  // 家賃上限
+      isDesignersApartment: null,
+      hasWashlet: null,
+      hasReboilBath: null
+    }
   }),
 
   methods: {
     rentReset: function() {
-      this.priceFrom = "";
-      this.priceTo = "";
+      this.searchObject.priceFrom = "";
+      this.searchObject.priceTo = "";
     },
     stationReset: function() {
-      this.stationCode = [];
+      this.searchObject.stationCode = [];
     },
     areaReset: function() {
-      this.areaCode = [];
+      this.searchObject.areaCode = [];
     },
     createSearchObject: function() {
-      const searchObject = { startIndex: (this.page - 1) * 10 + 1 };
-      if (this.priceFrom) {
-        searchObject.priceFrom = this.priceFrom;
-        this.saveSearchQuery(this.priceFrom);
-      }
-      if (this.priceTo) {
-        searchObject.priceTo = this.priceTo;
-        this.saveSearchQuery(this.priceTo);
-      }
-      if (this.stationCode[0]) {
-        searchObject.stationCode = this.stationCode;
-        this.saveSearchQuery(this.stationCode);
-      }
-      if (this.areaCode[0]) {
-        searchObject.cityCode = this.areaCode;
-        this.saveSearchQuery(this.areaCode);
-      }
-      searchObject.order = this.sortKey;
-      return searchObject;
+      let tmpSearchObject = {};
+      Object.keys(this.searchObject).forEach(key => {
+        if (this.searchObject[key] && this.searchObject[key] !== []) { 
+          tmpSearchObject[key] = this.searchObject[key];
+        } 
+      });
+      tmpSearchObject.startIndex = (this.page - 1) * 10 + 1;
+      tmpSearchObject.order = this.order;
+      return tmpSearchObject;
     },
     fetchProperties: async function() {
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
-      const searchObject = this.createSearchObject();
-      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObject);
+      const tmpSearchObject = this.createSearchObject();
+      console.log(tmpSearchObject)
+      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(tmpSearchObject);
+      console.log(this.queryResults)
       this.pageLength = Math.ceil(this.queryResults.total_counts / this.queryResults.items_per_page);
+      this.saveSearchQuery();
     },
     saveSearchQuery: async function() {
       await this.$store.state.apiServices.firebaseService.database
         .ref("users/username")
-        .set({ query: [this.priceFrom, this.priceTo, this.stationCode, this.areaCode] });
+        .set({ query: [
+          this.searchObject.priceFrom,
+          this.searchObject.priceTo,
+          this.searchObject.stationCode,
+          this.searchObject.areaCode,
+          this.searchObject.isDesignersApartment ? this.searchObject.isDesignersApartment : null,
+          this.searchObject.hasReboilBath ? this.searchObject.isDesignersApartment : null,
+          this.searchObject.hasWashlet ? this.searchObject.isDesignersApartment : null,
+        ]});
     },
     loadSearchQuery: async function() {
       const firebaseService = this.$store.state.apiServices.firebaseService;
@@ -274,22 +301,23 @@ export default {
   },
 
   watch: {
-    sortKey: async function() {
-      const apiClient = this.$store.state.apiServices.dejimaApiClient;
-      const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
-      const searchObject = this.createSearchObject();
-      searchObject.order = this.sortKey;
-      this.queryResults = await rentPropertyQueryAPIApi.searchRentPropertyByBuilding(searchObject);
+    order: async function() {
+      this.fetchProperties();
     },
   },
 
   mounted: async function(){
+    if (this.$route.query.page) { this.pageChange(this.$route.query.page) }
     const getQuery = await this.loadSearchQuery();
-    this.priceFrom = getQuery[0]; // 家賃の下限
-    this.priceTo = getQuery[1];   // 家賃の上限
-    this.stationCode = getQuery[2] ? getQuery[2] : []; // 駅コード
-    this.areaCode = getQuery[3] ? getQuery[3] : [];  // 市区郡コード
-    if (this.$route.query.page) { this.pageChange(this.$route.query.page)}
+    this.searchObject = {
+      priceFrom: getQuery[0], 
+      priceTo: getQuery[1],
+      stationCode: getQuery[2] ? getQuery[2] : [],
+      areaCode: getQuery[3] ? getQuery[3] : [],
+      isDesignersApartment: getQuery[4] ? getQuery[4] : null,
+      hasReboilBath: getQuery[5] ? getQuery[5] : null,
+      hasWashlet: getQuery[6] ? getQuery[6] : null,
+    }
   },
 
   created: async function() {
@@ -319,7 +347,7 @@ export default {
 
   computed: {
     selectedStationsNames() {
-      const selectedStationsCodes = this.stationCode;
+      const selectedStationsCodes = this.searchObject.stationCode;
       if (selectedStationsCodes.length == 0) return ["全ての駅"];
       else {
         let stationNames = [];
@@ -333,7 +361,7 @@ export default {
       }
     },
     selectedAreas() {
-      const selectedAreasCodes = this.areaCode;
+      const selectedAreasCodes = this.searchObject.areaCode;
       if (selectedAreasCodes.length == 0) return ["全てのエリア"];
       else {
         let areaNames = [];
