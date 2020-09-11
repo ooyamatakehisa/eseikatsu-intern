@@ -2,7 +2,7 @@
   <v-container>
     <v-card>
       <v-card-title>{{ value.building_name }}</v-card-title>
-      <v-card-subtitle class="text-left">{{ value.property[0].room_number_text }}号室</v-card-subtitle>
+      <v-card-subtitle v-if="value.property[0].room_number_text" class="text-left">{{ value.property[0].room_number_text }}号室</v-card-subtitle>
       <v-row>
         <v-col sm=6 md=6>
           <v-card-text>
@@ -91,8 +91,7 @@ export default {
     }
   },
 
-
-  watch:{
+  watch: {
     value: async function() {
       this.getNearestSea();
       try {
@@ -105,9 +104,23 @@ export default {
         this.pictureUrl = "";
       }
     }
-  } 
-  
-};
+  },
+
+
+  mounted: async function() {
+    this.getNearestSea();
+    try {
+      const imageApiClient = this.$store.state.apiServices.dejimaImageApiClient
+      const imageQueryAPIApi = new ImageQueryAPIApi(imageApiClient);
+      const propertyFullKey = this.value.property[0].property_full_key;
+      const imageMetadatas = await imageQueryAPIApi.getMetadataRentRentPropertyKeyGet(propertyFullKey);
+      this.pictureUrl = imageMetadatas[0].url;
+    } catch (error) {
+      this.pictureUrl = "";
+    }
+  }
+
+}
 </script>
 
 <style scoped>

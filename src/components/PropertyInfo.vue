@@ -1,8 +1,13 @@
 <template>
   <v-container>
-    <h4>{{buildingName}} </h4>
-    <p>{{address}} </p>
-    <p>竣工年: {{completionDatejun}} </p>
+    <v-card outlined>
+      <v-row justify="center">
+        <v-col v-if="buildingName" cols="10"><h3>{{buildingName}}</h3><hr></v-col>
+        <v-col v-if="address" cols="12"><h4>住所：{{address}} </h4></v-col>
+        <v-col v-if="completionDatejun" cols="12"><h4>竣工年：{{completionDatejun}} </h4></v-col>
+        <v-col v-if="rent" cols="12"><h4>家賃：{{rent}}円</h4></v-col>
+      </v-row>
+    </v-card>
   </v-container>
 </template>
 
@@ -14,6 +19,7 @@ export default {
       completionDatejun: null,
       buildingName: null,
       address: null,
+      rent: null,
     }
   },
   computed: {
@@ -24,10 +30,11 @@ export default {
 
   watch: {
     getProperty(val) {
-      const propertyData = val.results[0].building_preview;
-      this.completionDatejun = propertyData.completion_datejun.text;
-      this.address = propertyData.address_text;
-      this.buildingName = propertyData.building_name;
+      const propertyData = val.results[0];
+      this.completionDatejun = propertyData.building_preview.completion_datejun.text;
+      this.address = propertyData.building_preview.address_text;
+      this.buildingName = propertyData.building_preview.building_name;
+      this.rent = propertyData.price.amount;
     }
   },
 }

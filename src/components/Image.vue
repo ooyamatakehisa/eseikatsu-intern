@@ -32,6 +32,7 @@ export default {
         const propertyFullKey = newVal.results[0].property_full_key;
         this.imageMetadatas = await imageQueryAPIApi.getMetadataRentRentPropertyKeyGet(propertyFullKey);
       } catch (error) {
+        console.log(error)
         this.imageMetadatas = null;
       }
     }

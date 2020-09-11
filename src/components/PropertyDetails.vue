@@ -1,21 +1,38 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row justify="center">
+      <!-- 物件タイトル -->
+      <v-col cols="12" class="center-text">
+        <property-title />
+      </v-col>
+
+      <!-- 物件画像 -->
+      <v-col cols="12">
+        <property-image/>
+      </v-col>
+
+      <!-- カツオのこだわり（あれば表示） -->
+      <v-col cols="12" class="center-text">
+        <kodawari />
+      </v-col>
+
+      <!-- 浜までの距離　&　基本情報 -->
+      <v-col cols="6">
+        <property-info class="center-text" />
+        <sea-distance />
+      </v-col>
+
+      <!-- 地図 -->
       <v-col cols="6">
         <property-map/>
       </v-col>
-      <v-col cols="6">
-        <property-image/>
-      </v-col>
+
     </v-row>
     <v-row justify="center" class="text-center">
-      <v-col cols="6">
-        <sea-distance />
-      </v-col>
+
       <v-col>
-        <v-card><property-info /></v-card>
         <br>
-        <v-card><agent customerKey=""/></v-card>
+        <agent customerKey=""/>
       </v-col>
     </v-row>
   </v-container>
@@ -30,6 +47,8 @@ import Agent from "./Agent.vue";
 import propertyMap from "./Map.vue";
 import propertyImage from "./Image.vue";
 import PropertyInfo from "./PropertyInfo";
+import PropertyTitle from "./PropertyTitle";
+import KatsuoNoKodawari from "./KatsuoNoKodawari";
 
 
 export default {
@@ -46,6 +65,8 @@ export default {
     "property-image": propertyImage,
     "sea-distance": SeaDistance,
     "property-info": PropertyInfo,
+    "property-title": PropertyTitle,
+    "kodawari": KatsuoNoKodawari,
   },
 
   async created() {
@@ -69,6 +90,12 @@ export default {
 }
 </script>
 
+<style scoped>
+.center-text {
+  text-align: center;
+  word-break: keep-all;
+}
+</style>
 
 
 
