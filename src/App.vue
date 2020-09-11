@@ -33,3 +33,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#app {
+  background-color: rgb(242, 255, 255);
+}
+</style>

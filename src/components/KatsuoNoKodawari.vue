@@ -10,7 +10,7 @@
 
     <v-hover>
       <template v-slot="{ hover }">
-        <v-card color="#F8BBD0" :elevation="hover ? 24 : 6">
+        <v-card color="#FFCDD2" :elevation="hover ? 24 : 6">
           <v-row v-if="katsuoNoKodawari.length !== 0" justify="center">
             <v-col cols="12"><h3><v-icon x-large color="red">mdi-head-heart-outline</v-icon> あなたのこだわり条件にマッチしています！！！<v-icon color="red" large>mdi-thumb-up</v-icon></h3><hr></v-col>
           </v-row>

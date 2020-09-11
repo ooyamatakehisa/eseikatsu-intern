@@ -1,20 +1,27 @@
 <template>
   <v-container>
-    <v-card>
-      <v-card-title>{{ value.building_name }}</v-card-title>
+    <v-card elevation="0">
+      <v-card-title><b>{{ value.building_name }}</b></v-card-title>
       <v-card-subtitle v-if="value.property[0].room_number_text" class="text-left">{{ value.property[0].room_number_text }}号室</v-card-subtitle>
-      <v-row>
+      <v-row justify="center">
+        <!-- 物件の情報 -->
         <v-col sm=6 md=6>
           <v-card-text>
+            <p class="text-left">エリア : {{ value.city }}</p>
+            <hr><br>
+            <p class="text-left"> {{ value.property[0].sales_point }}</p>
+            <hr><br>
             <p class="text-left">住所 : {{ value.address_text }}</p>
-            <p class="text-left">ポイント！ : {{ value.property[0].sales_point }}</p>
+            <p class="text-left">竣工年月: {{ value.completion_datejun.text }} </p>
             <p class="text-left">家賃 : {{ value.property[0].price.amount }} 円</p>
             <p class="text-left">最寄り駅 : {{ value.property[0].transportation[0].station.station_name }} 駅</p>
-            <p class="text-left">エリア : {{ value.city }}</p>
-            <p class="text-left">最寄りの浜 : {{ nearestSea.name }}</p>
-            <p class="text-left">最寄りの浜までの距離 : {{ Math.floor(nearestSea.distance) }} km</p>
+            <p class="text-left">最寄り駅まで徒歩: {{ value.property[0].transportation[0].station_access.value }} 分</p>
+            <h4 class="text-left sea">最寄りの浜 : {{ nearestSea.name }}</h4>
+            <h4 class="text-left sea">最寄りの浜までの距離 : {{ Math.floor(nearestSea.distance) }} km</h4>
           </v-card-text>
         </v-col>
+
+        <!-- 物件の写真 -->
         <v-col>
           <v-img v-if="pictureUrl"
             :src="pictureUrl"
@@ -126,5 +133,8 @@ export default {
 <style scoped>
 .card {
   margin: 1rem;
+}
+.sea {
+  color: rgb(0, 119, 255);
 }
 </style>
