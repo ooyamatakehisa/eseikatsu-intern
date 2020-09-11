@@ -1,16 +1,19 @@
 <template>
-  <v-container fluid v-if="imageMetadatas">
-    <v-carousel hide-delimiters cycle>
-      <!-- <v-carousel-item
-        v-for="(imageMetadata, index) in imageMetadatas"
-        :key="index"
-        :src="imageMetadata.url"
-      ></v-carousel-item> -->
-
-
+  <v-container fluid v-if="imageMetadatas && isMobile">
+    <v-carousel hide-delimiters cycle height="200">
       <template v-for="(imageMetadata, index) in imageMetadatas">
-        <v-carousel-item>
-          <v-img :src="imageMetadata.url" :key="index" contain aspect-ratio="3"></v-img>
+        <v-carousel-item :key="index">
+          <v-img :src="imageMetadata.url" :key="index" contain></v-img>
+        </v-carousel-item>
+      </template>
+    </v-carousel>
+  </v-container>
+
+  <v-container fluid v-else-if="imageMetadatas">
+    <v-carousel hide-delimiters cycle>
+      <template v-for="(imageMetadata, index) in imageMetadatas">
+        <v-carousel-item :key="index">
+          <v-img :src="imageMetadata.url" :key="index" contain aspect-ratio="2.5"></v-img>
         </v-carousel-item>
       </template>
     </v-carousel>
@@ -29,6 +32,9 @@ export default {
 
   computed: {
     propertyDetails: function() { return this.$store.getters["propertyDetails/getProperty"] },
+    isMobile() {
+      return this.$vuetify.breakpoint.name === "xs" ? true : false;
+    }
   },
 
   watch: {

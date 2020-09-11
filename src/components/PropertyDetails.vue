@@ -1,5 +1,43 @@
 <template>
-  <v-container>
+  <v-container v-if="isMobile">
+    <v-row justify="center" align="center">
+      <!-- 物件タイトル -->
+      <v-col cols="11" class="center-text">
+        <property-title />
+      </v-col>
+
+      <!-- 物件画像 -->
+      <v-col cols="11">
+        <property-image/>
+      </v-col>
+
+      <!-- カツオのこだわり（あれば表示） -->
+      <v-col cols="11" class="center-text">
+        <kodawari />
+      </v-col>
+
+      <!-- 浜までの距離　&　基本情報 -->
+      <v-col cols="11">
+        <property-info class="center-text" />
+        <sea-distance />
+      </v-col>
+
+      <!-- 地図 -->
+      <v-col cols="11">
+        <property-map/>
+      </v-col>
+
+    </v-row>
+    <v-row justify="center" class="text-center">
+
+      <v-col>
+        <br>
+        <agent customerKey=""/>
+      </v-col>
+    </v-row>
+  </v-container>
+
+  <v-container v-else>
     <v-row justify="center" align="center">
       <!-- 物件タイトル -->
       <v-col cols="12" class="center-text">
@@ -86,6 +124,12 @@ export default {
   mounted() {
     this.searchRentPropertyByDwellingUnit();
   },
+
+  computed: {
+    isMobile() {
+      return this.$vuetify.breakpoint.name === "xs" ? true : false;
+    }
+  }
 
 }
 </script>

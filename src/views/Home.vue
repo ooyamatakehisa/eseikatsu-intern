@@ -1,6 +1,261 @@
 <template>
-  <v-container fluid>
+  <!-- 携帯版 -->
+  <v-container fluid v-if="isMobile">
+    <v-row justify="center">
 
+      <!-- 選択された絞り込み条件と検索ボタン -->
+      <v-col cols="12" lg="5">
+        <v-card class="center-text">
+          <v-row justify="center">
+            <template>
+              <v-col cols="10"><h3>選択されている絞り込み条件</h3><hr></v-col>
+              <!-- 選択した絞り込み条件の表示 -->
+              <v-col cols="10">
+                <v-card elevation="0">
+                  <v-row>
+                    <!-- 家賃の範囲 -->
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col cols="10">
+                          <h3>家賃の範囲<v-icon color="#FFD600">mdi-home-currency-usd</v-icon> </h3>
+                          <v-card outlined :color="selectedRentColor">
+                            <h4 v-if="rentRange === '指定なし'"> {{rentRange}}</h4>
+                            <h3 v-else> {{rentRange}}</h3>
+                          </v-card>
+                        </v-col>
+                        <v-col cols="2">
+                          <v-btn v-on:click="rentReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+
+                    <!-- 駅の指定 -->
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col>
+                          <h3>駅指定<v-icon color="#F06292">mdi-train</v-icon> </h3>
+                          <v-card outlined :color="selectedStationsColor">
+                            <template v-for="name in selectedStationsNames">
+                              <b :key="name">{{name}}{{space}}</b>
+                            </template>
+                          </v-card>
+                        </v-col>
+                        <v-col cols="2">
+                          <v-btn v-on:click="stationReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+
+                    <!-- エリアの指定 -->
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col>
+                          <h3>エリア指定<v-icon color="#A1887F">mdi-home-city-outline</v-icon></h3>
+                          <v-card :color="selectedAreasColor" outlined>
+                            <template v-for="area in selectedAreas">
+                              <b :key="area">{{area}}{{space}}</b>
+                            </template>
+                          </v-card>
+                        </v-col>
+                        <v-col cols="2">
+                          <v-btn v-on:click="areaReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+
+                    <!-- こだわり条件の指定 -->
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col>
+                          <h3>こだわり条件指定<v-icon color="green">mdi-human-greeting</v-icon></h3>
+                          <v-card :color="selectedKodawariColor" outlined>
+                            <template v-for="kodawari in selectedKodawari">
+                              <b :key="kodawari">{{kodawari}}{{space}}</b>
+                            </template>
+                          </v-card>
+                        </v-col>
+                        <v-col cols="2">
+                          <v-btn v-on:click="kodawariReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-col>
+              <!-- 検索ボタン -->
+              <v-col cols="12">
+                <v-btn id="search_button" v-on:click="searchProperties()" width="30%"><h2>検索</h2><v-icon>mdi-magnify</v-icon> </v-btn>
+              </v-col>
+            </template>
+            <br>
+          </v-row>
+        </v-card>
+      </v-col>
+
+      <!-- 絞り込み条件の選択画面 -->
+      <v-col cols="12" lg="5">
+        <v-card>
+          <v-row justify="center">
+            <v-col cols="10" class="center-text"><h3>検索：絞り込み条件</h3><hr></v-col>
+            <!-- 家賃の範囲 -->
+            <v-col cols="10">
+              <v-expansion-panels hover>
+                <v-expansion-panel>
+                  <v-expansion-panel-header><h3>家賃の範囲</h3></v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-card elevation="0">
+                      <v-row justify="center">
+                        <v-col cols="11">
+                          <v-row>
+                            <v-col cols="6">
+                              <h4>下限</h4>
+                              <v-text-field v-model="searchObject.priceFrom" placeholder="例）30000（円以上）" />
+                            </v-col>
+                            <v-col cols="6">
+                              <h4>上限</h4>
+                              <v-text-field v-model="searchObject.priceTo" placeholder="例）50000（円以下）" />
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-col>
+            <!-- 駅の指定 -->
+            <v-col cols="10">
+              <v-expansion-panels hover>
+                <v-expansion-panel>
+                  <v-expansion-panel-header><h3>駅の指定</h3></v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-card elevation="0">
+                      <v-row>
+                        <template v-for="(station,index) in stationNameList">
+                          <v-col cols="6" md="3" lg="4" :key="index">
+                            <v-checkbox v-model="searchObject.stationCode" :label="station.name" :value="station.code"></v-checkbox>
+                          </v-col>
+                        </template>
+                      </v-row>
+                    </v-card>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-col>
+            <!-- エリアの指定 -->
+            <v-col cols="10">
+              <v-expansion-panels hover>
+                <v-expansion-panel>
+                  <v-expansion-panel-header><h3>エリア指定</h3></v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-card elevation="0">
+                      <v-row justify="center">
+                        <template v-for="(area, index) in queryAreas.results">
+                          <v-col cols="6" md="3" lg="4" :key="index">
+                            <v-checkbox v-model="searchObject.areaCode" :label="area.city" :value="area.city_code"></v-checkbox>
+                          </v-col>
+                        </template>
+                      </v-row>
+                    </v-card>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-col>
+            <!-- こだわり -->
+            <v-col cols="10">
+              <v-expansion-panels hover>
+                <v-expansion-panel>
+                  <v-expansion-panel-header><h3>こだわり条件</h3></v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-card elevation="0">
+                      <v-row justify="center">
+                        <v-col cols="12">
+                          <v-checkbox v-model="searchObject.isDesignersApartment" label="デザイナーズマンション"></v-checkbox>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-checkbox v-model="searchObject.hasReboilBath" label="追い焚き機能"></v-checkbox>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-checkbox v-model="searchObject.hasWashlet" label="温水洗浄便座"></v-checkbox>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+
+    </v-row>
+
+    <!-- 検索結果表示部分 -->
+    <v-row v-if="page" justify="center">
+      <!-- 検索結果表示 -->
+      <template v-if="queryResults" class="container">
+        <v-col cols="10" class="center-text" id="result"><h2>検索結果</h2><hr><br></v-col>
+        <!-- 並び替え条件選択部分 -->
+        <v-col cols="10">
+          <v-card class="center-text" outlined>
+            <h3>並び替え条件</h3>
+            <v-radio-group v-model="order" row>
+              <v-row justify="center">
+                <v-col cols="5"><v-radio label="家賃(安い順)" value="price.asc"></v-radio></v-col>
+                <v-col cols="5"><v-radio label="帖数" value="exclusive_area.desc"></v-radio></v-col>
+                <v-col cols="5"><v-radio label="築年月" value="building_age.asc"></v-radio></v-col>
+                <v-col cols="5"><v-radio label="駅徒歩時間" value="walk_from_station_minutes.asc"></v-radio></v-col>
+              </v-row>
+            </v-radio-group>
+          </v-card>
+        </v-col>
+
+        <!-- 検索結果（物件カード） -->
+        <v-col cols="11">
+          <template v-for="(building, index) in queryResults.results">
+            <v-hover v-slot:default="{ hover }" :key="building.buildingGuid">
+            <v-card :key="building.buildingGuid" @click="toDetailesPage(index)" :elevation="hover ? 12 : 2">
+                <bukken-property-card
+                  :key="building.buildingGuid"
+                  :value="building"
+                ></bukken-property-card>
+            </v-card>
+            </v-hover>
+            <br :key="building.buildingGuid">
+          </template>
+        </v-col>
+
+        <!-- ページネーション -->
+        <v-col cols="10">
+          <v-pagination
+            v-model="page"
+            :length="this.pageLength"
+            @input="pageChange(page)"
+          ></v-pagination>
+        </v-col>
+      </template>
+
+      <!-- 検索中 -->
+      <template v-else>
+        <v-col lg="10">
+          <hr><br>
+          <h1 class="center-text">
+            <p>検索中<v-icon color="#455A64" x-large>mdi-run-fast</v-icon></p>
+            <v-progress-circular
+              :width="3"
+              :size="32"
+              color="#3F51B5"
+              indeterminate
+            />
+          </h1>
+
+        </v-col>
+      </template>
+    </v-row>
+  </v-container>
+
+
+  <v-container fluid v-else>
     <v-row justify="center">
 
       <!-- 絞り込み条件の選択画面 -->
@@ -157,6 +412,23 @@
                         </v-col>
                       </v-row>
                     </v-col>
+
+                    <!-- こだわり条件の指定 -->
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col>
+                          <h3>こだわり条件指定<v-icon color="green">mdi-human-greeting</v-icon></h3>
+                          <v-card :color="selectedKodawariColor" outlined>
+                            <template v-for="kodawari in selectedKodawari">
+                              <b :key="kodawari">{{kodawari}}{{space}}</b>
+                            </template>
+                          </v-card>
+                        </v-col>
+                        <v-col cols="2">
+                          <v-btn v-on:click="kodawariReset()" icon elevation="1" color="red"><v-icon>mdi-close</v-icon></v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
                   </v-row>
                 </v-card>
               </v-col>
@@ -195,7 +467,7 @@
         <!-- 検索結果（物件カード） -->
         <v-col cols="8">
           <template v-for="(building, index) in queryResults.results">
-            <v-hover v-slot:default="{ hover }">
+            <v-hover v-slot:default="{ hover }" :key="building.buildingGuid">
             <v-card :key="building.buildingGuid" @click="toDetailesPage(index)" :elevation="hover ? 12 : 2">
                 <bukken-property-card
                   :key="building.buildingGuid"
@@ -203,7 +475,7 @@
                 ></bukken-property-card>
             </v-card>
             </v-hover>
-            <br>
+            <br :key="building.buildingGuid">
           </template>
         </v-col>
 
@@ -253,7 +525,7 @@ export default {
     queryStations: "", // 駅の情報
     queryAreas: "", // cityの情報
     stationNameList: [], // queryStationsから重複をなくした駅の情報
-    areaNameList: null,  // queryAreasから重複をなくした駅の情報
+    areaNameList: [],  // queryAreasから重複をなくした駅の情報
     space: "　",
     page: null,
     pageLength: null,
@@ -270,6 +542,8 @@ export default {
     selectedRentColor: "#ECEFF1",
     selectedStationsColor: "#ECEFF1",
     selectedAreasColor: "#ECEFF1",
+    selectedKodawariColor: "#ECEFF1",
+    selectedKodawariList: [],
   }),
 
   methods: {
@@ -283,18 +557,24 @@ export default {
     areaReset: function() {
       this.searchObject.areaCode = [];
     },
+    kodawariReset () {
+      this.searchObject.hasReboilBath = false;
+      this.searchObject.hasWashlet = false;
+      this.searchObject.isDesignersApartment = false;
+    },
     createSearchObject: function() {
       let tmpSearchObject = {};
       Object.keys(this.searchObject).forEach(key => {
-        if (this.searchObject[key] && this.searchObject[key] !== []) { 
+        if (this.searchObject[key] && this.searchObject[key] !== []) {
           tmpSearchObject[key] = this.searchObject[key];
-        } 
+        }
       });
       tmpSearchObject.startIndex = (this.page - 1) * 10 + 1;
       tmpSearchObject.order = this.order;
       return tmpSearchObject;
     },
     fetchProperties: async function() {
+      this.queryResults = null;
       const apiClient = this.$store.state.apiServices.dejimaApiClient;
       const rentPropertyQueryAPIApi = new RentPropertyQueryAPIApi(apiClient);
       const tmpSearchObject = this.createSearchObject();
@@ -327,7 +607,6 @@ export default {
       this.pageChange(this.page);
     },
     async pageChange(page) {
-      this.queryResults = null;
       await this.fetchProperties();
       this.$router.push({
         path: "/",
@@ -349,7 +628,7 @@ export default {
   mounted: async function(){
     const getQuery = await this.loadSearchQuery();
     this.searchObject = {
-      priceFrom: getQuery[0], 
+      priceFrom: getQuery[0],
       priceTo: getQuery[1],
       stationCode: getQuery[2] ? getQuery[2] : [],
       areaCode: getQuery[3] ? getQuery[3] : [],
@@ -430,7 +709,28 @@ export default {
         this.selectedRentColor = "#FFAB91";
         return String(this.searchObject.priceFrom) + "円　〜　"+ String(this.searchObject.priceTo) + "円"
       }
-    }
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.name === "xs" ? true : false;
+    },
+    selectedKodawari() {
+      let selectedList = []
+      if (this.searchObject.isDesignersApartment) {
+        selectedList.push("デザイナーズマンション")
+      }
+      if (this.searchObject.hasReboilBath) {
+        selectedList.push("追い焚き機能")
+      }
+      if (this.searchObject.hasWashlet) {
+        selectedList.push("温水洗浄便座")
+      }
+      if (selectedList.length == 0) {
+        this.selectedKodawariColor = "#ECEFF1"
+        return ["指定なし"]
+      }
+      this.selectedKodawariColor = "#FFAB91"
+      return selectedList;
+    },
 
   },
 };

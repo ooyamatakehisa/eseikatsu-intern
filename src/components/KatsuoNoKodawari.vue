@@ -1,5 +1,30 @@
 <template>
-  <v-container>
+  <v-container v-if="isMobile">
+
+    <v-snackbar v-model="snackbar" top vertical color="info">
+      <h5><v-icon x-large>mdi-alert-circle</v-icon> {{message}}</h5>
+      <template v-slot:action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="snackbar = false">Close</v-btn>
+      </template>
+    </v-snackbar>
+
+    <v-hover>
+      <template v-slot="{ hover }">
+        <v-card color="#FFCDD2" :elevation="hover ? 24 : 6">
+          <v-row v-if="katsuoNoKodawari.length !== 0" justify="center">
+            <v-col cols="12"><h3><v-icon x-large color="red">mdi-head-heart-outline</v-icon> あなたのこだわり条件にマッチしています！！！<v-icon color="red" large>mdi-thumb-up</v-icon></h3><hr></v-col>
+          </v-row>
+            <template v-for="(kodawari, index) in katsuoNoKodawari">
+              <h3 :key="kodawari">{{kodawari}}</h3>
+              <br :key="index">
+            </template>
+        </v-card>
+      </template>
+    </v-hover>
+  </v-container>
+
+
+  <v-container v-else>
 
     <v-snackbar v-model="snackbar" top vertical color="info">
       <h2><v-icon x-large>mdi-alert-circle</v-icon> {{message}}</h2>
@@ -14,9 +39,9 @@
           <v-row v-if="katsuoNoKodawari.length !== 0" justify="center">
             <v-col cols="12"><h3><v-icon x-large color="red">mdi-head-heart-outline</v-icon> あなたのこだわり条件にマッチしています！！！<v-icon color="red" large>mdi-thumb-up</v-icon></h3><hr></v-col>
           </v-row>
-            <template v-for="kodawari in katsuoNoKodawari">
+            <template v-for="(kodawari, index) in katsuoNoKodawari">
               <h3 :key="kodawari">{{kodawari}}</h3>
-              <br>
+              <br :key="index">
             </template>
         </v-card>
       </template>
@@ -38,6 +63,9 @@ export default {
     getProperty() {
       return this.$store.getters["propertyDetails/getProperty"];
     },
+    isMobile() {
+      return this.$vuetify.breakpoint.name === "xs" ? true : false;
+    }
   },
 
   watch: {

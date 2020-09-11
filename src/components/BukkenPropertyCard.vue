@@ -1,11 +1,56 @@
 <template>
-  <v-container>
+  <v-container v-if="isMobile">
+    <v-card elevation="0">
+      <v-card-title><b>{{ value.building_name }}</b></v-card-title>
+      <v-card-subtitle v-if="value.property[0].room_number_text" class="text-left">{{ value.property[0].room_number_text }}号室</v-card-subtitle>
+      <v-row justify="center">
+
+        <!-- 物件の写真 -->
+        <v-col>
+          <v-img v-if="pictureUrl"
+            :src="pictureUrl"
+            aspect-ratio="1"
+            class="grey lighten-2"
+            max-width="500"
+            max-height="300"
+          ></v-img>
+          <v-img v-else
+            src="http://placehold.jp/500x300.png?text=No Image"
+            aspect-ratio="1"
+            class="grey lighten-2"
+            max-width="500"
+            max-height="300"
+          ></v-img>
+        </v-col>
+
+        <!-- 物件の情報 -->
+        <v-col cols="12">
+          <v-card-text>
+            <p class="text-left">エリア : {{ value.city }}</p>
+            <hr><br>
+            <p class="text-left"> {{ value.property[0].sales_point }}</p>
+            <hr><br>
+            <p class="text-left">住所 : {{ value.address_text }}</p>
+            <p class="text-left">竣工年月: {{ value.completion_datejun.text }} </p>
+            <p class="text-left">家賃 : {{ value.property[0].price.amount }} 円</p>
+            <p class="text-left">最寄り駅 : {{ value.property[0].transportation[0].station.station_name }} 駅</p>
+            <p class="text-left">最寄り駅まで徒歩: {{ value.property[0].transportation[0].station_access.value }} 分</p>
+            <h4 class="text-left sea">最寄りの浜 : {{ nearestSea.name }}</h4>
+            <h4 class="text-left sea">最寄りの浜までの距離 : {{ Math.floor(nearestSea.distance) }} km</h4>
+          </v-card-text>
+        </v-col>
+
+      </v-row>
+    </v-card>
+  </v-container>
+
+  <v-container v-else>
     <v-card elevation="0">
       <v-card-title><b>{{ value.building_name }}</b></v-card-title>
       <v-card-subtitle v-if="value.property[0].room_number_text" class="text-left">{{ value.property[0].room_number_text }}号室</v-card-subtitle>
       <v-row justify="center">
         <!-- 物件の情報 -->
-        <v-col sm=6 md=6>
+        <v-col cols="12" sm=6 md=6>
           <v-card-text>
             <p class="text-left">エリア : {{ value.city }}</p>
             <hr><br>
@@ -125,6 +170,11 @@ export default {
     } catch (error) {
       this.pictureUrl = "";
     }
+  },
+  computed: {
+    isMobile() {
+      return this.$vuetify.breakpoint.name === "xs" ? true : false;
+    },
   }
 
 }
